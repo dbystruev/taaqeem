@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
-import 'package:taaqeem/widgets/text_widgets.dart';
+import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
   runApp(
@@ -9,26 +8,13 @@ void main() {
   );
 }
 
-class Main extends StatelessWidget with Scale {
+class Main extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final double scale = 1; // getScale(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: TheText.w600(
-            colors: [null, globals.accentColor],
-            texts: [
-              'Protect your\n',
-              'home &\nbusiness',
-              ' from\nCOVID-19',
-            ],
-            fontSize: 38 * scale,
-          ),
-        ),
-      ),
+      home: LaunchScreen(),
       title: 'Taqeem',
       theme: ThemeData(
         accentColor: globals.accentColor,
