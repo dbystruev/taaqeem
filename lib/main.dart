@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taaqeem/globals.dart' as globals;
 
 void main() {
   runApp(
@@ -26,7 +27,8 @@ class Main extends StatelessWidget {
       ),
       title: 'Taqeem',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        accentColor: globals.accentColor,
+        primaryColor: globals.primaryColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
     );
