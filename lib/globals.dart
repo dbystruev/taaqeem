@@ -11,6 +11,10 @@ import 'package:flutter/material.dart';
 // The foreground color for widgets (knobs, text, overscroll edge effect, etc).
 const Color accentColor = Color(0xFF07B360);
 
+// App credentials to get plans and feedback sheet ids
+const String appName = 'taaqeem';
+const String appPassword = 'aexoo5eiz3Mahahd';
+
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';
 

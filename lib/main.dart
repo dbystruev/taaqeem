@@ -1,8 +1,33 @@
+//
+//  lib/main.dart
+//
+//  Created by Denis Bystruev on 16/04/2020.
+//
+
 import 'package:flutter/material.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
+  final NetworkController networkController = NetworkController();
+  networkController.getSheetIds(callback: (
+    String status, {
+    String feedbackId,
+    String feedbackUrl,
+    String message,
+    String plansId,
+    String plansUrl,
+  }) {
+    print(
+      'DEBUG in lib/main.dart line 20: $status' +
+          ', feedbackId = $feedbackId' +
+          ', feedbackUrl = $feedbackUrl' +
+          ', plansId = $plansId' +
+          ', plansUrl = $plansUrl' +
+          '\n$message',
+    );
+  });
   runApp(
     Main(),
   );
