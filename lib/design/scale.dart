@@ -1,7 +1,7 @@
 //
 //  lib/design/scale.dart
 //
-//  Created by Denis Bystruev on 11/03/2020.
+//  Created by Denis Bystruev on 11/03/2020, updated 18/04/2020.
 //
 
 import 'dart:math';

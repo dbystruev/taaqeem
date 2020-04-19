@@ -1,7 +1,7 @@
 //
 //  lib/widgets/text_widgets.dart
 //
-//  Created by Denis Bystruev on 13/03/2020.
+//  Created by Denis Bystruev on 13/03/2020, updated 18/04/2020.
 //
 
 import 'package:flutter/material.dart';

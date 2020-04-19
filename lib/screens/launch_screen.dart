@@ -1,7 +1,7 @@
 //
 //  lib/screens/launch_screen.dart
 //
-//  Created by Denis Bystruev on 14/04/2020.
+//  Created by Denis Bystruev on 14/04/2020, updated 18/04/2020.
 //
 
 import 'package:flutter/material.dart';
