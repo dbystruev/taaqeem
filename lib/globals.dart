@@ -14,6 +14,7 @@ const Color accentColor = Color(0xFF07B360);
 // App credentials to get plans and feedback sheet ids
 const String appName = 'taaqeem';
 const String appPassword = 'aexoo5eiz3Mahahd';
+const String appVersion = '20200420094000';
 
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';

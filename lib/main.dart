@@ -11,20 +11,18 @@ import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
   final NetworkController networkController = NetworkController();
-  networkController.getSheetIds(callback: (
+  networkController.getAppData(callback: (
     String status, {
-    String feedbackId,
     String feedbackUrl,
     String message,
-    String plansId,
     String plansUrl,
+    String version,
   }) {
     print(
       'DEBUG in lib/main.dart line 20: $status' +
-          ', feedbackId = $feedbackId' +
           ', feedbackUrl = $feedbackUrl' +
-          ', plansId = $plansId' +
           ', plansUrl = $plansUrl' +
+          ', version = $version' +
           '\n$message',
     );
   });

@@ -24,41 +24,38 @@ class NetworkController {
         '/exec',
   });
 
-  // Async function which returns plans and feedback sheet ids
-  void getSheetIds(
+  // Async function which returns feedback and plans urls
+  void getAppData(
       // Callback function to return response of current request
       {
     String appName = globals.appName,
     String appPassword = globals.appPassword,
     Function(
       String status, {
-      String feedbackId,
       String feedbackUrl,
       String message,
-      String plansId,
       String plansUrl,
+      String version,
     })
         callback,
   }) async {
     try {
       final String request = '$url?appName=$appName&password=$appPassword';
       print(
-          'DEBUG in lib/controllers/network_controller.dart line 46: request = $request');
+          'DEBUG in lib/controllers/network_controller.dart line 45: request = $request');
       await http.get(request).then((http.Response response) {
         final Map<String, dynamic> body = convert.jsonDecode(response.body);
-        final String feedbackId = body['feedbackId'].toString();
         final String feedbackUrl = body['feedbackUrl'].toString();
         final String message = body['message'].toString();
-        final String plansId = body['plansId'].toString();
         final String plansUrl = body['plansUrl'].toString();
         final String status = body['status'].toString();
+        final String version = body['version'].toString();
         callback(
           status,
-          feedbackId: feedbackId,
           feedbackUrl: feedbackUrl,
           message: message,
-          plansId: plansId,
           plansUrl: plansUrl,
+          version: version,
         );
       });
     } catch (error) {
