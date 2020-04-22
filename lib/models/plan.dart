@@ -9,8 +9,8 @@ class Plan {
   final String icon;
   final int id;
   final String image;
-  final String placeType;
   final String title;
+  final String type;
   final String subtitle;
 
   static int _maxId = 0;
@@ -21,7 +21,7 @@ class Plan {
     this.description,
     this.icon,
     this.image,
-    this.placeType,
+    this.type,
     this.subtitle,
   }) : id = ++_maxId;
 
@@ -33,7 +33,7 @@ class Plan {
       (description == null ? '' : ', description: \'$description\'') +
       (icon == null ? '' : ', icon: "\'icon\'') +
       (image == null ? '' : ', image: "\'image\'') +
-      (placeType == null ? '' : ', place: "\'place\'') +
+      (type == null ? '' : ', place: "\'place\'') +
       (subtitle == null ? '' : ', subtitle: "\'subtitle\'') +
       ')';
 }
