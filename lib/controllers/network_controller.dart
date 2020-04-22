@@ -7,6 +7,7 @@
 //
 
 import 'dart:convert' as convert;
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 
@@ -41,26 +42,44 @@ class NetworkController {
   }) async {
     try {
       final String request = '$url?appName=$appName&password=$appPassword';
-      print(
-          'DEBUG in lib/controllers/network_controller.dart line 45: request = $request');
+      debugPrint(
+          'DEBUG in lib/controllers/network_controller.dart line 46: request = $request');
       await http.get(request).then((http.Response response) {
-        final Map<String, dynamic> body = convert.jsonDecode(response.body);
-        final String feedbackUrl = body['feedbackUrl'].toString();
-        final String message = body['message'].toString();
-        final String plansUrl = body['plansUrl'].toString();
-        final String status = body['status'].toString();
-        final String version = body['version'].toString();
-        callback(
-          status,
-          feedbackUrl: feedbackUrl,
-          message: message,
-          plansUrl: plansUrl,
-          version: version,
-        );
+        try {
+          if (response?.body == null) throw 'Response body is empty';
+          final Map<String, dynamic> body = convert.jsonDecode(response.body);
+          if (body == null) throw 'Can\'t decode response body';
+          final String decodedData = body['data'].toString();
+          final Map<String, dynamic> data =
+              decodedData == null ? null : convert.jsonDecode(decodedData);
+          final String feedbackUrl = data['feedbackUrl'].toString();
+          final String message = body['message'].toString();
+          final String plansUrl = data['plansUrl'].toString();
+          final String status = body['status'].toString();
+          final String version = body['version'].toString();
+          callback(
+            status,
+            feedbackUrl: feedbackUrl,
+            message: message,
+            plansUrl: plansUrl,
+            version: version,
+          );
+        } catch (error) {
+          debugPrint(
+              'ERROR in lib/controllers/network_controller.dart line 69: $error');
+          callback(
+            'ERROR',
+            message: error.toString(),
+          );
+        }
       });
     } catch (error) {
-      print('ERROR in lib/controllers/network_controller.dart line 65: $error');
-      callback('FAIL', message: error);
+      debugPrint(
+          'ERROR in lib/controllers/network_controller.dart line 78: $error');
+      callback(
+        'ERROR',
+        message: error.toString(),
+      );
     }
   }
 }

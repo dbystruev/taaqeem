@@ -18,8 +18,8 @@ void main() {
     String plansUrl,
     String version,
   }) {
-    print(
-      'DEBUG in lib/main.dart line 20: $status' +
+    debugPrint(
+      'DEBUG in lib/main.dart line 22: $status' +
           ', feedbackUrl = $feedbackUrl' +
           ', plansUrl = $plansUrl' +
           ', version = $version' +

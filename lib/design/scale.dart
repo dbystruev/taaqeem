@@ -51,7 +51,7 @@ mixin Scale {
     final double horizontalScale = screenWidth / width;
     final double verticalScale = screenHeight / height;
     final double scale = min(horizontalScale, verticalScale);
-    // print(
+    // debugPrint(
     //     'DEBUG in lib/design/scale.dart line 55: design $width x $height, screen $screenWidth x $screenHeight, scale = $scale');
     return scale;
   }
