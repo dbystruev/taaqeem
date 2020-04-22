@@ -37,6 +37,7 @@ class NetworkController {
       String feedbackUrl,
       String message,
       String plansUrl,
+      String token,
       String version,
     })
         callback,
@@ -57,17 +58,19 @@ class NetworkController {
           final String message = body['message'].toString();
           final String plansUrl = data['plansUrl'].toString();
           final String status = body['status'].toString();
+          final String token = body['token'].toString();
           final String version = body['version'].toString();
           callback(
             status,
             feedbackUrl: feedbackUrl,
             message: message,
             plansUrl: plansUrl,
+            token: token,
             version: version,
           );
         } catch (error) {
           debugPrint(
-              'ERROR in lib/controllers/network_controller.dart line 69: $error');
+              'ERROR in lib/controllers/network_controller.dart line 73: $error');
           callback(
             'ERROR',
             message: error.toString(),
@@ -76,7 +79,7 @@ class NetworkController {
       });
     } catch (error) {
       debugPrint(
-          'ERROR in lib/controllers/network_controller.dart:getAppData() line 79: $error');
+          'ERROR in lib/controllers/network_controller.dart:getAppData() line 82: $error');
       callback(
         'ERROR',
         message: error.toString(),
@@ -98,10 +101,12 @@ class NetworkController {
   }) async {
     final String request = '$url?token=$token';
     debugPrint(
-        'DEBUG in lib/controllers/network_controller.dart:getPlans() line 101: request = $request');
+        'DEBUG in lib/controllers/network_controller.dart:getPlans() line 104: request = $request');
     await http.get(request).then((http.Response response) {
       try {
         if (response?.body == null) throw 'Response body is empty';
+        debugPrint(
+            'DEBUG in lib/controllers/network_controller.dart:getPlans() line 109: response.body = ${response.body}');
         final Map<String, dynamic> body = convert.jsonDecode(response.body);
         if (body == null) throw 'Can\'t decode response body';
         final String message = body['message'].toString();
@@ -128,7 +133,7 @@ class NetworkController {
         );
       } catch (error) {
         debugPrint(
-            'ERROR in lib/controllers/network_controller.dart:getPlans() line 125: $error');
+            'ERROR in lib/controllers/network_controller.dart:getPlans() line 136: $error');
         callback(
           'ERROR',
           message: error.toString(),

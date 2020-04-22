@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
@@ -68,22 +69,42 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
       String feedbackUrl,
       String message,
       String plansUrl,
+      String token,
       String version,
     }) {
       debugPrint(
-        'DEBUG in lib/screens/launch_screen.dart line 34: $status' +
+        'DEBUG in lib/screens/launch_screen.dart line 76: $status' +
             '\nfeedbackUrl = $feedbackUrl' +
             '\nplansUrl = $plansUrl' +
             '\nmessage = $message' +
+            '\ntoken = $token' +
             '\nversion = $version',
       );
-      navigateWithDelay(
-        context,
-        message: 'globals.isProduction = ${globals.isProduction}' +
-            '\nstatus = $status' +
-            '\nmessage = $message',
-      );
+      getPlans(token: token, url: plansUrl);
     });
+  }
+
+  void getPlans({String token, String url}) {
+    networkController.getPlans(
+        token: token,
+        url: url,
+        callback: (
+          String status, {
+          String message,
+          List<Plan> plans,
+          String version,
+        }) {
+          debugPrint(
+            'DEBUG in lib/screens/launch_screen.dart line 104: $status' +
+                '\nmessage = $message' +
+                '\nplans = $plans' +
+                '\nversion = $version',
+          );
+          navigateWithDelay(
+            context,
+            message: '\nstatus = $status\nmessage = $message',
+          );
+        });
   }
 
   @override
