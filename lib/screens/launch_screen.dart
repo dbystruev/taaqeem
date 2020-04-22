@@ -5,6 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/text_widgets.dart';
@@ -16,12 +17,33 @@ class LaunchScreen extends StatefulWidget {
 
 class _LaunchScreenState extends State<LaunchScreen> with Scale {
   bool tapped = false;
+  final NetworkController networkController = NetworkController();
 
   @override
   Widget build(BuildContext context) {
     final double safeMargin = isHorizontal(context) ? 44 : 0;
     final double scale = getScale(context);
-    navigateWithDelay(context, 3);
+    networkController.getAppData(callback: (
+      String status, {
+      String feedbackUrl,
+      String message,
+      String plansUrl,
+      String version,
+    }) {
+      debugPrint(
+        'DEBUG in lib/screens/launch_screen.dart line 34: $status' +
+            '\nfeedbackUrl = $feedbackUrl' +
+            '\nplansUrl = $plansUrl' +
+            '\nmessage = $message' +
+            '\nversion = $version',
+      );
+      navigateWithDelay(
+        context,
+        message: 'globals.isProduction = ${globals.isProduction}' +
+            '\nstatus = $status' +
+            '\nmessage = $message',
+      );
+    });
     return Scaffold(
       body: Container(
         child: Stack(
@@ -61,7 +83,11 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     );
   }
 
-  void navigateWithDelay(BuildContext context, int seconds) async {
+  void navigateWithDelay(
+    BuildContext context, {
+    int seconds = 0,
+    String message,
+  }) async {
     final duration = Duration(seconds: seconds);
     await Future.delayed(duration);
     if (tapped) return;
@@ -69,7 +95,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Text('Service Selection Screen'),
+        builder: (context) => Text(message),
       ),
     );
   }

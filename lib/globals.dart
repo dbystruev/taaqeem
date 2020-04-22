@@ -19,6 +19,9 @@ const String appVersion = '20200420094000';
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';
 
+// True if running in release mode
+const bool isProduction = bool.fromEnvironment('dart.vm.product');
+
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;
 
