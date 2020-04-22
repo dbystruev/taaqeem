@@ -51,31 +51,25 @@ function doGet(request) {
         const lastRow = sheet.getLastRow();
         const range = sheet.getRange('A' + firstRow + ':G' + lastRow);
 
-        // Start making the plans
-        let plans = [];
+        // DEBUG
+        message = 'range.getNumRows() = ' + range.getNumRows() +
+            ', range.getNumColumns() = ' + range.getNumColumns();
 
-        // Go through all routes and compose each plan row
-        for (let row = 1; row <= range.getLastRow(); row++) {
-            const id = range.getCell(row, 1).getValue();
-            const type = range.getCell(row, 2).getValue();
-            const title = range.getCell(row, 3).getValue();
-            const subtitle = range.getCell(row, 4).getValue();
-            const icon = range.getCell(row, 5).getValue();
-            const image = range.getCell(row, 6).getValue();
-            const description = range.getCell(row, 7).getValue();
-            const plan = {
-                'description': description,
-                'icon': icon,
-                'id': id,
-                'image': image,
-                'title': title,
-                'type': type,
-                'subtitle': subtitle
-            };
+        // Get the values for all plans
+        const rangeValues = range.getValues();
 
-            // Add current plan the list of plans
-            plans.push(plan);
-        }
+        // Map each row of rangeValues to an obect
+        const plans = rangeValues.map(function (rowValues) {
+            return {
+                'id': rowValues[0],
+                'type': rowValues[1],
+                'title': rowValues[2],
+                'subtitle': rowValues[3],
+                'icon': rowValues[4],
+                'image': rowValues[5],
+                'description': rowValues[6]
+            }
+        });
 
         result = {
             'message': message,
@@ -85,7 +79,7 @@ function doGet(request) {
         };
 
     } catch (error) {
-        result = { 'status': 'ERROR', 'message': error };
+        result = { 'status': 'ERROR', 'message': message + '\n' + error };
     }
 
     // Return result
