@@ -23,6 +23,46 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
   Widget build(BuildContext context) {
     final double safeMargin = isHorizontal(context) ? 44 : 0;
     final double scale = getScale(context);
+    return Scaffold(
+      body: Container(
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              child: Image(
+                image: AssetImage('assets/images/logo.png'),
+                height: 58 * scale,
+                width: 135 * scale,
+              ),
+              left: 20 * scale + safeMargin,
+              top: 30 * scale,
+            ),
+            Positioned(
+              child: TheText.w600(
+                colors: [null, globals.accentColor],
+                texts: [
+                  'Protect your\n',
+                  'home &\nbusiness',
+                  ' from\nGlobal virus',
+                ],
+                fontSize: 38 * scale,
+              ),
+              left: 20 * scale + safeMargin,
+              top: 118 * scale,
+            ),
+          ],
+        ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            alignment: Alignment(0, -0.1),
+            image: AssetImage("assets/images/background.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void getAppData() {
     networkController.getAppData(callback: (
       String status, {
       String feedbackUrl,
@@ -44,43 +84,12 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
             '\nmessage = $message',
       );
     });
-    return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              child: TheText.w600(
-                colors: [null, globals.accentColor],
-                texts: [
-                  'Protect your\n',
-                  'home &\nbusiness',
-                  ' from\nCOVID-19',
-                ],
-                fontSize: 38 * scale,
-              ),
-              left: 20 * scale + safeMargin,
-              top: 40 * scale,
-            ),
-            Positioned(
-              bottom: 30 * scale,
-              child: Image(
-                image: AssetImage('assets/images/logo.png'),
-                height: 58 * scale,
-                width: 135 * scale,
-              ),
-              left: 20 * scale + safeMargin,
-            ),
-          ],
-        ),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            alignment: Alignment(0, -0.4),
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
+  }
+
+  @override
+  void initState() {
+    getAppData();
+    super.initState();
   }
 
   void navigateWithDelay(

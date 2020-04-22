@@ -5,6 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/screens/launch_screen.dart';
 
@@ -15,6 +16,7 @@ void main() {
   runApp(
     Main(),
   );
+  SystemChrome.setEnabledSystemUIOverlays([]);
 }
 
 class Main extends StatelessWidget {
