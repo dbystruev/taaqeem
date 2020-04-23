@@ -7,17 +7,12 @@
 //
 
 import 'dart:convert' as convert;
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
-import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
 
 class NetworkController {
-  // Status success message
-  static const STATUS_SUCCESS = 'SUCCESS';
-
   // Google Apps Script web url
   final String url;
 
@@ -39,7 +34,7 @@ class NetworkController {
       final Map<String, dynamic> appDataMap = convert.jsonDecode(response.body);
       return AppData.fromJson(appDataMap);
     } catch (error) {
-      return AppData('ERROR', message: error.toString());
+      return AppData(globals.statusError, message: error.toString());
     }
   }
 
@@ -54,7 +49,7 @@ class NetworkController {
       final Map<String, dynamic> plansMap = convert.jsonDecode(response.body);
       return Plans.fromJson(plansMap);
     } catch (error) {
-      return Plans([], message: error.toString(), status: 'ERROR');
+      return Plans([], message: error.toString(), status: globals.statusError);
     }
   }
 }

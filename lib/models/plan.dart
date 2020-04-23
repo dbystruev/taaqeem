@@ -21,6 +21,21 @@ class Plan {
   final String description;
   final String icon;
   final int id;
+  bool get isValid =>
+      description != null &&
+      description.isNotEmpty &&
+      icon != null &&
+      icon.isNotEmpty &&
+      id != null &&
+      0 < id &&
+      image != null &&
+      image.isNotEmpty &&
+      title != null &&
+      title.isNotEmpty &&
+      type != null &&
+      type.isNotEmpty &&
+      subtitle != null &&
+      subtitle.isNotEmpty;
   final String image;
   final String title;
   final String type;
@@ -57,10 +72,10 @@ class Plan {
   String toString() =>
       'Plan(\'$title\'' +
       (description == null ? '' : ', description: \'$description\'') +
-      (icon == null ? '' : ', icon: \'icon\'') +
-      (id == null ? '' : ', id: \'id\'') +
-      (image == null ? '' : ', image: \'image\'') +
-      (type == null ? '' : ', place: \'place\'') +
-      (subtitle == null ? '' : ', subtitle: \'subtitle\'') +
+      (icon == null ? '' : ', icon: \'$icon\'') +
+      (id == null ? '' : ', id: \'$id\'') +
+      (image == null ? '' : ', image: \'$image\'') +
+      (type == null ? '' : ', type: \'$type\'') +
+      (subtitle == null ? '' : ', subtitle: \'$subtitle\'') +
       ')';
 }

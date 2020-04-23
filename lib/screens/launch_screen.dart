@@ -9,6 +9,7 @@ import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
+import 'package:taaqeem/models/plans+all.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
@@ -66,43 +67,37 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
 
   void getAppData() async {
     AppData appData = await networkController.getAppData();
-    if (appData.status == "SUCCESS") {
+    Plans plans = appData.status == globals.statusSuccess
+        ? await getPlans(token: appData.token, url: appData.plansUrl)
+        : Plans(
+            [],
+            message: appData.message,
+            status: appData.status,
+          );
+    if (!plans.isValid) {
+      plans.plans = AllPlans.local;
       debugPrint(
-        'DEBUG in lib/screens/launch_screen.dart line 71: ${appData.status}' +
-            '\nfeedbackUrl = ${appData.feedbackUrl}' +
-            '\nplansUrl = ${appData.plansUrl}' +
-            '\nmessage = ${appData.message}' +
-            '\ntoken = ${appData.token}' +
-            '\nversion = ${appData.version}',
-      );
-      getPlans(token: appData.token, url: appData.plansUrl);
-    } else
-      debugPrint(
-        'DEBUG in lib/screens/launch_screen.dart line 81: ${appData.status}' +
+        'ERROR in lib/screens/launch_screen.dart line 80: ' +
+            '${appData.status}' +
             '\nmessage = ${appData.message}',
       );
+    }
+    navigateWithDelay(
+      context,
+      message: '\nstatus = ${plans.status}',
+    );
   }
 
-  void getPlans({String token, String url}) async {
+  Future<Plans> getPlans({String token, String url}) async {
     Plans plans = await networkController.getPlans(
       token: token,
       url: url,
     );
-    if (plans.status == "SUCCESS") {
-      debugPrint(
-        'DEBUG in lib/screens/launch_screen.dart line 93: ${plans.status}' +
-            '\nmessage = ${plans.message}' +
-            '\nplans = ${plans.plans}' +
-            '\nversion = ${plans.versionDynamic}',
-      );
-      navigateWithDelay(
-        context,
-        message: '\nstatus = ${plans.status}',
-      );
-    } else
-      debugPrint(
-          'DEBUG in lib/screens/launch_screen.dart line 104: ${plans.status}' +
-              '\nmessage = ${plans.message}');
+    if (plans.status == globals.statusSuccess) return plans;
+    debugPrint('ERROR in lib/screens/launch_screen.dart line 97: ' +
+        '${plans.status}' +
+        '\nmessage = ${plans.message}');
+    return Plans([], status: plans.status, message: plans.message);
   }
 
   @override

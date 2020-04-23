@@ -25,5 +25,9 @@ const bool isProduction = bool.fromEnvironment('dart.vm.product');
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;
 
+// Success code for external requests
+const statusError = 'ERROR';
+const statusSuccess = 'SUCCESS';
+
 // Default text color
 const Color textColor = Color(0xFF333333);
