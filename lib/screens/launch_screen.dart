@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
-import 'package:taaqeem/models/plan.dart';
+import 'package:taaqeem/models/app_data.dart';
+import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
@@ -63,48 +64,45 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     );
   }
 
-  void getAppData() {
-    networkController.getAppData(callback: (
-      String status, {
-      String feedbackUrl,
-      String message,
-      String plansUrl,
-      String token,
-      String version,
-    }) {
+  void getAppData() async {
+    AppData appData = await networkController.getAppData();
+    if (appData.status == "SUCCESS") {
       debugPrint(
-        'DEBUG in lib/screens/launch_screen.dart line 76: $status' +
-            '\nfeedbackUrl = $feedbackUrl' +
-            '\nplansUrl = $plansUrl' +
-            '\nmessage = $message' +
-            '\ntoken = $token' +
-            '\nversion = $version',
+        'DEBUG in lib/screens/launch_screen.dart line 71: ${appData.status}' +
+            '\nfeedbackUrl = ${appData.feedbackUrl}' +
+            '\nplansUrl = ${appData.plansUrl}' +
+            '\nmessage = ${appData.message}' +
+            '\ntoken = ${appData.token}' +
+            '\nversion = ${appData.version}',
       );
-      getPlans(token: token, url: plansUrl);
-    });
+      getPlans(token: appData.token, url: appData.plansUrl);
+    } else
+      debugPrint(
+        'DEBUG in lib/screens/launch_screen.dart line 81: ${appData.status}' +
+            '\nmessage = ${appData.message}',
+      );
   }
 
-  void getPlans({String token, String url}) {
-    networkController.getPlans(
-        token: token,
-        url: url,
-        callback: (
-          String status, {
-          String message,
-          List<Plan> plans,
-          String version,
-        }) {
-          debugPrint(
-            'DEBUG in lib/screens/launch_screen.dart line 104: $status' +
-                '\nmessage = $message' +
-                '\nplans = $plans' +
-                '\nversion = $version',
-          );
-          navigateWithDelay(
-            context,
-            message: '\nstatus = $status\nmessage = $message',
-          );
-        });
+  void getPlans({String token, String url}) async {
+    Plans plans = await networkController.getPlans(
+      token: token,
+      url: url,
+    );
+    if (plans.status == "SUCCESS") {
+      debugPrint(
+        'DEBUG in lib/screens/launch_screen.dart line 93: ${plans.status}' +
+            '\nmessage = ${plans.message}' +
+            '\nplans = ${plans.plans}' +
+            '\nversion = ${plans.versionDynamic}',
+      );
+      navigateWithDelay(
+        context,
+        message: '\nstatus = ${plans.status}',
+      );
+    } else
+      debugPrint(
+          'DEBUG in lib/screens/launch_screen.dart line 104: ${plans.status}' +
+              '\nmessage = ${plans.message}');
   }
 
   @override
