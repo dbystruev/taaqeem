@@ -22,7 +22,7 @@ function doGet(request) {
         if (!token) throw 'token should not be empty';
 
         // Open Google sheet bound with this script
-        const sheet = SpreadsheetApp.getActiveSpreadsheet();
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Plans');
 
         // Check maybe not needed, but just for case
         if (!sheet) throw 'Can\'t open the plans sheet';
@@ -81,4 +81,38 @@ function doGet(request) {
     return ContentService
         .createTextOutput(JSON.stringify(result))
         .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Derived from https://webapps.stackexchange.com/a/117630
+function onEdit(event) {
+
+    // Pads the value with 0 if value < 10
+    function padded(value) {
+        return value < 10 ? '0' + value : value;
+    }
+
+    // Return if event is null/empty
+    if (!event) return;
+
+    // Get the sheet for date cell
+    const sheet = event.source.getSheetByName('Plans');
+
+    // Get the cell where version is located
+    const range = sheet.getRange('B2');
+
+    // Calculate the version depending on date + time
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+    const version = '' +
+        year + padded(month) + padded(day) + padded(hour) + padded(minute) + padded(second);
+
+    // Update the version cell
+    range.setValue(version);
+
+    return true;
 }
