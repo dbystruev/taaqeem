@@ -6,11 +6,12 @@
 
 // Derived from https://medium.com/mindorks/storing-data-from-the-flutter-app-google-sheets-e4498e9cda5d
 function doGet(request) {
-    // Plans google sheet https://docs.google.com/spreadsheets/d/14U-ou_VEdnUiUrhRnok3sDyvuE2xrDQ9rVbWWBHeeqc/edit
-    const googleSheetId = '14U-ou_VEdnUiUrhRnok3sDyvuE2xrDQ9rVbWWBHeeqc';
+    function nonEmpty(value) {
+        return value || value === 0 || value === false ? value : undefined;
+    }
 
     // Failing by default
-    let message = 'Unknown';
+    let message = 'default';
     let result = { 'status': 'FAILED', 'message': message };
 
     try {
@@ -18,17 +19,13 @@ function doGet(request) {
         const token = request.parameter.token;
 
         // Check the parameters
-        if (token == null || token == '') {
-            throw 'token should not be empty';
-        }
+        if (!token) throw 'token should not be empty';
 
-        // Open Google Sheet using ID
-        const sheet = SpreadsheetApp.openById(googleSheetId);
+        // Open Google sheet bound with this script
+        const sheet = SpreadsheetApp.getActiveSpreadsheet();
 
         // Check maybe not needed, but just for case
-        if (sheet == null) {
-            throw `Can't open the plans sheet with id ${googleSheetId}`
-        }
+        if (!sheet) throw 'Can\'t open the plans sheet';
 
         // Find the token hash from spreadsheet
         const savedTokenHash = sheet.getRange('B1').getCell(1, 1).getValue();
@@ -39,9 +36,7 @@ function doGet(request) {
             .join('');
 
         // Check if the tokens match
-        if (savedTokenHash != tokenHash) {
-            throw `Token is not correct`;
-        }
+        if (savedTokenHash != tokenHash) throw `Token is not correct`;
 
         // Get the version number
         const version = sheet.getRange('B2').getCell(1, 1).getValue();
@@ -61,13 +56,13 @@ function doGet(request) {
         // Map each row of rangeValues to an obect
         const plans = rangeValues.map(function (rowValues) {
             return {
-                'id': rowValues[0],
-                'type': rowValues[1],
-                'title': rowValues[2],
-                'subtitle': rowValues[3],
-                'icon': rowValues[4],
-                'image': rowValues[5],
-                'description': rowValues[6]
+                'id': nonEmpty(rowValues[0]),
+                'type': nonEmpty(rowValues[1]),
+                'title': nonEmpty(rowValues[2]),
+                'subtitle': nonEmpty(rowValues[3]),
+                'icon': nonEmpty(rowValues[4]),
+                'image': nonEmpty(rowValues[5]),
+                'description': nonEmpty(rowValues[6])
             }
         });
 
@@ -79,7 +74,7 @@ function doGet(request) {
         };
 
     } catch (error) {
-        result = { 'status': 'ERROR', 'message': message + '\n' + error };
+        result = { 'status': 'ERROR', 'message': 'Plans: ' + error };
     }
 
     // Return result

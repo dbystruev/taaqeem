@@ -68,36 +68,24 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
   void getAppData() async {
     AppData appData = await networkController.getAppData();
     Plans plans = appData.status == globals.statusSuccess
-        ? await getPlans(token: appData.token, url: appData.plansUrl)
+        ? await networkController.getPlans(
+            token: appData.token, url: appData.plansUrl)
         : Plans(
             [],
             message: appData.message,
             status: appData.status,
           );
-    if (!plans.isValid) {
-      plans.plans = AllPlans.local;
-      debugPrint(
-        'ERROR in lib/screens/launch_screen.dart line 80: ' +
-            '${appData.status}' +
-            '\nmessage = ${appData.message}',
-      );
-    }
+    if (!plans.isValid) plans.plans = AllPlans.local;
+    debugPrint(
+      'DEBUG in lib/screens/launch_screen.dart line 80: ' +
+          '${appData.status}' +
+          '\nmessage = ${appData.message}' +
+          '\nplans = ${plans.plans}',
+    );
     navigateWithDelay(
       context,
       message: '\nstatus = ${plans.status}',
     );
-  }
-
-  Future<Plans> getPlans({String token, String url}) async {
-    Plans plans = await networkController.getPlans(
-      token: token,
-      url: url,
-    );
-    if (plans.status == globals.statusSuccess) return plans;
-    debugPrint('ERROR in lib/screens/launch_screen.dart line 97: ' +
-        '${plans.status}' +
-        '\nmessage = ${plans.message}');
-    return Plans([], status: plans.status, message: plans.message);
   }
 
   @override
