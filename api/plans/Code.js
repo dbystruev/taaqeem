@@ -46,10 +46,6 @@ function doGet(request) {
         const lastRow = sheet.getLastRow();
         const range = sheet.getRange('A' + firstRow + ':G' + lastRow);
 
-        // DEBUG
-        message = 'range.getNumRows() = ' + range.getNumRows() +
-            ', range.getNumColumns() = ' + range.getNumColumns();
-
         // Get the values for all plans
         const rangeValues = range.getValues();
 
@@ -70,11 +66,16 @@ function doGet(request) {
             'message': message,
             'plans': plans,
             'status': 'SUCCESS',
+            'time': Math.floor(new Date().getTime() / 1000),
             'version': version,
         };
 
     } catch (error) {
-        result = { 'status': 'ERROR', 'message': 'Plans: ' + error };
+        result = {
+            'message': 'Plans: ' + error,
+            'status': 'ERROR',
+            'time': Math.floor(new Date().getTime() / 1000)
+        };
     }
 
     // Return result

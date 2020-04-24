@@ -77,10 +77,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
           );
     if (!plans.isValid) plans.plans = AllPlans.local;
     debugPrint(
-      'DEBUG in lib/screens/launch_screen.dart line 80: ' +
-          '${appData.status}' +
-          '\nmessage = ${appData.message}' +
-          '\nplans = ${plans.plans}',
+      'DEBUG in lib/screens/launch_screen.dart line 80: $plans',
     );
     navigateWithDelay(
       context,

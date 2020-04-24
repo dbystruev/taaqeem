@@ -11,6 +11,7 @@ AppData _$AppDataFromJson(Map<String, dynamic> json) {
     json['status'] as String,
     data: json['data'] as String,
     message: json['message'] as String,
+    time: json['time'] as int,
     token: json['token'] as String,
     versionDynamic: json['version'],
   );
@@ -20,6 +21,7 @@ Map<String, dynamic> _$AppDataToJson(AppData instance) => <String, dynamic>{
       'data': instance.data,
       'message': instance.message,
       'status': instance.status,
+      'time': instance.time,
       'token': instance.token,
       'version': instance.versionDynamic,
     };

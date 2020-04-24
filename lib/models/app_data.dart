@@ -18,14 +18,21 @@ class AppData {
   final String message;
   String get plansUrl => Data.fromJson(_decodedData).plansUrl;
   final String status;
+  final int time;
   final String token;
   String get version => versionDynamic.toString();
 
   @JsonKey(name: 'version')
   final dynamic versionDynamic;
 
-  AppData(this.status,
-      {this.data, this.message, this.token, this.versionDynamic});
+  AppData(
+    this.status, {
+    this.data,
+    this.message,
+    this.time,
+    this.token,
+    this.versionDynamic,
+  });
 
   factory AppData.fromJson(Map<String, dynamic> json) =>
       _$AppDataFromJson(json);

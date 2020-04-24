@@ -70,7 +70,7 @@ class Plan {
 
   @override
   String toString() =>
-      'Plan(\'$title\'' +
+      '\nPlan(\'$title\'' +
       (description == null ? '' : ', description: \'$description\'') +
       (icon == null ? '' : ', icon: \'$icon\'') +
       (id == null ? '' : ', id: \'$id\'') +
