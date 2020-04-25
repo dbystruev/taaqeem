@@ -14,6 +14,7 @@ class TheText extends StatelessWidget {
   final String fontFamily;
   final double fontSize;
   final FontWeight fontWeight;
+  final double height;
   final String text;
   final TextAlign textAlign;
   final List<String> texts; // for optional rich text
@@ -26,6 +27,7 @@ class TheText extends StatelessWidget {
     String fontFamily,
     this.fontSize,
     this.fontWeight,
+    this.height,
     this.text,
     TextAlign textAlign,
     this.texts,
@@ -39,6 +41,7 @@ class TheText extends StatelessWidget {
     Color color,
     List<Color> colors,
     double fontSize,
+    double height,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -50,6 +53,7 @@ class TheText extends StatelessWidget {
         colors: colors,
         fontSize: fontSize,
         fontWeight: FontWeight.bold,
+        height: height,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -61,6 +65,7 @@ class TheText extends StatelessWidget {
     Color color,
     List<Color> colors,
     double fontSize,
+    double height,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -72,6 +77,7 @@ class TheText extends StatelessWidget {
         colors: colors,
         fontSize: fontSize,
         fontWeight: FontWeight.normal,
+        height: height,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -83,6 +89,7 @@ class TheText extends StatelessWidget {
     Color color,
     List<Color> colors,
     double fontSize,
+    double height,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -94,6 +101,7 @@ class TheText extends StatelessWidget {
         colors: colors,
         fontSize: fontSize,
         fontWeight: FontWeight.w300,
+        height: height,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -105,6 +113,7 @@ class TheText extends StatelessWidget {
     Color color,
     List<Color> colors,
     double fontSize,
+    double height,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -116,6 +125,31 @@ class TheText extends StatelessWidget {
         colors: colors,
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
+        height: height,
+        text: text,
+        textAlign: textAlign,
+        texts: texts,
+        textScaleFactor: textScaleFactor,
+      );
+
+  factory TheText.w700({
+    Color backgroundColor,
+    Color color,
+    List<Color> colors,
+    double fontSize,
+    double height,
+    String text,
+    TextAlign textAlign,
+    List<String> texts,
+    double textScaleFactor,
+  }) =>
+      TheText(
+        backgroundColor: backgroundColor,
+        color: color,
+        colors: colors,
+        fontSize: fontSize,
+        fontWeight: FontWeight.w700,
+        height: height,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -131,6 +165,7 @@ class TheText extends StatelessWidget {
       fontFamily: fontFamily,
       fontSize: fontSize,
       fontWeight: fontWeight,
+      height: height,
     );
     final bool isRichText = texts != null && 0 < texts.length;
     return isRichText

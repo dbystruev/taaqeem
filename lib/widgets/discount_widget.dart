@@ -57,7 +57,7 @@ class DiscountWidget extends StatelessWidget with Scale {
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6 * scale),
-                color: globals.primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               height: 60 * scale,
               padding: EdgeInsets.symmetric(vertical: 10 * scale),

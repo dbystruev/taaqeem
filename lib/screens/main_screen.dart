@@ -9,6 +9,7 @@ import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
+import 'package:taaqeem/widgets/plan_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -48,8 +49,12 @@ class _MainScreenState extends State<MainScreen> with Scale {
                 scale: scale,
                 subtitle:
                     'Find the best companies in the UAE to provide govt-approved sanitation and disinfection services',
+                subtitleHeight: 1.57,
                 titleSize: 22,
                 subtitleSize: 14,
+              ),
+              ...plans.plans.map(
+                (plan) => PlanWidget(plan),
               ),
             ],
             padding: const EdgeInsets.only(),

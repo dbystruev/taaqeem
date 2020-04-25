@@ -29,7 +29,6 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double safeMargin = isHorizontal(context) ? 44 : 0;
     final double scale = getScale(context);
     return Scaffold(
       body: Container(
@@ -41,21 +40,22 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
                 image: AssetImage('assets/images/logo.png'),
                 width: 135 * scale,
               ),
-              left: 20 * scale + safeMargin,
+              left: 20 * scale + getSafeMargin(context),
               top: 30 * scale,
             ),
             Positioned(
               child: TheText.w600(
-                colors: [null, globals.accentColor],
+                colors: [null, Theme.of(context).accentColor],
                 texts: [
                   'Protect your\n',
                   'home &\nbusiness',
                   ' from\nGlobal virus',
                 ],
                 fontSize: 38,
+                height: 1.21,
                 textScaleFactor: scale,
               ),
-              left: 20 * scale + safeMargin,
+              left: 20 * scale + getSafeMargin(context),
               top: 118 * scale,
             ),
           ],
@@ -83,7 +83,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
           );
     if (!plans.isValid) plans.plans = AllPlans.local;
     debugPrint(
-      'DEBUG in lib/screens/launch_screen.dart line 82: $plans',
+      'lib/screens/launch_screen.dart:85: $plans',
     );
     navigateWithDelay(context);
   }
