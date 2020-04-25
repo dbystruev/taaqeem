@@ -118,6 +118,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
           ),
           padding: EdgeInsets.all(safeMargin),
         ),
+        
       ),
     );
   }

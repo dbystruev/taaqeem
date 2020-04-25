@@ -29,6 +29,9 @@ const bool isProduction = bool.fromEnvironment('dart.vm.product');
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;
 
+// The default background color for all screens
+const Color scaffoldBackgroundColor = Colors.white;
+
 // The box shadow color rgba(99, 99, 99, 0.15)
 const Color shadowColor = Color.fromRGBO(99, 99, 99, 0.15);
 

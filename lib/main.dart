@@ -29,6 +29,7 @@ class Main extends StatelessWidget {
       theme: ThemeData(
         accentColor: globals.accentColor,
         primaryColor: globals.primaryColor,
+        scaffoldBackgroundColor: globals.scaffoldBackgroundColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
     );
