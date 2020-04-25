@@ -9,6 +9,7 @@ import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
+import 'package:taaqeem/widgets/title_widget.dart';
 
 class MainScreen extends StatefulWidget {
   final Plans plans;
@@ -42,6 +43,14 @@ class _MainScreenState extends State<MainScreen> with Scale {
                 width: 286,
               ),
               DiscountWidget('Get 19% discount\non your first order'),
+              TitleWidget(
+                'Choose your area',
+                scale: scale,
+                subtitle:
+                    'Find the best companies in the UAE to provide govt-approved sanitation and disinfection services',
+                titleSize: 22,
+                subtitleSize: 14,
+              ),
             ],
             padding: const EdgeInsets.only(),
           ),

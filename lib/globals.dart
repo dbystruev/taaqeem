@@ -39,5 +39,6 @@ const Color shadowColor = Color.fromRGBO(99, 99, 99, 0.15);
 const statusError = 'ERROR';
 const statusSuccess = 'SUCCESS';
 
-// Default text color
+// Default text colors
+const Color subtitleColor = Color(0xFF828282);
 const Color textColor = Color(0xFF333333);
