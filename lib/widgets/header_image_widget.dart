@@ -1,12 +1,12 @@
 //
-//  lib/widgets/header_image.dart
+//  lib/widgets/header_image_widget.dart
 //
 //  Created by Denis Bystruev on 25/04/2020.
 //
 
 import 'package:flutter/material.dart';
 
-class HeaderImage extends StatelessWidget {
+class HeaderImageWidget extends StatelessWidget {
   final String imageName;
   final bool hasLogo;
   final double height;
@@ -14,7 +14,7 @@ class HeaderImage extends StatelessWidget {
   final double scale;
   final double width;
 
-  HeaderImage(
+  HeaderImageWidget(
     this.imageName, {
     this.hasLogo = false,
     @required this.height,

@@ -6,10 +6,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
-import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plans.dart';
-import 'package:taaqeem/widgets/header_image.dart';
-import 'package:taaqeem/widgets/text_widgets.dart';
+import 'package:taaqeem/widgets/discount_widget.dart';
+import 'package:taaqeem/widgets/header_image_widget.dart';
 
 class MainScreen extends StatefulWidget {
   final Plans plans;
@@ -28,14 +27,13 @@ class _MainScreenState extends State<MainScreen> with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double safeMargin = isHorizontal(context) ? 44 : 0;
     final double scale = getScale(context);
     return Container(
       child: Scaffold(
         body: Padding(
           child: ListView(
             children: [
-              HeaderImage(
+              HeaderImageWidget(
                 'assets/images/main.png',
                 hasLogo: true,
                 height: 205,
@@ -43,67 +41,13 @@ class _MainScreenState extends State<MainScreen> with Scale {
                 scale: scale,
                 width: 286,
               ),
-              Padding(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      child: Container(
-                        child: TheText.w600(
-                          color: globals.discountTextColor,
-                          fontSize: 18,
-                          text: 'Get 19% discount\non your first order',
-                          textScaleFactor: scale,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6 * scale),
-                          color: globals.discountBackgroundColor,
-                        ),
-                        height: 65 * scale,
-                        padding:
-                            EdgeInsets.only(left: 20 * scale, top: 10 * scale),
-                        width: 335 * scale,
-                      ),
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 15 * scale,
-                            color: globals.shadowColor,
-                          )
-                        ],
-                      ),
-                      padding: EdgeInsets.only(top: 10 * scale),
-                    ),
-                    Positioned(
-                        bottom: 14 * scale,
-                        child: Container(
-                          child: Image(
-                            height: 40 * scale,
-                            image: AssetImage('assets/images/wow.png'),
-                            width: 10 * scale,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6 * scale),
-                            color: globals.primaryColor,
-                          ),
-                          height: 60 * scale,
-                          padding: EdgeInsets.symmetric(vertical: 10 * scale),
-                          width: 60 * scale,
-                        ),
-                        left: getMidX(context) + 77.5 * scale - safeMargin),
-                  ],
-                ),
-                padding: EdgeInsets.only(
-                  bottom: 15 * scale,
-                  left: 20 * scale,
-                  right: 20 * scale,
-                  top: 16 * scale,
-                ),
-              ),
+              DiscountWidget('Get 19% discount\non your first order'),
             ],
             padding: const EdgeInsets.only(),
           ),
-          padding: EdgeInsets.all(safeMargin),
+          padding: EdgeInsets.all(
+            getSafeMargin(context),
+          ),
         ),
       ),
     );

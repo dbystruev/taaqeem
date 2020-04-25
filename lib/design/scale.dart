@@ -23,6 +23,8 @@ mixin Scale {
 
   double getMidY(BuildContext context) => getScreenHeight(context) / 2;
 
+  double getSafeMargin(BuildContext context) => isHorizontal(context) ? 44 : 0;
+
   double getScale(
     BuildContext context, {
     bool deductSafeArea = false,
