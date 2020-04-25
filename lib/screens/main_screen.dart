@@ -38,9 +38,9 @@ class _MainScreenState extends State<MainScreen> with Scale {
               HeaderImage(
                 'assets/images/main.png',
                 hasLogo: true,
-                height: 65,
+                height: 205,
                 scale: scale,
-                width: 46,
+                width: 286,
               ),
               Padding(
                 child: Stack(

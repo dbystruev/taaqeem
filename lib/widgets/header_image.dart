@@ -29,18 +29,18 @@ class HeaderImage extends StatelessWidget {
         if (hasLogo)
           Positioned(
             child: Image(
-              height: height * scale,
+              height: 65 * scale,
               image: AssetImage('assets/images/logo_q.png'),
-              width: width * scale,
+              width: 46 * scale,
             ),
             right: 20 * scale,
             top: 24 * scale,
           ),
         Padding(
           child: Image(
-            height: 205 * scale,
+            height: height * scale,
             image: AssetImage(imageName),
-            width: 286 * scale,
+            width: width * scale,
           ),
           padding: EdgeInsets.only(top: 60 * scale),
         ),
