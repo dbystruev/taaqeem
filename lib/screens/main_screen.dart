@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/widgets/header_image.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class MainScreen extends StatefulWidget {
@@ -34,27 +35,12 @@ class _MainScreenState extends State<MainScreen> with Scale {
         body: Padding(
           child: ListView(
             children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Positioned(
-                    child: Image(
-                      height: 65 * scale,
-                      image: AssetImage('assets/images/logo_q.png'),
-                      width: 46 * scale,
-                    ),
-                    right: 20 * scale,
-                    top: 24 * scale,
-                  ),
-                  Padding(
-                    child: Image(
-                      height: 205 * scale,
-                      image: AssetImage('assets/images/main.png'),
-                      width: 286 * scale,
-                    ),
-                    padding: EdgeInsets.only(top: 60 * scale),
-                  ),
-                ],
+              HeaderImage(
+                'assets/images/main.png',
+                hasLogo: true,
+                height: 65,
+                scale: scale,
+                width: 46,
               ),
               Padding(
                 child: Stack(
@@ -118,7 +104,6 @@ class _MainScreenState extends State<MainScreen> with Scale {
           ),
           padding: EdgeInsets.all(safeMargin),
         ),
-        
       ),
     );
   }
