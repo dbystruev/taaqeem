@@ -10,6 +10,7 @@ class HeaderImage extends StatelessWidget {
   final String imageName;
   final bool hasLogo;
   final double height;
+  final EdgeInsets padding;
   final double scale;
   final double width;
 
@@ -17,6 +18,7 @@ class HeaderImage extends StatelessWidget {
     this.imageName, {
     this.hasLogo = false,
     @required this.height,
+    this.padding = const EdgeInsets.all(0),
     this.scale = 1,
     @required this.width,
   });
@@ -42,7 +44,12 @@ class HeaderImage extends StatelessWidget {
             image: AssetImage(imageName),
             width: width * scale,
           ),
-          padding: EdgeInsets.only(top: 60 * scale),
+          padding: EdgeInsets.fromLTRB(
+            scale * padding.left,
+            scale * padding.top,
+            scale * padding.right,
+            scale * padding.bottom,
+          ),
         ),
       ],
     );

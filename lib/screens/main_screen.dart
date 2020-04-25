@@ -39,6 +39,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                 'assets/images/main.png',
                 hasLogo: true,
                 height: 205,
+                padding: EdgeInsets.only(top: 60),
                 scale: scale,
                 width: 286,
               ),
