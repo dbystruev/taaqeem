@@ -17,7 +17,11 @@ mixin Scale {
   static const double defaultShorterSize = 375;
 
   bool isHorizontal(BuildContext context) =>
-      MediaQuery.of(context).size.height < MediaQuery.of(context).size.width;
+      getScreenHeight(context) < getScreenWidth(context);
+
+  double getMidX(BuildContext context) => getScreenWidth(context) / 2;
+
+  double getMidY(BuildContext context) => getScreenHeight(context) / 2;
 
   double getScale(
     BuildContext context, {
@@ -46,13 +50,21 @@ mixin Scale {
     final double width = designWidth == null || designWidth <= 0
         ? defaultWidth - deductWidth
         : designWidth;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double horizontalScale = screenWidth / width;
-    final double verticalScale = screenHeight / height;
+    final double horizontalScale = getScreenWidth(context) / width;
+    final double verticalScale = getScreenHeight(context) / height;
     final double scale = min(horizontalScale, verticalScale);
     // debugPrint(
-    //     'DEBUG in lib/design/scale.dart line 55: design $width x $height, screen $screenWidth x $screenHeight, scale = $scale');
+    //   'DEBUG in lib/design/scale.dart line 53:' +
+    //       ' design $width x $height' +
+    //       ', screen ${getScreenWidth(context)} x ${getScreenHeight(context)}' +
+    //       ', scale = $scale',
+    // );
     return scale;
   }
+
+  double getScreenHeight(BuildContext context) =>
+      MediaQuery.of(context).size.height;
+
+  double getScreenWidth(BuildContext context) =>
+      MediaQuery.of(context).size.width;
 }

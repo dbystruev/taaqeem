@@ -11,6 +11,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans+all.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
@@ -19,8 +20,12 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> with Scale {
-  bool tapped = false;
+  // Minimum delay — 3 seconds
+  final Duration minDelay = Duration(seconds: 3);
   final NetworkController networkController = NetworkController();
+  Plans plans;
+  final startTime = DateTime.now();
+  bool tapped = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +37,8 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
           children: <Widget>[
             Positioned(
               child: Image(
-                image: AssetImage('assets/images/logo.png'),
                 height: 58 * scale,
+                image: AssetImage('assets/images/logo.png'),
                 width: 135 * scale,
               ),
               left: 20 * scale + safeMargin,
@@ -47,7 +52,8 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
                   'home &\nbusiness',
                   ' from\nGlobal virus',
                 ],
-                fontSize: 38 * scale,
+                fontSize: 38,
+                textScaleFactor: scale,
               ),
               left: 20 * scale + safeMargin,
               top: 118 * scale,
@@ -65,9 +71,9 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     );
   }
 
-  void getAppData() async {
+  void getPlans() async {
     AppData appData = await networkController.getAppData();
-    Plans plans = appData.status == globals.statusSuccess
+    plans = appData.status == globals.statusSuccess
         ? await networkController.getPlans(
             token: appData.token, url: appData.plansUrl)
         : Plans(
@@ -77,33 +83,27 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
           );
     if (!plans.isValid) plans.plans = AllPlans.local;
     debugPrint(
-      'DEBUG in lib/screens/launch_screen.dart line 80: $plans',
+      'DEBUG in lib/screens/launch_screen.dart line 82: $plans',
     );
-    navigateWithDelay(
-      context,
-      message: '\nstatus = ${plans.status}',
-    );
+    navigateWithDelay(context);
   }
 
   @override
   void initState() {
-    getAppData();
+    getPlans();
     super.initState();
   }
 
-  void navigateWithDelay(
-    BuildContext context, {
-    int seconds = 0,
-    String message,
-  }) async {
-    final duration = Duration(seconds: seconds);
-    await Future.delayed(duration);
+  void navigateWithDelay(BuildContext context) async {
     if (tapped) return;
     tapped = true;
+    final Duration elapsedTime = DateTime.now().difference(startTime);
+    final Duration delay = minDelay - elapsedTime;
+    if (0 < delay.inMilliseconds) await Future.delayed(delay);
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => Text(message),
+        builder: (context) => MainScreen(plans),
       ),
     );
   }

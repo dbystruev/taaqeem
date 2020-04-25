@@ -11,7 +11,6 @@ import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
   // Disable debugPring in release mode
-  print('globals.isProduction = ${globals.isProduction}');
   if (globals.isProduction) debugPrint = (String message, {int wrapWidth}) {};
   runApp(
     Main(),
