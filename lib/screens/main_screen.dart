@@ -5,7 +5,6 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
@@ -24,45 +23,20 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with Scale {
   int lastIndex;
-  // final List<Key> planKeys;
-  final ItemScrollController scrollController = ItemScrollController();
+  final ScrollController scrollController = ScrollController();
   final Plans plans;
-  // final List<ItemScrollController> scrollControllers;
-  bool scrollToSelected = false;
   int selectedIndex;
 
-  _MainScreenState(this.plans)
-      :
-        // planKeys = List<Key>.generate(
-        //     plans.plans.length + 1,
-        //     (_) => UniqueKey(),
-        //     growable: false,
-        //   ),
-        //   scrollControllers = List<ItemScrollController>.generate(
-        //     plans.plans.length + 1,
-        //     (_) => ItemScrollController(),
-        //     growable: false,
-        //   ),
-        selectedIndex = plans.plans.length;
+  _MainScreenState(this.plans) : selectedIndex = plans.plans.length;
 
   @override
   Widget build(BuildContext context) {
     final double scale = getScale(context);
     return Container(
       child: Scaffold(
-        body: ScrollablePositionedList.builder(
-          // key: planKeys[selectedIndex],
+        body: ListView.builder(
+          controller: scrollController,
           itemBuilder: (BuildContext context, int index) {
-            if (scrollToSelected && selectedIndex < plans.plans.length) {
-              scrollToSelected = false;
-              Future.delayed(Duration(milliseconds: 40)).then(
-                (_) => scrollController.scrollTo(
-                  // scrollControllers[selectedIndex].scrollTo(
-                  duration: Duration(milliseconds: 500),
-                  index: selectedIndex,
-                ),
-              );
-            }
             switch (index) {
               case 0:
                 return HeaderImageWidget(
@@ -94,31 +68,17 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   index: planIndex,
                   isSelected: selectedIndex == planIndex,
                   onExpansionChanged: (int index, bool expanded) {
-                    debugPrint(
-                      '\nlib/screens/main_screen.dart:99 index = $index, expanded = $expanded, lastIndex = $lastIndex',
-                    );
                     if (expanded && lastIndex != null && lastIndex != index) {
-                      debugPrint(
-                        'lib/screens/main_screen.dart:103 PlanWidget.keys[$lastIndex].currentState.collapse()',
-                      );
                       PlanWidget.keys[lastIndex].currentState.collapse();
                     }
                     Future.delayed(
-                      Duration(milliseconds: 300),
+                      Duration(milliseconds: 250),
                     ).then(
                       (_) {
                         if (expanded && lastIndex == null) {
-                          debugPrint(
-                            'lib/screens/main_screen.dart:114 lastIndex = $lastIndex, scrollTo(index: $index)',
-                          );
-                          scrollController.scrollTo(
-                              duration: Duration(milliseconds: 500),
-                              index: index);
+                          scrollTo(index);
                         }
                         lastIndex = expanded ? index : null;
-                        debugPrint(
-                          '/lib/screens/main_screen.dart:113 lastIndex = $lastIndex',
-                        );
                         setState(() {
                           selectedIndex =
                               expanded ? planIndex : plans.plans.length;
@@ -136,13 +96,26 @@ class _MainScreenState extends State<MainScreen> with Scale {
             }
           },
           itemCount: plans.plans.length + 3,
-          itemScrollController: scrollController,
           // itemScrollController: scrollControllers[selectedIndex],
           padding: EdgeInsets.all(
             getSafeMargin(context),
           ),
         ),
       ),
+    );
+  }
+
+  void scrollTo(int index) {
+    final double scale = getScale(context);
+    final double collapsedHeight = 87 * scale;
+    final double expandedHeight = 257 * scale;
+    final double height = index <= selectedIndex
+        ? index * collapsedHeight
+        : (index - 1) * collapsedHeight + expandedHeight;
+    scrollController.animateTo(
+      height,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.ease,
     );
   }
 }
