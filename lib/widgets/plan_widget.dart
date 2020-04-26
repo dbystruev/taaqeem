@@ -9,48 +9,30 @@ import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
+import 'package:taaqeem/widgets/expansion_tile_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class PlanWidget extends StatefulWidget {
+class PlanWidget extends StatelessWidget with Scale {
+  final ExpansionTileWidget expansionTile;
+  final int index;
+  static Map<int, GlobalKey<ExpansionTileWidgetState>> keys = {};
+  final bool isSelected;
+  final void Function(
+    int index,
+    bool expanded,
+  ) onExpansionChanged;
+  final void Function(int index) onPressed;
   final Plan plan;
+  final double scale;
 
   PlanWidget(
     this.plan, {
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _PlanWidgetState createState() => _PlanWidgetState(
-        description: plan.description,
-        leadingIcon: plan.icon,
-        subtitle: plan.subtitle,
-        title: plan.type,
-      );
-}
-
-class _PlanWidgetState extends State<PlanWidget> with Scale {
-  final String description;
-  final String leadingIcon;
-  bool open = false;
-  final String subtitle;
-  final String title;
-
-  _PlanWidgetState({
-    this.description,
-    this.leadingIcon,
-    this.subtitle,
-    this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final double scale = getScale(context);
-    return Card(
-      child: ListTileTheme(
-        contentPadding:
-            EdgeInsets.fromLTRB(13 * scale, 0, 24 * scale, open ? 0 : 12 * scale,
-                ),
-        child: ExpansionTile(
+    this.index,
+    this.isSelected = false,
+    this.onExpansionChanged,
+    this.onPressed,
+    this.scale = 1,
+  }) : expansionTile = ExpansionTileWidget(
           children: [
             Divider(
               endIndent: 24 * scale,
@@ -62,7 +44,7 @@ class _PlanWidgetState extends State<PlanWidget> with Scale {
                 color: globals.subtitleColor,
                 fontSize: 14,
                 height: 1.57,
-                text: description,
+                text: plan.description,
                 textScaleFactor: scale,
               ),
               padding: EdgeInsets.fromLTRB(
@@ -81,46 +63,55 @@ class _PlanWidgetState extends State<PlanWidget> with Scale {
               ),
               child: ButtonWidget(
                 'Book Service',
-                onPressed: () {
-                  debugPrint(
-                      'lib/widgets/plan_widget.dart:67 Book Service Pressed');
-                },
+                onPressed: () => onPressed(index),
                 scale: scale,
               ),
             ),
           ],
-          initiallyExpanded: open,
-          leading: leadingIcon.startsWith('http')
-              ? NetworkImage(leadingIcon)
+          initiallyExpanded: isSelected,
+          key: GlobalKey<ExpansionTileWidgetState>(),
+          leading: plan.icon.startsWith('http')
+              ? NetworkImage(plan.icon)
               : Image.asset(
-                  'assets/images/$leadingIcon.png',
+                  'assets/images/${plan.icon}.png',
                   height: 34 * scale,
                   width: 34 * scale,
                 ),
-          onExpansionChanged: (bool expanded) {
-            setState(() {
-              open = expanded;
-            });
-          },
+          onExpansionChanged: (bool expanded) =>
+              onExpansionChanged(index, expanded),
           subtitle: TheText.w700(
-            color: Theme.of(context).accentColor,
+            color: globals.accentColor,
             fontSize: 16,
             height: 1.37,
-            text: subtitle,
+            text: plan.subtitle,
             textScaleFactor: scale,
           ),
           title: TheText.w700(
             fontSize: 16,
             height: 1.37,
-            text: title,
+            text: plan.type,
             textScaleFactor: scale,
           ),
           trailing: Image.asset(
-            'assets/images/${open ? 'up' : 'down'}.png',
+            'assets/images/${isSelected ? 'up' : 'down'}.png',
             height: 9 * scale,
             width: 15 * scale,
           ),
+        ) {
+    keys[index] = expansionTile.key;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTileTheme(
+        contentPadding: EdgeInsets.fromLTRB(
+          13 * scale,
+          0,
+          24 * scale,
+          isSelected ? 0 : 12 * scale,
         ),
+        child: expansionTile,
         dense: true,
       ),
       elevation: 6,
@@ -131,4 +122,84 @@ class _PlanWidgetState extends State<PlanWidget> with Scale {
       ),
     );
   }
+
+  static List<ExpansionTileWidget> buildExpansionTiles(
+    List<Plan> plans, {
+    void Function(int index, bool expanded) onExpansionChanged,
+    void Function(int index) onPressed,
+    double scale = 1,
+  }) =>
+      plans
+          .asMap()
+          .map(
+            (index, plan) => MapEntry(
+              index,
+              ExpansionTileWidget(
+                children: [
+                  Divider(
+                    endIndent: 24 * scale,
+                    indent: 13 * scale,
+                    thickness: scale,
+                  ),
+                  Padding(
+                    child: TheText.normal(
+                      color: globals.subtitleColor,
+                      fontSize: 14,
+                      height: 1.57,
+                      text: plan.description,
+                      textScaleFactor: scale,
+                    ),
+                    padding: EdgeInsets.fromLTRB(
+                      15 * scale,
+                      8 * scale,
+                      24 * scale,
+                      12 * scale,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      16 * scale,
+                      0,
+                      19 * scale,
+                      27 * scale,
+                    ),
+                    child: ButtonWidget(
+                      'Book Service',
+                      onPressed: () => onPressed(index),
+                      scale: scale,
+                    ),
+                  ),
+                ],
+                leading: plan.icon.startsWith('http')
+                    ? NetworkImage(plan.icon)
+                    : Image.asset(
+                        'assets/images/${plan.icon}.png',
+                        height: 34 * scale,
+                        width: 34 * scale,
+                      ),
+                onExpansionChanged: (bool expanded) =>
+                    onExpansionChanged(index, expanded),
+                subtitle: TheText.w700(
+                  color: globals.accentColor,
+                  fontSize: 16,
+                  height: 1.37,
+                  text: plan.subtitle,
+                  textScaleFactor: scale,
+                ),
+                title: TheText.w700(
+                  fontSize: 16,
+                  height: 1.37,
+                  text: plan.type,
+                  textScaleFactor: scale,
+                ),
+                trailing: Image.asset(
+                  'assets/images/down.png',
+                  height: 9 * scale,
+                  width: 15 * scale,
+                ),
+              ),
+            ),
+          )
+          .values
+          .toList();
 }
