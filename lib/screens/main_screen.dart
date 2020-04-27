@@ -4,6 +4,8 @@
 //  Created by Denis Bystruev on 25/04/2020.
 //
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
@@ -75,13 +77,11 @@ class _MainScreenState extends State<MainScreen> with Scale {
                       Duration(milliseconds: 250),
                     ).then(
                       (_) {
-                        if (expanded && lastIndex == null) {
-                          scrollTo(index);
-                        }
-                        lastIndex = expanded ? index : null;
                         setState(() {
                           selectedIndex =
                               expanded ? planIndex : plans.plans.length;
+                          if (expanded && lastIndex == null) scrollTo(index);
+                          lastIndex = expanded ? index : null;
                         });
                       },
                     );
@@ -109,11 +109,24 @@ class _MainScreenState extends State<MainScreen> with Scale {
     final double scale = getScale(context);
     final double collapsedHeight = 87 * scale;
     final double expandedHeight = 257 * scale;
-    final double height = index <= selectedIndex
-        ? index * collapsedHeight
-        : (index - 1) * collapsedHeight + expandedHeight;
+    final double headerHeight = 464 * scale;
+    final double footerHeight = 97 * scale;
+    final double height = index < selectedIndex
+        ? (index + 1) * collapsedHeight
+        : index * collapsedHeight + expandedHeight;
+    final double scrollHeigh = max(
+      headerHeight +
+          height +
+          footerHeight +
+          getSafeMargin(context) -
+          getScreenHeight(context),
+      0,
+    );
+    // debugPrint(
+    //   'lib/screens/main_screen.dart.scrollTo():124 index = $index, height = $height, scrollHeigh = $scrollHeigh',
+    // );
     scrollController.animateTo(
-      height,
+      scrollHeigh,
       duration: Duration(milliseconds: 500),
       curve: Curves.ease,
     );
