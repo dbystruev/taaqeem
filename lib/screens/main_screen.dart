@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
 import 'package:taaqeem/widgets/plan_widget.dart';
@@ -88,7 +89,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   },
                   onPressed: (int index) {
                     debugPrint(
-                      'lib/screens/main_screen.dart:121 index = $index, planIndex = $planIndex',
+                      'lib/screens/main_screen.dart:91 index = $index, planIndex = $planIndex',
                     );
                   },
                   scale: scale,
@@ -96,11 +97,11 @@ class _MainScreenState extends State<MainScreen> with Scale {
             }
           },
           itemCount: plans.plans.length + 3,
-          // itemScrollController: scrollControllers[selectedIndex],
           padding: EdgeInsets.all(
             getSafeMargin(context),
           ),
         ),
+        bottomNavigationBar: BottomNavigationWidget(),
       ),
     );
   }
@@ -114,7 +115,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
     final double height = index < selectedIndex
         ? (index + 1) * collapsedHeight
         : index * collapsedHeight + expandedHeight;
-    final double scrollHeigh = max(
+    final double scrollHeight = max(
       headerHeight +
           height +
           footerHeight +
@@ -123,10 +124,10 @@ class _MainScreenState extends State<MainScreen> with Scale {
       0,
     );
     // debugPrint(
-    //   'lib/screens/main_screen.dart.scrollTo():124 index = $index, height = $height, scrollHeigh = $scrollHeigh',
+    //   'lib/screens/main_screen.dart.scrollTo():125 index = $index, height = $height, scrollHeight = $scrollHeight',
     // );
     scrollController.animateTo(
-      scrollHeigh,
+      scrollHeight,
       duration: Duration(milliseconds: 500),
       curve: Curves.ease,
     );
