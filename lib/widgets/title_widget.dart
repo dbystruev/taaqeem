@@ -21,10 +21,10 @@ class TitleWidget extends StatelessWidget {
     this.title, {
     this.scale,
     this.titleHeight,
-    this.titleSize,
+    this.titleSize = 22,
     this.subtitle,
-    this.subtitleHeight,
-    this.subtitleSize,
+    this.subtitleHeight = 1.6,
+    this.subtitleSize = 15,
   });
 
   @override

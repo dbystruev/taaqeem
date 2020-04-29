@@ -10,6 +10,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/expansion_tile_widget.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class PlanWidget extends StatelessWidget with Scale {
@@ -70,13 +71,7 @@ class PlanWidget extends StatelessWidget with Scale {
           ],
           initiallyExpanded: isSelected,
           key: GlobalKey<ExpansionTileWidgetState>(),
-          leading: plan.icon.startsWith('http')
-              ? NetworkImage(plan.icon)
-              : Image.asset(
-                  'assets/images/${plan.icon}.png',
-                  height: 34 * scale,
-                  width: 34 * scale,
-                ),
+          leading: ImageWidget(plan.icon, null, height: 34, width: 34),
           onExpansionChanged: (bool expanded) =>
               onExpansionChanged(index, expanded),
           subtitle: TheText.w700(
@@ -92,11 +87,7 @@ class PlanWidget extends StatelessWidget with Scale {
             text: plan.type,
             textScaleFactor: scale,
           ),
-          trailing: Image.asset(
-            'assets/images/${isSelected ? 'up' : 'down'}.png',
-            height: 9 * scale,
-            width: 15 * scale,
-          ),
+          trailing: ImageWidget(isSelected ? 'up' : 'down', 'green'),
         ) {
     keys[index] = expansionTile.key;
   }

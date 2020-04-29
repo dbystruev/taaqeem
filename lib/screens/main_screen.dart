@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
@@ -37,90 +38,89 @@ class _MainScreenState extends State<MainScreen> with Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = getScale(context);
-    return Container(
-      child: Scaffold(
-        body: ListView.builder(
-          controller: scrollController,
-          itemBuilder: (BuildContext context, int index) {
-            switch (index) {
-              case 0:
-                return HeaderImageWidget(
-                  'assets/images/main.png',
-                  hasLogo: true,
-                  height: 205,
-                  padding: EdgeInsets.only(top: 60),
-                  scale: scale,
-                  width: 286,
-                );
-              case 1:
-                return DiscountWidget(
-                  'Get 19% discount\non your first order',
-                );
-              case 2:
-                return TitleWidget(
-                  'Choose your area',
-                  scale: scale,
-                  subtitle: 'Find the best companies in the UAE to provide' +
-                      '\ngovt-approved sanitation and disinfection services',
-                  subtitleHeight: 1.57,
-                  titleSize: 22,
-                  subtitleSize: 14,
-                );
-              default:
-                final int planIndex = index - 3;
-                return PlanWidget(
-                  plans.plans[planIndex],
-                  index: planIndex,
-                  isSelected: selectedPlan == planIndex,
-                  onExpansionChanged: (int index, bool expanded) {
-                    if (expanded && lastIndex != null && lastIndex != index) {
-                      PlanWidget.keys[lastIndex].currentState.collapse();
-                    }
-                    Future.delayed(
-                      Duration(milliseconds: 250),
-                    ).then(
-                      (_) {
-                        setState(() {
-                          selectedPlan =
-                              expanded ? planIndex : plans.plans.length;
-                          if (expanded && lastIndex == null) scrollTo(index);
-                          lastIndex = expanded ? index : null;
-                        });
-                      },
-                    );
-                  },
-                  onPressed: (int index) {
-                    debugPrint(
-                      'lib/screens/main_screen.dart:94 order index = $index, planIndex = $planIndex',
-                    );
-                  },
-                  scale: scale,
-                );
-            }
-          },
-          itemCount: plans.plans.length + 3,
-          padding: EdgeInsets.all(
-            getSafeMargin(context),
-          ),
+    return Scaffold(
+      body: ListView.builder(
+        controller: scrollController,
+        itemBuilder: (BuildContext context, int index) {
+          switch (index) {
+            case 0:
+              return HeaderImageWidget(
+                'main',
+                hasLogo: true,
+                height: 205,
+                padding: EdgeInsets.only(top: 60),
+                scale: scale,
+              );
+            case 1:
+              return DiscountWidget(
+                'Get 19% discount\non your first order',
+              );
+            case 2:
+              return TitleWidget(
+                'Choose your area',
+                scale: scale,
+                subtitle: 'Find the best companies in the UAE to provide' +
+                    '\ngovt-approved sanitation and disinfection services',
+                subtitleHeight: 1.57,
+                subtitleSize: 14,
+              );
+            default:
+              final int planIndex = index - 3;
+              return PlanWidget(
+                plans.plans[planIndex],
+                index: planIndex,
+                isSelected: selectedPlan == planIndex,
+                onExpansionChanged: (int index, bool expanded) {
+                  if (expanded && lastIndex != null && lastIndex != index) {
+                    PlanWidget.keys[lastIndex].currentState.collapse();
+                  }
+                  Future.delayed(
+                    Duration(milliseconds: 250),
+                  ).then(
+                    (_) {
+                      setState(() {
+                        selectedPlan =
+                            expanded ? planIndex : plans.plans.length;
+                        if (expanded && lastIndex == null) scrollTo(index);
+                        lastIndex = expanded ? index : null;
+                      });
+                    },
+                  );
+                },
+                onPressed: (int index) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OrderScreen(plans.plans[index]),
+                    ),
+                  );
+                },
+                scale: scale,
+              );
+          }
+        },
+        itemCount: plans.plans.length + 3,
+        padding: EdgeInsets.all(
+          getSafeMargin(context),
         ),
-        bottomNavigationBar: BottomNavigationWidget(
-          onTap: (int index) {
-            setState(() => selectedBottomBarItem = index);
-            debugPrint(
-              'lib/screens/main_screen.dart:110 bottom index = $index',
-            );
-          },
-          selectedIndex: selectedBottomBarItem,
-        ),
-        floatingActionButton: PlusButtonWidget(
-          onTap: () {
-            debugPrint(
-              'lib/screens/main_screen.dart:118 plus button',
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
+      bottomNavigationBar: BottomNavigationWidget(
+        onTap: (int index) {
+          setState(() => selectedBottomBarItem = index);
+          debugPrint(
+            'lib/screens/main_screen.dart:110 bottom index = $index',
+          );
+        },
+        selectedIndex: selectedBottomBarItem,
+      ),
+      floatingActionButton: PlusButtonWidget(
+        onTap: () {
+          debugPrint(
+            'lib/screens/main_screen.dart:118 plus button',
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 

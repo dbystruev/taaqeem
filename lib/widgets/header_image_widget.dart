@@ -5,6 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 
 class HeaderImageWidget extends StatelessWidget {
   final String imageName;
@@ -17,10 +18,10 @@ class HeaderImageWidget extends StatelessWidget {
   HeaderImageWidget(
     this.imageName, {
     this.hasLogo = false,
-    @required this.height,
-    this.padding = const EdgeInsets.all(0),
+    this.height,
+    this.padding = const EdgeInsets.only(top: 64),
     this.scale = 1,
-    @required this.width,
+    this.width = 305,
   });
 
   @override
@@ -30,20 +31,12 @@ class HeaderImageWidget extends StatelessWidget {
       children: [
         if (hasLogo)
           Positioned(
-            child: Image(
-              height: 65 * scale,
-              image: AssetImage('assets/images/logo_q.png'),
-              width: 46 * scale,
-            ),
+            child: ImageWidget('logo', 'q', height: 65, width: 46),
             right: 20 * scale,
             top: 24 * scale,
           ),
         Padding(
-          child: Image(
-            height: height * scale,
-            image: AssetImage(imageName),
-            width: width * scale,
-          ),
+          child: ImageWidget(imageName, null, height: height, width: width),
           padding: EdgeInsets.fromLTRB(
             scale * padding.left,
             scale * padding.top,

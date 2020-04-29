@@ -20,11 +20,17 @@ const String appVersion = '20200425090500';
 const Color discountBackgroundColor = Color(0xFF1DB263);
 const Color discountTextColor = Colors.white;
 
+// Divider color
+const Color dividerColor = Color(0xFFC4C4C4);
+
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';
 
 // True if running in release mode
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
+
+// Menu item color
+const Color menuItemColor = Color(0xFF4F4F4F);
 
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;

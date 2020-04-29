@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class BottomNavigationWidget extends StatelessWidget with Scale {
@@ -50,11 +51,12 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
   }) {
     final Color color = selected ? globals.accentColor : globals.subtitleColor;
     final String imageName = iconName ?? text.split(' ').first.toLowerCase();
-    final String imageSuffix = selected ? '_green' : '_grey';
-    final Image image = Image(
-      height: scale * iconHeight,
-      image: AssetImage('assets/images/$imageName$imageSuffix.png'),
-      width: scale * iconWidth,
+    final String imageSuffix = selected ? 'green' : 'grey';
+    final ImageWidget image = ImageWidget(
+      imageName,
+      imageSuffix,
+      height: iconHeight,
+      width: iconWidth,
     );
     final TheText textWidget = TheText.w600(
       color: color,

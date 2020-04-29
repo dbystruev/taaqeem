@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class DiscountWidget extends StatelessWidget with Scale {
@@ -50,11 +51,7 @@ class DiscountWidget extends StatelessWidget with Scale {
           Positioned(
             bottom: 14 * scale,
             child: Container(
-              child: Image(
-                height: 40 * scale,
-                image: AssetImage('assets/images/wow.png'),
-                width: 10 * scale,
-              ),
+              child: ImageWidget('wow', null, height: 40, width: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6 * scale),
                 color: Theme.of(context).primaryColor,

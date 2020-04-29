@@ -12,6 +12,7 @@ import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans+all.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/main_screen.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class LaunchScreen extends StatefulWidget {
@@ -35,9 +36,10 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
         child: Stack(
           children: <Widget>[
             Positioned(
-              child: Image(
+              child: ImageWidget(
+                'logo',
+                null,
                 height: 58 * scale,
-                image: AssetImage('assets/images/logo.png'),
                 width: 135 * scale,
               ),
               left: 20 * scale + getSafeMargin(context),
