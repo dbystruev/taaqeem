@@ -89,7 +89,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   },
                   onPressed: (int index) {
                     debugPrint(
-                      'lib/screens/main_screen.dart:91 index = $index, planIndex = $planIndex',
+                      'lib/screens/main_screen.dart:92 order index = $index, planIndex = $planIndex',
                     );
                   },
                   scale: scale,
@@ -101,7 +101,13 @@ class _MainScreenState extends State<MainScreen> with Scale {
             getSafeMargin(context),
           ),
         ),
-        bottomNavigationBar: BottomNavigationWidget(),
+        bottomNavigationBar: BottomNavigationWidget(
+            onTap: (int index) {
+              debugPrint(
+                'lib/screens/main_screen.dart:107 bottom item index = $index',
+              );
+            },
+            scale: scale),
       ),
     );
   }
@@ -123,9 +129,6 @@ class _MainScreenState extends State<MainScreen> with Scale {
           getScreenHeight(context),
       0,
     );
-    // debugPrint(
-    //   'lib/screens/main_screen.dart.scrollTo():125 index = $index, height = $height, scrollHeight = $scrollHeight',
-    // );
     scrollController.animateTo(
       scrollHeight,
       duration: Duration(milliseconds: 500),
