@@ -11,13 +11,14 @@ import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class DiscountWidget extends StatelessWidget with Scale {
+  final double scale;
   final String text;
 
-  DiscountWidget(this.text);
+  DiscountWidget(this.text, {this.scale});
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = this.scale ?? getScale(context);
     return Padding(
       child: Stack(
         alignment: Alignment.center,

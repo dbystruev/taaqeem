@@ -10,16 +10,23 @@ import 'package:taaqeem/design/scale.dart';
 class ImageWidget extends StatelessWidget with Scale {
   final double height;
   final String name;
+  final double scale;
   final String suffix;
   final double width;
 
-  ImageWidget(this.name, this.suffix, {this.height = 9, this.width = 15});
+  ImageWidget(
+    this.name,
+    this.suffix, {
+    this.height = 9,
+    this.scale,
+    this.width = 15,
+  });
 
   @override
   Widget build(BuildContext context) {
     final String imageSuffix = suffix == null ? '' : '_$suffix';
     final String imageName = 'assets/images/$name$imageSuffix.png';
-    final double scale = getScale(context);
+    final double scale = this.scale ?? getScale(context);
     final double imageHeight = height == null ? null : height * scale;
     final double imageWidth = width == null ? null : width * scale;
     return name.startsWith('http')

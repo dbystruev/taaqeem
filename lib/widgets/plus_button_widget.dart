@@ -16,17 +16,19 @@ class PlusButtonWidget extends StatelessWidget with Scale {
   final Color color;
   final void Function() onTap;
   final double radius;
+  final double scale;
 
   PlusButtonWidget({
     this.backgroundColor = globals.accentColor,
     this.color = globals.primaryColor,
     this.onTap,
     this.radius = 27,
+    this.scale,
   }) : blurRadius = max(10, 30 - radius);
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = this.scale ?? getScale(context);
     final double doubleScale = 2 * scale;
     final double plusSize = doubleScale * (radius - 5);
     return SizedBox(

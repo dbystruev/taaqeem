@@ -5,10 +5,11 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class ButtonWidget extends StatelessWidget {
+class ButtonWidget extends StatelessWidget with Scale {
   final Color borderColor;
   final double borderWidth;
   final Color buttonColor;
@@ -36,13 +37,14 @@ class ButtonWidget extends StatelessWidget {
     this.imageWidth = 18,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.onPressed,
-    this.scale = 1,
+    this.scale,
     this.textColor = globals.primaryColor,
     this.width = 300,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double scale = this.scale ?? getScale(context);
     final TheText textWidget = TheText.w600(
       color: textColor,
       fontSize: fontSize,

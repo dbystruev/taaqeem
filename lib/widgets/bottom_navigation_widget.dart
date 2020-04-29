@@ -12,13 +12,14 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 
 class BottomNavigationWidget extends StatelessWidget with Scale {
   final ValueChanged<int> onTap;
+  final double scale;
   final int selectedIndex;
 
-  BottomNavigationWidget({this.onTap, this.selectedIndex = 0});
+  BottomNavigationWidget({this.onTap, this.scale, this.selectedIndex = 0});
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = this.scale ?? getScale(context);
     return Container(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -46,7 +47,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
     String iconName,
     double iconWidth = 20,
     ValueChanged<int> onTap,
-    double scale = 1,
+    @required double scale,
     bool selected = false,
   }) {
     final Color color = selected ? globals.accentColor : globals.subtitleColor;
@@ -81,7 +82,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
   Widget buildBottomAppBar({
     int currentIndex = 0,
     ValueChanged<int> onTap,
-    double scale = 1,
+    @required double scale,
   }) {
     int barItemIndex = 0;
     Expanded barItem(

@@ -5,9 +5,10 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 
-class HeaderImageWidget extends StatelessWidget {
+class HeaderImageWidget extends StatelessWidget with Scale {
   final String imageName;
   final bool hasLogo;
   final double height;
@@ -20,12 +21,13 @@ class HeaderImageWidget extends StatelessWidget {
     this.hasLogo = false,
     this.height,
     this.padding = const EdgeInsets.only(top: 64),
-    this.scale = 1,
+    this.scale,
     this.width = 305,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double scale = this.scale ?? getScale(context);
     return Stack(
       alignment: Alignment.center,
       children: [

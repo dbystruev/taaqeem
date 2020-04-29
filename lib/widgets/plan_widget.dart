@@ -32,7 +32,7 @@ class PlanWidget extends StatelessWidget with Scale {
     this.isSelected = false,
     this.onExpansionChanged,
     this.onPressed,
-    this.scale = 1,
+    @required this.scale,
   }) : expansionTile = ExpansionTileWidget(
           children: [
             Divider(

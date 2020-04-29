@@ -5,10 +5,11 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class TitleWidget extends StatelessWidget {
+class TitleWidget extends StatelessWidget with Scale {
   final double scale;
   final String title;
   final double titleHeight;
@@ -29,6 +30,7 @@ class TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scale = this.scale ?? getScale(context);
     return Padding(
       child: Column(
         children: [
