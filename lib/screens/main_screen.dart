@@ -28,9 +28,10 @@ class _MainScreenState extends State<MainScreen> with Scale {
   int lastIndex;
   final ScrollController scrollController = ScrollController();
   final Plans plans;
-  int selectedIndex;
+  int selectedBottomBarItem = 0;
+  int selectedPlan;
 
-  _MainScreenState(this.plans) : selectedIndex = plans.plans.length;
+  _MainScreenState(this.plans) : selectedPlan = plans.plans.length;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +70,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                 return PlanWidget(
                   plans.plans[planIndex],
                   index: planIndex,
-                  isSelected: selectedIndex == planIndex,
+                  isSelected: selectedPlan == planIndex,
                   onExpansionChanged: (int index, bool expanded) {
                     if (expanded && lastIndex != null && lastIndex != index) {
                       PlanWidget.keys[lastIndex].currentState.collapse();
@@ -79,7 +80,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                     ).then(
                       (_) {
                         setState(() {
-                          selectedIndex =
+                          selectedPlan =
                               expanded ? planIndex : plans.plans.length;
                           if (expanded && lastIndex == null) scrollTo(index);
                           lastIndex = expanded ? index : null;
@@ -102,12 +103,14 @@ class _MainScreenState extends State<MainScreen> with Scale {
           ),
         ),
         bottomNavigationBar: BottomNavigationWidget(
-            onTap: (int index) {
-              debugPrint(
-                'lib/screens/main_screen.dart:107 bottom item index = $index',
-              );
-            },
-            scale: scale),
+          onTap: (int index) {
+            setState(() => selectedBottomBarItem = index);
+            debugPrint(
+              'lib/screens/main_screen.dart:107 bottom item index = $index',
+            );
+          },
+          selectedIndex: selectedBottomBarItem,
+        ),
       ),
     );
   }
@@ -118,7 +121,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
     final double expandedHeight = 257 * scale;
     final double headerHeight = 464 * scale;
     final double footerHeight = 97 * scale;
-    final double height = index < selectedIndex
+    final double height = index < selectedPlan
         ? (index + 1) * collapsedHeight
         : index * collapsedHeight + expandedHeight;
     final double scrollHeight = max(
