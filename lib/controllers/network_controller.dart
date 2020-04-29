@@ -23,6 +23,8 @@ class NetworkController {
         '/exec',
   });
 
+  void dispose() {}
+
   // Async function which returns feedback and plans urls
   Future<AppData> getAppData({
     String appName = globals.appName,

@@ -73,6 +73,12 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     );
   }
 
+  @override
+  void dispose() {
+    networkController.dispose();
+    super.dispose();
+  }
+
   void getPlans() async {
     AppData appData = await networkController.getAppData();
     plans = appData.status == globals.statusSuccess

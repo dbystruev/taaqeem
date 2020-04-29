@@ -5,9 +5,10 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 
-class TheText extends StatelessWidget {
+class TheText extends StatelessWidget with Scale {
   final Color backgroundColor;
   final Color color;
   final List<Color> colors; // for optional rich text
@@ -168,6 +169,7 @@ class TheText extends StatelessWidget {
       height: height,
     );
     final bool isRichText = texts != null && 0 < texts.length;
+    final double scale = textScaleFactor ?? getScale(context);
     return isRichText
         ? RichText(
             text: TextSpan(
@@ -189,13 +191,13 @@ class TheText extends StatelessWidget {
               style: defaultStyle,
             ),
             textAlign: textAlign,
-            textScaleFactor: textScaleFactor,
+            textScaleFactor: scale,
           )
         : Text(
             text,
             style: defaultStyle,
             textAlign: textAlign,
-            textScaleFactor: textScaleFactor,
+            textScaleFactor: scale,
           );
   }
 }

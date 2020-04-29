@@ -24,6 +24,7 @@ class ImageWidget extends StatelessWidget with Scale {
 
   @override
   Widget build(BuildContext context) {
+    if (name == null) return Container();
     final String imageSuffix = suffix == null ? '' : '_$suffix';
     final String imageName = 'assets/images/$name$imageSuffix.png';
     final double scale = this.scale ?? getScale(context);

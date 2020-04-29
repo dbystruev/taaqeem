@@ -124,6 +124,12 @@ class _MainScreenState extends State<MainScreen> with Scale {
     );
   }
 
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   void scrollTo(int index) {
     final double scale = getScale(context);
     final double collapsedHeight = 87 * scale;

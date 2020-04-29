@@ -7,13 +7,18 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/widgets/image_widget.dart';
 
 class DecorationWidget extends StatelessWidget with Scale {
+  final AlignmentGeometry alignment;
   final Color borderColor;
   final double borderRadius;
   final double borderWidth;
   final Widget child;
   final double height;
+  final String icon;
+  final double iconHeight;
+  final double iconWidth;
   final double marginBottom;
   final double marginLeft;
   final double marginRight;
@@ -26,11 +31,15 @@ class DecorationWidget extends StatelessWidget with Scale {
   final double width;
 
   DecorationWidget({
+    this.alignment = Alignment.centerLeft,
     this.borderColor = globals.subtitleColor,
     this.borderRadius = 5,
     this.borderWidth = 1,
     @required this.child,
     this.height = 52,
+    this.icon,
+    this.iconHeight = 20,
+    this.iconWidth = 20,
     this.marginBottom = 5,
     this.marginLeft = 20,
     this.marginRight = 20,
@@ -48,7 +57,13 @@ class DecorationWidget extends StatelessWidget with Scale {
     final double scale = this.scale ?? getScale(context);
     return Padding(
       child: Container(
-        child: child,
+        alignment: alignment,
+        child: Row(
+          children: [
+            Expanded(child: child),
+            ImageWidget(icon, null, height: iconHeight, width: iconWidth)
+          ],
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: borderColor, width: borderWidth * scale),
           borderRadius: BorderRadius.circular(borderRadius * scale),

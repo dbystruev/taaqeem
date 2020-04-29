@@ -31,7 +31,7 @@ class FormWidget extends StatelessWidget with Scale {
     this.fontWeight = FontWeight.normal,
     this.height = 1.6,
     this.hintText,
-    this.keyboardType = TextInputType.number,
+    this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.labelText,
     this.obscureText = false,
     this.onChanged,
@@ -44,7 +44,7 @@ class FormWidget extends StatelessWidget with Scale {
     return DecorationWidget(
       child: TextFormField(
         controller: controller,
-        cursorColor: Theme.of(context).accentColor,
+        cursorColor: globals.subtitleColor,
         decoration: decoration ??
             InputDecoration(
               border: OutlineInputBorder(
