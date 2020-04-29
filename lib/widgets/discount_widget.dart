@@ -42,7 +42,7 @@ class DiscountWidget extends StatelessWidget with Scale {
                 BoxShadow(
                   blurRadius: 15 * scale,
                   color: globals.shadowColor,
-                )
+                ),
               ],
             ),
             padding: EdgeInsets.only(top: 10 * scale),

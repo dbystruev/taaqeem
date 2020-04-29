@@ -13,6 +13,7 @@ import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
 import 'package:taaqeem/widgets/plan_widget.dart';
+import 'package:taaqeem/widgets/plus_button_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -90,7 +91,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   },
                   onPressed: (int index) {
                     debugPrint(
-                      'lib/screens/main_screen.dart:92 order index = $index, planIndex = $planIndex',
+                      'lib/screens/main_screen.dart:94 order index = $index, planIndex = $planIndex',
                     );
                   },
                   scale: scale,
@@ -106,11 +107,19 @@ class _MainScreenState extends State<MainScreen> with Scale {
           onTap: (int index) {
             setState(() => selectedBottomBarItem = index);
             debugPrint(
-              'lib/screens/main_screen.dart:107 bottom item index = $index',
+              'lib/screens/main_screen.dart:110 bottom index = $index',
             );
           },
           selectedIndex: selectedBottomBarItem,
         ),
+        floatingActionButton: PlusButtonWidget(
+          onTap: () {
+            debugPrint(
+              'lib/screens/main_screen.dart:118 plus button',
+            );
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

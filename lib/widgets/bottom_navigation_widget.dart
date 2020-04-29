@@ -18,10 +18,23 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = getScale(context);
-    return buildBottomAppBarContents(
-      currentIndex: selectedIndex,
-      onTap: onTap,
-      scale: scale,
+    return Container(
+      child: Container(
+        color: Theme.of(context).primaryColor,
+        child: buildBottomAppBar(
+          currentIndex: selectedIndex,
+          onTap: onTap,
+          scale: scale,
+        ),
+      ),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 15 * scale,
+            color: globals.shadowColor,
+          )
+        ],
+      ),
     );
   }
 
@@ -63,7 +76,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
     );
   }
 
-  Container buildBottomAppBarContents({
+  Widget buildBottomAppBar({
     int currentIndex = 0,
     ValueChanged<int> onTap,
     double scale = 1,
@@ -87,7 +100,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
             selected: currentIndex == barItemIndex++,
           ),
         );
-    return Container(
+    return SizedBox(
       child: Row(
         children: [
           barItem('Main page', iconName: 'home', iconWidth: 22),
@@ -96,7 +109,6 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
           barItem('Support'),
           barItem('My Taaqeem', iconName: 'user'),
         ],
-        crossAxisAlignment: CrossAxisAlignment.end,
       ),
       height: 70 * scale,
     );
