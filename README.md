@@ -21,3 +21,11 @@ Cleaning order app for [Taaqeem](https://taaqeem.ae) from [FL.ru](https://www.fl
 ## Date Selection
 
 ![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot05.png?raw=true)
+
+## New Booking
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot06.png?raw=true)
+
+## Numeric Keypad
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot07.png?raw=true)

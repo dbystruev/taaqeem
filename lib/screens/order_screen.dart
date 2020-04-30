@@ -10,6 +10,7 @@ import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
+import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -23,11 +24,13 @@ import 'package:table_calendar/table_calendar.dart';
 
 class OrderScreen extends StatefulWidget {
   final Plan plan;
+  final Plans plans;
 
-  OrderScreen({this.plan});
+  OrderScreen({this.plan, this.plans});
 
   @override
-  _OrderScreenState createState() => _OrderScreenState(plan: plan);
+  _OrderScreenState createState() =>
+      _OrderScreenState(plan: plan, plans: plans);
 }
 
 class _OrderScreenState extends State<OrderScreen> with Scale {
@@ -35,7 +38,9 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
   KeyboardActionsConfig keyboardConfig;
   final FocusNode keyboardNode = FocusNode();
   final Plan plan;
-  int selectedService;
+  final Plans plans;
+  int selectedPlanIndex;
+  int selectedServiceIndex;
   final List<String> services = [
     'Sanitation & disinfection',
     'Cleaning & maintenance',
@@ -46,30 +51,40 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
   final TextEditingController squareMetersController = TextEditingController();
   double squareMeters;
 
-  _OrderScreenState({this.plan});
+  _OrderScreenState({this.plan, this.plans});
 
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
     final bool showHeaderTitle = plan != null;
+    final bool showPlanSelection = plans != null;
     final List<Widget> children = [
+      if (!showHeaderTitle) BackWidget('Create new booking'),
       if (showHeaderTitle) HeaderImageWidget(plan.image),
       if (showHeaderTitle) SizedBox(height: 16 * scale),
       if (showHeaderTitle)
         TitleWidget(
           plan.title,
           subtitle:
-              'Fill in the form, please and we will help' + '\nYou immediately',
+              'Fill in the form, please and we will help\nYou immediately',
         ),
-      if (!showHeaderTitle) BackWidget('Create new booking'),
+      if (showPlanSelection)
+        DropdownWidget(
+          plans.plans.map<String>((plan) => plan.type).toList(),
+          hint: 'Type of area',
+          onChanged: (int index) {
+            setState(() => selectedPlanIndex = index < 0 ? null : index);
+          },
+          selectedItemIndex: selectedPlanIndex,
+        ),
       DropdownWidget(
         services,
         hint: 'Type of service',
         onChanged: (int index) {
-          setState(() => selectedService = index < 0 ? null : index);
+          setState(() => selectedServiceIndex = index < 0 ? null : index);
           hideKeyboard();
         },
-        selectedService: selectedService,
+        selectedItemIndex: selectedServiceIndex,
       ),
       FormWidget(
         controller: squareMetersController,
@@ -125,7 +140,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
           'Book Service',
           onPressed: () {
             hideKeyboard();
-            debugPrint('lib/screens/order_screen.dart:117 book $plan');
+            debugPrint('lib/screens/order_screen.dart:143 book $plan');
           },
           width: 335,
         ),
@@ -163,7 +178,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       floatingActionButton: PlusButtonWidget(
         onTap: () {
           debugPrint(
-            'lib/screens/main_screen.dart:122 plus button',
+            'lib/screens/main_screen.dart:181 plus button',
           );
         },
       ),

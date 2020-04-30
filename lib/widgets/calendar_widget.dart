@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:taaqeem/globals.dart' as globals;
-import 'package:taaqeem/widgets/decoration_widget.dart';
+import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class CalendarWidget extends StatelessWidget {
@@ -22,7 +22,7 @@ class CalendarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: DecorationWidget(
+      child: DecorationPaddingWidget(
         marginBottom: 10,
         child: TheText.normal(
           color: selectedDay == null ? globals.subtitleColor : globals.menuItemColor,

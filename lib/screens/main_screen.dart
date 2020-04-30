@@ -120,7 +120,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OrderScreen(),
+            builder: (context) => OrderScreen(plans: plans),
           ),
         ),
       ),

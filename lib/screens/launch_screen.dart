@@ -36,8 +36,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
         child: Stack(
           children: <Widget>[
             Positioned(
-              child:
-                  ImageWidget('logo', height: 58, width: 135),
+              child: ImageWidget('logo', height: 58, width: 135),
               left: 20 * scale + Scale.getSafeMargin(context),
               top: 30 * scale,
             ),
@@ -87,7 +86,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
           );
     if (!plans.isValid) plans.plans = AllPlans.local;
     debugPrint(
-      'lib/screens/launch_screen.dart:85: $plans',
+      'lib/screens/launch_screen.dart:89: $plans',
     );
     navigateWithDelay(context);
   }

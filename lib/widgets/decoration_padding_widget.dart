@@ -1,5 +1,5 @@
 //
-//  lib/widgets/decoration_widget.dart
+//  lib/widgets/decoration_padding_widget.dart
 //
 //  Created by Denis Bystruev on 29/04/2020.
 //
@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/image_widget.dart';
+import 'package:taaqeem/widgets/padding_widget.dart';
 
-class DecorationWidget extends StatelessWidget with Scale {
+class DecorationPaddingWidget extends StatelessWidget with Scale {
   final AlignmentGeometry alignment;
   final Color borderColor;
   final double borderRadius;
@@ -30,7 +31,7 @@ class DecorationWidget extends StatelessWidget with Scale {
   final double scale;
   final double width;
 
-  DecorationWidget({
+  DecorationPaddingWidget({
     this.alignment = Alignment.centerLeft,
     this.borderColor = globals.subtitleColor,
     this.borderRadius = 5,
@@ -40,22 +41,25 @@ class DecorationWidget extends StatelessWidget with Scale {
     this.icon,
     this.iconHeight = 20,
     this.iconWidth = 20,
-    this.marginBottom = 5,
-    this.marginLeft = 20,
-    this.marginRight = 20,
-    this.marginTop = 5,
+    double marginBottom,
+    double marginLeft,
+    double marginRight,
+    double marginTop,
     this.paddingBottom = 0,
     this.paddingLeft = 15,
     this.paddingRight = 15,
     this.paddingTop = 0,
     this.scale,
     this.width,
-  });
+  })  : this.marginBottom = marginBottom ?? 5,
+        this.marginLeft = marginLeft ?? 20,
+        this.marginRight = marginRight ?? 20,
+        this.marginTop = marginTop ?? 5;
 
   @override
   Widget build(BuildContext context) {
     final double scale = this.scale ?? Scale.getScale(context);
-    return Padding(
+    return PaddingWidget(
       child: Container(
         alignment: alignment,
         child: Row(
@@ -77,12 +81,11 @@ class DecorationWidget extends StatelessWidget with Scale {
         ),
         width: width == null ? null : width * scale,
       ),
-      padding: EdgeInsets.fromLTRB(
-        marginLeft * scale,
-        marginTop * scale,
-        marginRight * scale,
-        marginBottom * scale,
-      ),
+      marginBottom: marginBottom,
+      marginLeft: marginLeft,
+      marginRight: marginRight,
+      marginTop: marginTop,
+      scale: scale,
     );
   }
 }

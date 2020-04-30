@@ -7,28 +7,37 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
-import 'package:taaqeem/widgets/decoration_widget.dart';
+import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class DropdownWidget extends StatelessWidget with Scale {
   final String hint;
   final List<String> items;
+  final double marginBottom;
+  final double marginLeft;
+  final double marginRight;
+  final double marginTop;
   final ValueChanged<int> onChanged;
   final double scale;
-  final int selectedService;
+  final int selectedItemIndex;
 
   DropdownWidget(
     this.items, {
     this.hint,
+    this.marginBottom,
+    this.marginLeft,
+    this.marginRight,
+    this.marginTop,
     @required this.onChanged,
     this.scale,
-    this.selectedService,
+    this.selectedItemIndex,
   });
 
   @override
   Widget build(BuildContext context) {
     final double scale = this.scale ?? Scale.getScale(context);
+
     Widget itemWidget(
       String text, {
       bool showDivider = false,
@@ -85,12 +94,13 @@ class DropdownWidget extends StatelessWidget with Scale {
         )
         .values
         .toList();
-    return DecorationWidget(
+
+    return DecorationPaddingWidget(
       child: Theme(
         child: DropdownButton<int>(
-          hint: selectedService == null
+          hint: selectedItemIndex == null
               ? itemWidget(hint, isHint: true)
-              : itemWidget(items[selectedService]),
+              : itemWidget(items[selectedItemIndex]),
           icon: ImageWidget('down', suffix: 'grey'),
           isExpanded: true,
           items: menuItems,
@@ -101,7 +111,10 @@ class DropdownWidget extends StatelessWidget with Scale {
           canvasColor: Theme.of(context).primaryColor,
         ),
       ),
-      marginTop: 4,
+      marginBottom: marginBottom,
+      marginLeft: marginLeft,
+      marginRight: marginRight,
+      marginTop: marginTop,
       paddingLeft: 26,
       paddingRight: 19,
     );

@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
-import 'package:taaqeem/widgets/decoration_widget.dart';
+import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 
 class FormWidget extends StatelessWidget with Scale {
   final Color color;
@@ -49,7 +49,7 @@ class FormWidget extends StatelessWidget with Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = this.scale ?? Scale.getScale(context);
-    return DecorationWidget(
+    return DecorationPaddingWidget(
       child: TextFormField(
         controller: controller,
         cursorColor: globals.subtitleColor,
