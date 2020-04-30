@@ -26,6 +26,23 @@ const Color dividerColor = Color(0xFFC4C4C4);
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';
 
+// UAE Holidays 2020
+final Map<DateTime, List> holidays = {
+  DateTime(2020, 1, 1): [''],
+  DateTime(2020, 5, 24): [''],
+  DateTime(2020, 5, 25): [''],
+  DateTime(2020, 5, 26): [''],
+  DateTime(2020, 7, 30): [''],
+  DateTime(2020, 7, 31): [''],
+  DateTime(2020, 8, 1): [''],
+  DateTime(2020, 8, 2): [''],
+  DateTime(2020, 8, 20): [''],
+  DateTime(2020, 10, 29): [''],
+  DateTime(2020, 12, 1): [''],
+  DateTime(2020, 12, 2): [''],
+  DateTime(2020, 12, 3): [''],
+};
+
 // True if running in release mode
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 

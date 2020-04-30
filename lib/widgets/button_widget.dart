@@ -19,7 +19,7 @@ class ButtonWidget extends StatelessWidget with Scale {
   final double imageWidth;
   final double height;
   final MainAxisAlignment mainAxisAlignment;
-  final void Function() onPressed;
+  final VoidCallback onPressed;
   final double scale;
   final String text;
   final Color textColor;

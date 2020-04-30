@@ -14,7 +14,7 @@ class PlusButtonWidget extends StatelessWidget with Scale {
   final Color backgroundColor;
   final double blurRadius;
   final Color color;
-  final void Function() onTap;
+  final VoidCallback onTap;
   final double radius;
   final double scale;
 

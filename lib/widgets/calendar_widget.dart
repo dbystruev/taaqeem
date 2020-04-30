@@ -11,22 +11,31 @@ import 'package:taaqeem/widgets/decoration_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class CalendarWidget extends StatelessWidget {
+  final VoidCallback onTap;
   final DateTime selectedDay;
 
-  CalendarWidget({DateTime selectedDay})
-      : this.selectedDay = selectedDay ?? DateTime.now();
+  CalendarWidget({
+    this.onTap,
+    this.selectedDay,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return DecorationWidget(
-      child: TheText.normal(
-        color: globals.subtitleColor,
-        fontSize: 15,
-        height: 1.6,
-        text: 'Preferable date: ${DateFormat.yMd().format(selectedDay)}',
+    return InkWell(
+      child: DecorationWidget(
+        marginBottom: 10,
+        child: TheText.normal(
+          color: selectedDay == null ? globals.subtitleColor : globals.menuItemColor,
+          fontSize: 15,
+          height: 1.6,
+          text: selectedDay == null
+              ? 'Please choose the date'
+              : 'Preferable date: ${DateFormat.yMd().format(selectedDay)}',
+        ),
+        icon: 'calendar',
+        paddingLeft: 26,
       ),
-      icon: 'calendar',
-      paddingLeft: 26,
+      onTap: onTap,
     );
   }
 }

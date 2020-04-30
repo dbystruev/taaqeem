@@ -10,6 +10,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/decoration_widget.dart';
 
 class FormWidget extends StatelessWidget with Scale {
+  final Color color;
   final TextEditingController controller;
   final InputDecoration decoration;
   final String fontFamily;
@@ -20,10 +21,13 @@ class FormWidget extends StatelessWidget with Scale {
   final TextInputType keyboardType;
   final String labelText;
   final bool obscureText;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onEditingComplete;
   final double scale;
-  final Function(String) onChanged;
+  final String suffixText;
 
   FormWidget({
+    this.color = globals.menuItemColor,
     this.controller,
     this.decoration,
     this.fontFamily = globals.fontFamily,
@@ -35,7 +39,9 @@ class FormWidget extends StatelessWidget with Scale {
     this.labelText,
     this.obscureText = false,
     this.onChanged,
+    this.onEditingComplete,
     this.scale,
+    this.suffixText,
   });
 
   @override
@@ -56,11 +62,15 @@ class FormWidget extends StatelessWidget with Scale {
                 color: globals.subtitleColor,
               ),
               hintText: hintText,
+              suffixText: suffixText,
+              suffixStyle: TextStyle(color: color),
             ),
         keyboardType: keyboardType,
         obscureText: obscureText,
         onChanged: onChanged,
+        onEditingComplete: onEditingComplete,
         style: TextStyle(
+          color: color,
           fontFamily: fontFamily,
           fontSize: fontSize * scale,
           fontWeight: fontWeight,

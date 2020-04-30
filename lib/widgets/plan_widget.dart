@@ -22,7 +22,7 @@ class PlanWidget extends StatelessWidget with Scale {
     int index,
     bool expanded,
   ) onExpansionChanged;
-  final void Function(int index) onPressed;
+  final ValueChanged<int> onPressed;
   final Plan plan;
   final double scale;
 
@@ -65,7 +65,6 @@ class PlanWidget extends StatelessWidget with Scale {
               child: ButtonWidget(
                 'Book Service',
                 onPressed: () => onPressed(index),
-                scale: scale,
               ),
             ),
           ],
