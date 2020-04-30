@@ -28,7 +28,7 @@ class PlusButtonWidget extends StatelessWidget with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = this.scale ?? getScale(context);
+    final double scale = this.scale ?? Scale.getScale(context);
     final double doubleScale = 2 * scale;
     final double plusSize = doubleScale * (radius - 5);
     return SizedBox(

@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -43,7 +44,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = Scale.getScale(context);
     final List<Widget> children = [
       HeaderImageWidget(plan.image),
       SizedBox(height: 16 * scale),
@@ -93,6 +94,14 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
           : CalendarWidget(
               onTap: () {
                 setState(() => showCalendar = true);
+                scrollController.scrollTo(
+                  3,
+                  collapsedHeight: 62,
+                  context: context,
+                  expandedHeight: 391,
+                  expandedIndex: 3,
+                  headerHeight: 391,
+                );
               },
               selectedDay: selectedDay,
             ),
@@ -117,8 +126,9 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
                 ),
               )
               .toList(),
+          controller: scrollController,
           padding: EdgeInsets.all(
-            getSafeMargin(context),
+            Scale.getSafeMargin(context),
           ),
         ),
       ),

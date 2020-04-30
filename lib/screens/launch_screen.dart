@@ -30,7 +30,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = Scale.getScale(context);
     return Scaffold(
       body: Container(
         child: Stack(
@@ -42,7 +42,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
                 height: 58 * scale,
                 width: 135 * scale,
               ),
-              left: 20 * scale + getSafeMargin(context),
+              left: 20 * scale + Scale.getSafeMargin(context),
               top: 30 * scale,
             ),
             Positioned(
@@ -57,7 +57,7 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
                 height: 1.21,
                 textScaleFactor: scale,
               ),
-              left: 20 * scale + getSafeMargin(context),
+              left: 20 * scale + Scale.getSafeMargin(context),
               top: 118 * scale,
             ),
           ],

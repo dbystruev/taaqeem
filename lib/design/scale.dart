@@ -16,16 +16,16 @@ mixin Scale {
   static const double defaultSafeAreaPortraitWidth = 375; // left/right: 0
   static const double defaultShorterSize = 375;
 
-  bool isHorizontal(BuildContext context) =>
+  static bool isHorizontal(BuildContext context) =>
       getScreenHeight(context) < getScreenWidth(context);
 
-  double getMidX(BuildContext context) => getScreenWidth(context) / 2;
+  static double getMidX(BuildContext context) => getScreenWidth(context) / 2;
 
-  double getMidY(BuildContext context) => getScreenHeight(context) / 2;
+  static double getMidY(BuildContext context) => getScreenHeight(context) / 2;
 
-  double getSafeMargin(BuildContext context) => isHorizontal(context) ? 44 : 0;
+  static double getSafeMargin(BuildContext context) => isHorizontal(context) ? 44 : 0;
 
-  double getScale(
+  static double getScale(
     BuildContext context, {
     bool deductSafeArea = false,
     double designHeight,
@@ -64,9 +64,9 @@ mixin Scale {
     return scale;
   }
 
-  double getScreenHeight(BuildContext context) =>
+  static double getScreenHeight(BuildContext context) =>
       MediaQuery.of(context).size.height;
 
-  double getScreenWidth(BuildContext context) =>
+  static double getScreenWidth(BuildContext context) =>
       MediaQuery.of(context).size.width;
 }

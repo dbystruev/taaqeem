@@ -169,7 +169,7 @@ class TheText extends StatelessWidget with Scale {
       height: height,
     );
     final bool isRichText = texts != null && 0 < texts.length;
-    final double scale = textScaleFactor ?? getScale(context);
+    final double scale = textScaleFactor ?? Scale.getScale(context);
     return isRichText
         ? RichText(
             text: TextSpan(

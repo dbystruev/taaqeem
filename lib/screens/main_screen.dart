@@ -8,6 +8,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = getScale(context);
+    final double scale = Scale.getScale(context);
     return Scaffold(
       body: ListView.builder(
         controller: scrollController,
@@ -81,7 +82,12 @@ class _MainScreenState extends State<MainScreen> with Scale {
                       setState(() {
                         selectedPlan =
                             expanded ? planIndex : plans.plans.length;
-                        if (expanded && lastIndex == null) scrollTo(index);
+                        if (expanded && lastIndex == null)
+                          scrollController.scrollTo(
+                            index,
+                            context: context,
+                            expandedIndex: selectedPlan,
+                          );
                         lastIndex = expanded ? index : null;
                       });
                     },
@@ -101,7 +107,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
         },
         itemCount: plans.plans.length + 3,
         padding: EdgeInsets.all(
-          getSafeMargin(context),
+          Scale.getSafeMargin(context),
         ),
       ),
       bottomNavigationBar: BottomNavigationWidget(
@@ -131,7 +137,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
   }
 
   void scrollTo(int index) {
-    final double scale = getScale(context);
+    final double scale = Scale.getScale(context);
     final double collapsedHeight = 87 * scale;
     final double expandedHeight = 257 * scale;
     final double headerHeight = 464 * scale;
@@ -143,8 +149,8 @@ class _MainScreenState extends State<MainScreen> with Scale {
       headerHeight +
           height +
           footerHeight +
-          getSafeMargin(context) -
-          getScreenHeight(context),
+          Scale.getSafeMargin(context) -
+          Scale.getScreenHeight(context),
       0,
     );
     scrollController.animateTo(

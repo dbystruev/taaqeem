@@ -46,7 +46,7 @@ class FormWidget extends StatelessWidget with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = this.scale ?? getScale(context);
+    final double scale = this.scale ?? Scale.getScale(context);
     return DecorationWidget(
       child: TextFormField(
         controller: controller,

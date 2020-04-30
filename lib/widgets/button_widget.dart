@@ -44,7 +44,7 @@ class ButtonWidget extends StatelessWidget with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = this.scale ?? getScale(context);
+    final double scale = this.scale ?? Scale.getScale(context);
     final TheText textWidget = TheText.w600(
       color: textColor,
       fontSize: fontSize,

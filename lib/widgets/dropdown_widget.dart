@@ -28,7 +28,7 @@ class DropdownWidget extends StatelessWidget with Scale {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = this.scale ?? getScale(context);
+    final double scale = this.scale ?? Scale.getScale(context);
     Widget itemWidget(
       String text, {
       bool showDivider = false,

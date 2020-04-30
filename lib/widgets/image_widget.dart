@@ -27,7 +27,7 @@ class ImageWidget extends StatelessWidget with Scale {
     if (name == null) return Container();
     final String imageSuffix = suffix == null ? '' : '_$suffix';
     final String imageName = 'assets/images/$name$imageSuffix.png';
-    final double scale = this.scale ?? getScale(context);
+    final double scale = this.scale ?? Scale.getScale(context);
     final double imageHeight = height == null ? null : height * scale;
     final double imageWidth = width == null ? null : width * scale;
     return name.startsWith('http')
