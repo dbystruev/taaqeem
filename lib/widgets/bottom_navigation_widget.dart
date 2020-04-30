@@ -13,6 +13,7 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 class BottomNavigationWidget extends StatelessWidget with Scale {
   final ValueChanged<int> onTap;
   final double scale;
+  static int selectedBottomBarItem = 0;
   final int selectedIndex;
 
   BottomNavigationWidget({this.onTap, this.scale, this.selectedIndex = 0});

@@ -46,6 +46,9 @@ final Map<DateTime, List> holidays = {
 // True if running in release mode
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
+// Default locale
+const String locale = 'en-ae';
+
 // Menu item color
 const Color menuItemColor = Color(0xFF4F4F4F);
 

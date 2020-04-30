@@ -9,3 +9,15 @@ Cleaning order app for [Taaqeem](https://taaqeem.ae) from [FL.ru](https://www.fl
 ## Main Screen
 
 ![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot02.png?raw=true)
+
+## Order Screen
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot03.png?raw=true)
+
+## Service Selection
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot04.png?raw=true)
+
+## Date Selection
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot05.png?raw=true)

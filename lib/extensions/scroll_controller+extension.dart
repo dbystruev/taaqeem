@@ -29,9 +29,6 @@ extension ScrollControllerExtension on ScrollController {
           Scale.getScreenHeight(context),
       0,
     );
-    debugPrint(
-      'lib/extensions/scroll_controller+extension.dart:33 height = $height, scrollHeight = $scrollHeight',
-    );
     this.animateTo(
       scrollHeight,
       duration: Duration(milliseconds: 500),

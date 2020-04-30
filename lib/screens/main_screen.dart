@@ -31,7 +31,6 @@ class _MainScreenState extends State<MainScreen> with Scale {
   int lastIndex;
   final ScrollController scrollController = ScrollController();
   final Plans plans;
-  int selectedBottomBarItem = 0;
   int selectedPlan;
 
   _MainScreenState(this.plans) : selectedPlan = plans.plans.length;
@@ -112,17 +111,14 @@ class _MainScreenState extends State<MainScreen> with Scale {
       ),
       bottomNavigationBar: BottomNavigationWidget(
         onTap: (int index) {
-          setState(() => selectedBottomBarItem = index);
-          debugPrint(
-            'lib/screens/main_screen.dart:110 bottom index = $index',
-          );
+          setState(() => BottomNavigationWidget.selectedBottomBarItem = index);
         },
-        selectedIndex: selectedBottomBarItem,
+        selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
       ),
       floatingActionButton: PlusButtonWidget(
         onTap: () {
           debugPrint(
-            'lib/screens/main_screen.dart:118 plus button',
+            'lib/screens/main_screen.dart:122 plus button',
           );
         },
       ),

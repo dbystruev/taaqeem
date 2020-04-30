@@ -7,12 +7,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
   // Disable debugPring in release mode
   if (globals.isProduction) debugPrint = (String message, {int wrapWidth}) {};
+  // Set default locale
+  Intl.defaultLocale = globals.locale;
   initializeDateFormatting().then(
     (_) {
       runApp(

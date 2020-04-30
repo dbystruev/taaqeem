@@ -30,7 +30,7 @@ class CalendarWidget extends StatelessWidget {
           height: 1.6,
           text: selectedDay == null
               ? 'Please choose the date'
-              : 'Preferable date: ${DateFormat.yMd().format(selectedDay)}',
+              : 'Preferable date: ${DateFormat.yMd(globals.locale).format(selectedDay)}',
         ),
         icon: 'calendar',
         paddingLeft: 26,

@@ -9,11 +9,13 @@ import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
+import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/calendar_widget.dart';
 import 'package:taaqeem/widgets/dropdown_widget.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
+import 'package:taaqeem/widgets/plus_button_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -105,13 +107,16 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
               },
               selectedDay: selectedDay,
             ),
-      ButtonWidget(
-        'Book Service',
-        onPressed: () {
-          hideKeyboard();
-          debugPrint('lib/screens/order_screen.dart:102 book $plan');
-        },
-        width: 335,
+      Opacity(
+        child: ButtonWidget(
+          'Book Service',
+          onPressed: () {
+            hideKeyboard();
+            debugPrint('lib/screens/order_screen.dart:115 book $plan');
+          },
+          width: 335,
+        ),
+        opacity: showCalendar ? 0 : 1,
       ),
     ];
     return Container(
@@ -131,6 +136,21 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
             Scale.getSafeMargin(context),
           ),
         ),
+        bottomNavigationBar: BottomNavigationWidget(
+          onTap: (int index) {
+            setState(
+                () => BottomNavigationWidget.selectedBottomBarItem = index);
+          },
+          selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
+        ),
+        floatingActionButton: PlusButtonWidget(
+          onTap: () {
+            debugPrint(
+              'lib/screens/main_screen.dart:122 plus button',
+            );
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
