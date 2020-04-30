@@ -52,7 +52,7 @@ class DiscountWidget extends StatelessWidget with Scale {
           Positioned(
             bottom: 14 * scale,
             child: Container(
-              child: ImageWidget('wow', null, height: 40, width: 10),
+              child: ImageWidget('wow', height: 40, width: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6 * scale),
                 color: Theme.of(context).primaryColor,

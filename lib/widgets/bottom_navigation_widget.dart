@@ -56,7 +56,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
     final String imageSuffix = selected ? 'green' : 'grey';
     final ImageWidget image = ImageWidget(
       imageName,
-      imageSuffix,
+      suffix: imageSuffix,
       height: iconHeight,
       width: iconWidth,
     );

@@ -33,12 +33,12 @@ class HeaderImageWidget extends StatelessWidget with Scale {
       children: [
         if (hasLogo)
           Positioned(
-            child: ImageWidget('logo', 'q', height: 65, width: 46),
+            child: ImageWidget('logo', suffix: 'q', height: 65, width: 46),
             right: 20 * scale,
             top: 24 * scale,
           ),
         Padding(
-          child: ImageWidget(imageName, null, height: height, width: width),
+          child: ImageWidget(imageName, height: height, width: width),
           padding: EdgeInsets.fromLTRB(
             scale * padding.left,
             scale * padding.top,

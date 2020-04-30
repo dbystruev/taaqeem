@@ -61,7 +61,7 @@ class DecorationWidget extends StatelessWidget with Scale {
         child: Row(
           children: [
             Expanded(child: child),
-            ImageWidget(icon, null, height: iconHeight, width: iconWidth)
+            ImageWidget(icon, height: iconHeight, width: iconWidth)
           ],
         ),
         decoration: BoxDecoration(

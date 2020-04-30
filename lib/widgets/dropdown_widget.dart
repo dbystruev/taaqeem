@@ -58,7 +58,7 @@ class DropdownWidget extends StatelessWidget with Scale {
                 Expanded(
                   child: Container(),
                 ),
-              if (showArrow) ImageWidget('up', 'grey'),
+              if (showArrow) ImageWidget('up', suffix: 'grey'),
             ],
           ),
           // if (isLast) SizedBox(height: 28 * scale),
@@ -91,7 +91,7 @@ class DropdownWidget extends StatelessWidget with Scale {
           hint: selectedService == null
               ? itemWidget(hint, isHint: true)
               : itemWidget(items[selectedService]),
-          icon: ImageWidget('down', 'grey'),
+          icon: ImageWidget('down', suffix: 'grey'),
           isExpanded: true,
           items: menuItems,
           onChanged: onChanged,

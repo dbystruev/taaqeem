@@ -36,12 +36,8 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
         child: Stack(
           children: <Widget>[
             Positioned(
-              child: ImageWidget(
-                'logo',
-                null,
-                height: 58 * scale,
-                width: 135 * scale,
-              ),
+              child:
+                  ImageWidget('logo', height: 58, width: 135),
               left: 20 * scale + Scale.getSafeMargin(context),
               top: 30 * scale,
             ),

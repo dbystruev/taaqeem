@@ -70,7 +70,7 @@ class PlanWidget extends StatelessWidget with Scale {
           ],
           initiallyExpanded: isSelected,
           key: GlobalKey<ExpansionTileWidgetState>(),
-          leading: ImageWidget(plan.icon, null, height: 34, width: 34),
+          leading: ImageWidget(plan.icon, height: 34, width: 34),
           onExpansionChanged: (bool expanded) =>
               onExpansionChanged(index, expanded),
           subtitle: TheText.w700(
@@ -86,7 +86,7 @@ class PlanWidget extends StatelessWidget with Scale {
             text: plan.type,
             textScaleFactor: scale,
           ),
-          trailing: ImageWidget(isSelected ? 'up' : 'down', 'green'),
+          trailing: ImageWidget(isSelected ? 'up' : 'down', suffix: 'green'),
         ) {
     keys[index] = expansionTile.key;
   }

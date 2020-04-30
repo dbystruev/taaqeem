@@ -18,6 +18,7 @@ class FormWidget extends StatelessWidget with Scale {
   final FontWeight fontWeight;
   final double height;
   final String hintText;
+  final FocusNode keyboardNode;
   final TextInputType keyboardType;
   final String labelText;
   final bool obscureText;
@@ -35,6 +36,7 @@ class FormWidget extends StatelessWidget with Scale {
     this.fontWeight = FontWeight.normal,
     this.height = 1.6,
     this.hintText,
+    this.keyboardNode,
     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.labelText,
     this.obscureText = false,
@@ -66,6 +68,7 @@ class FormWidget extends StatelessWidget with Scale {
               suffixStyle: TextStyle(color: color),
             ),
         keyboardType: keyboardType,
+        focusNode: keyboardNode,
         obscureText: obscureText,
         onChanged: onChanged,
         onEditingComplete: onEditingComplete,
@@ -76,6 +79,7 @@ class FormWidget extends StatelessWidget with Scale {
           fontWeight: fontWeight,
           height: height,
         ),
+        textInputAction: TextInputAction.go,
       ),
     );
   }

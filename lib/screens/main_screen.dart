@@ -96,7 +96,8 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => OrderScreen(plans.plans[index]),
+                      builder: (context) =>
+                          OrderScreen(plan: plans.plans[index]),
                     ),
                   );
                 },
@@ -116,11 +117,12 @@ class _MainScreenState extends State<MainScreen> with Scale {
         selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
       ),
       floatingActionButton: PlusButtonWidget(
-        onTap: () {
-          debugPrint(
-            'lib/screens/main_screen.dart:122 plus button',
-          );
-        },
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OrderScreen(),
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -130,29 +132,5 @@ class _MainScreenState extends State<MainScreen> with Scale {
   void dispose() {
     scrollController.dispose();
     super.dispose();
-  }
-
-  void scrollTo(int index) {
-    final double scale = Scale.getScale(context);
-    final double collapsedHeight = 87 * scale;
-    final double expandedHeight = 257 * scale;
-    final double headerHeight = 464 * scale;
-    final double footerHeight = 97 * scale;
-    final double height = index < selectedPlan
-        ? (index + 1) * collapsedHeight
-        : index * collapsedHeight + expandedHeight;
-    final double scrollHeight = max(
-      headerHeight +
-          height +
-          footerHeight +
-          Scale.getSafeMargin(context) -
-          Scale.getScreenHeight(context),
-      0,
-    );
-    scrollController.animateTo(
-      scrollHeight,
-      duration: Duration(milliseconds: 500),
-      curve: Curves.ease,
-    );
   }
 }

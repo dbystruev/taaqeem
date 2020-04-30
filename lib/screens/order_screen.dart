@@ -5,10 +5,12 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
+import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/calendar_widget.dart';
@@ -22,14 +24,16 @@ import 'package:table_calendar/table_calendar.dart';
 class OrderScreen extends StatefulWidget {
   final Plan plan;
 
-  OrderScreen(this.plan);
+  OrderScreen({this.plan});
 
   @override
-  _OrderScreenState createState() => _OrderScreenState(plan);
+  _OrderScreenState createState() => _OrderScreenState(plan: plan);
 }
 
 class _OrderScreenState extends State<OrderScreen> with Scale {
   final CalendarController calendarController = CalendarController();
+  KeyboardActionsConfig keyboardConfig;
+  final FocusNode keyboardNode = FocusNode();
   final Plan plan;
   int selectedService;
   final List<String> services = [
@@ -42,19 +46,22 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
   final TextEditingController squareMetersController = TextEditingController();
   double squareMeters;
 
-  _OrderScreenState(this.plan);
+  _OrderScreenState({this.plan});
 
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
+    final bool showHeaderTitle = plan != null;
     final List<Widget> children = [
-      HeaderImageWidget(plan.image),
-      SizedBox(height: 16 * scale),
-      TitleWidget(
-        plan.title,
-        subtitle:
-            'Fill in the form, please and we will help' + '\nYou immediately',
-      ),
+      if (showHeaderTitle) HeaderImageWidget(plan.image),
+      if (showHeaderTitle) SizedBox(height: 16 * scale),
+      if (showHeaderTitle)
+        TitleWidget(
+          plan.title,
+          subtitle:
+              'Fill in the form, please and we will help' + '\nYou immediately',
+        ),
+      if (!showHeaderTitle) BackWidget('Create new booking'),
       DropdownWidget(
         services,
         hint: 'Type of service',
@@ -67,6 +74,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       FormWidget(
         controller: squareMetersController,
         hintText: 'Square meters²',
+        keyboardNode: keyboardNode,
         onEditingComplete: () {},
         onChanged: (String text) {
           squareMeters = double.tryParse(text);
@@ -77,6 +85,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       showCalendar
           ? TableCalendar(
               availableCalendarFormats: const {CalendarFormat.month: ''},
+              availableGestures: AvailableGestures.horizontalSwipe,
               calendarController: calendarController,
               calendarStyle: CalendarStyle(
                 selectedColor: Theme.of(context).accentColor,
@@ -84,12 +93,16 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
               ),
               holidays: globals.holidays,
               initialSelectedDay: selectedDay,
+              locale: globals.locale,
               onDaySelected: (DateTime selectedDay, _) {
                 setState(() {
                   this.selectedDay = selectedDay;
                   this.showCalendar = false;
                 });
               },
+              onUnavailableDaySelected: () => setState(
+                () => this.showCalendar = false,
+              ),
               startDay: DateTime.now(),
               weekendDays: const [DateTime.friday, DateTime.saturday],
             )
@@ -112,55 +125,72 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
           'Book Service',
           onPressed: () {
             hideKeyboard();
-            debugPrint('lib/screens/order_screen.dart:115 book $plan');
+            debugPrint('lib/screens/order_screen.dart:117 book $plan');
           },
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
       ),
     ];
-    return Container(
-      child: Scaffold(
-        body: ListView(
-          children: children
-              .map(
-                (child) => GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: child,
-                  onTap: hideKeyboard,
-                ),
-              )
-              .toList(),
-          controller: scrollController,
-          padding: EdgeInsets.all(
-            Scale.getSafeMargin(context),
+    return Scaffold(
+      body: GestureDetector(
+        child: KeyboardActions(
+          config: keyboardConfig,
+          child: ListView(
+            children: children
+                .map(
+                  (child) => GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    child: child,
+                    onTap: hideKeyboard,
+                  ),
+                )
+                .toList(),
+            controller: scrollController,
+            padding: EdgeInsets.all(
+              Scale.getSafeMargin(context),
+            ),
           ),
         ),
-        bottomNavigationBar: BottomNavigationWidget(
-          onTap: (int index) {
-            setState(
-                () => BottomNavigationWidget.selectedBottomBarItem = index);
-          },
-          selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
-        ),
-        floatingActionButton: PlusButtonWidget(
-          onTap: () {
-            debugPrint(
-              'lib/screens/main_screen.dart:122 plus button',
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        onTap: hideKeyboard,
       ),
+      bottomNavigationBar: BottomNavigationWidget(
+        onTap: (int index) {
+          setState(() => BottomNavigationWidget.selectedBottomBarItem = index);
+        },
+        selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
+      ),
+      floatingActionButton: PlusButtonWidget(
+        onTap: () {
+          debugPrint(
+            'lib/screens/main_screen.dart:122 plus button',
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   @override
   void dispose() {
     calendarController.dispose();
+    keyboardNode.dispose();
     squareMetersController.dispose();
     scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    keyboardConfig = KeyboardActionsConfig(
+      actions: [
+        KeyboardAction(
+          displayArrows: false,
+          focusNode: keyboardNode,
+        )
+      ],
+    );
   }
 
   void hideKeyboard() {
