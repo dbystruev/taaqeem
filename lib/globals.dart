@@ -26,6 +26,9 @@ const Color dividerColor = Color(0xFFC4C4C4);
 // Default font
 const String fontFamily = 'Museo Sans Cyrl';
 
+// Hint color
+const Color hintColor = Color(0xFFBDBDBD);
+
 // UAE Holidays 2020
 final Map<DateTime, List> holidays = {
   DateTime(2020, 1, 1): [''],

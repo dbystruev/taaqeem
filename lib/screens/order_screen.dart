@@ -11,6 +11,7 @@ import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/screens/authorization_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -26,7 +27,7 @@ class OrderScreen extends StatefulWidget {
   final Plan plan;
   final Plans plans;
 
-  OrderScreen({this.plan, this.plans});
+  OrderScreen({this.plan, @required this.plans});
 
   @override
   _OrderScreenState createState() =>
@@ -56,13 +57,12 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
-    final bool showHeaderTitle = plan != null;
-    final bool showPlanSelection = plans != null;
+    final bool showPlanSelection = plan == null;
     final List<Widget> children = [
-      if (!showHeaderTitle) BackWidget('Create new booking'),
-      if (showHeaderTitle) HeaderImageWidget(plan.image),
-      if (showHeaderTitle) SizedBox(height: 16 * scale),
-      if (showHeaderTitle)
+      if (showPlanSelection) BackWidget('Create new booking'),
+      if (!showPlanSelection) HeaderImageWidget(plan.image),
+      if (!showPlanSelection) SizedBox(height: 16 * scale),
+      if (!showPlanSelection)
         TitleWidget(
           plan.title,
           subtitle:
@@ -140,7 +140,23 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
           'Book Service',
           onPressed: () {
             hideKeyboard();
-            debugPrint('lib/screens/order_screen.dart:143 book $plan');
+            final Plan plan = this.plan ??
+                (services == null ? null : plans.plans[selectedPlanIndex]);
+            if (plan == null ||
+                selectedServiceIndex == null ||
+                squareMeters == null ||
+                selectedDay == null) return;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AuthorizationScreen(
+                  day: selectedDay,
+                  meters: squareMeters,
+                  plan: plan,
+                  service: services[selectedServiceIndex],
+                ),
+              ),
+            );
           },
           width: 335,
         ),
@@ -178,7 +194,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       floatingActionButton: PlusButtonWidget(
         onTap: () {
           debugPrint(
-            'lib/screens/main_screen.dart:181 plus button',
+            'lib/screens/main_screen.dart:197 plus button',
           );
         },
       ),

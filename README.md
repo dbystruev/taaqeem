@@ -29,3 +29,15 @@ Cleaning order app for [Taaqeem](https://taaqeem.ae) from [FL.ru](https://www.fl
 ## Numeric Keypad
 
 ![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot07.png?raw=true)
+
+## Phone Number
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot08.png?raw=true)
+
+## Terms of Service
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot09.png?raw=true)
+
+## Privacy Policy
+
+![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot10.png?raw=true)

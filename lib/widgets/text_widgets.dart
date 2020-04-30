@@ -16,6 +16,7 @@ class TheText extends StatelessWidget with Scale {
   final double fontSize;
   final FontWeight fontWeight;
   final double height;
+  final List<TextStyle> styles;
   final String text;
   final TextAlign textAlign;
   final List<String> texts; // for optional rich text
@@ -29,6 +30,7 @@ class TheText extends StatelessWidget with Scale {
     this.fontSize,
     this.fontWeight,
     this.height,
+    this.styles,
     this.text,
     TextAlign textAlign,
     this.texts,
@@ -43,6 +45,7 @@ class TheText extends StatelessWidget with Scale {
     List<Color> colors,
     double fontSize,
     double height,
+    List<TextStyle> styles,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -55,6 +58,7 @@ class TheText extends StatelessWidget with Scale {
         fontSize: fontSize,
         fontWeight: FontWeight.bold,
         height: height,
+        styles: styles,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -67,6 +71,7 @@ class TheText extends StatelessWidget with Scale {
     List<Color> colors,
     double fontSize,
     double height,
+    List<TextStyle> styles,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -79,6 +84,7 @@ class TheText extends StatelessWidget with Scale {
         fontSize: fontSize,
         fontWeight: FontWeight.normal,
         height: height,
+        styles: styles,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -91,6 +97,7 @@ class TheText extends StatelessWidget with Scale {
     List<Color> colors,
     double fontSize,
     double height,
+    List<TextStyle> styles,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -103,6 +110,7 @@ class TheText extends StatelessWidget with Scale {
         fontSize: fontSize,
         fontWeight: FontWeight.w300,
         height: height,
+        styles: styles,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -115,6 +123,7 @@ class TheText extends StatelessWidget with Scale {
     List<Color> colors,
     double fontSize,
     double height,
+    List<TextStyle> styles,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -127,6 +136,7 @@ class TheText extends StatelessWidget with Scale {
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
         height: height,
+        styles: styles,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -139,6 +149,7 @@ class TheText extends StatelessWidget with Scale {
     List<Color> colors,
     double fontSize,
     double height,
+    List<TextStyle> styles,
     String text,
     TextAlign textAlign,
     List<String> texts,
@@ -151,6 +162,7 @@ class TheText extends StatelessWidget with Scale {
         fontSize: fontSize,
         fontWeight: FontWeight.w700,
         height: height,
+        styles: styles,
         text: text,
         textAlign: textAlign,
         texts: texts,
@@ -160,6 +172,7 @@ class TheText extends StatelessWidget with Scale {
   @override
   Widget build(BuildContext context) {
     final int colorsLength = colors?.length ?? 0;
+    final int stylesLength = styles?.length ?? 0;
     final TextStyle defaultStyle = TextStyle(
       backgroundColor: backgroundColor,
       color: color,
@@ -180,9 +193,11 @@ class TheText extends StatelessWidget with Scale {
                       index,
                       TextSpan(
                         text: text,
-                        style: TextStyle(
-                          color: index < colorsLength ? colors[index] : null,
-                        ),
+                        style: index < stylesLength
+                            ? styles[index]
+                            : index < colorsLength
+                                ? TextStyle(color: colors[index])
+                                : null,
                       ),
                     ),
                   )

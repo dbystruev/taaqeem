@@ -16,6 +16,7 @@ class DecorationPaddingWidget extends StatelessWidget with Scale {
   final double borderRadius;
   final double borderWidth;
   final Widget child;
+  final Decoration decoration;
   final double height;
   final String icon;
   final double iconHeight;
@@ -37,6 +38,7 @@ class DecorationPaddingWidget extends StatelessWidget with Scale {
     this.borderRadius = 5,
     this.borderWidth = 1,
     @required this.child,
+    this.decoration,
     this.height = 52,
     this.icon,
     this.iconHeight = 20,
@@ -68,10 +70,12 @@ class DecorationPaddingWidget extends StatelessWidget with Scale {
             ImageWidget(icon, height: iconHeight, width: iconWidth)
           ],
         ),
-        decoration: BoxDecoration(
-          border: Border.all(color: borderColor, width: borderWidth * scale),
-          borderRadius: BorderRadius.circular(borderRadius * scale),
-        ),
+        decoration: decoration ??
+            BoxDecoration(
+              border:
+                  Border.all(color: borderColor, width: borderWidth * scale),
+              borderRadius: BorderRadius.circular(borderRadius * scale),
+            ),
         height: height * scale,
         padding: EdgeInsets.fromLTRB(
           paddingLeft * scale,

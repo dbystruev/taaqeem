@@ -12,12 +12,13 @@ import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 class FormWidget extends StatelessWidget with Scale {
   final Color color;
   final TextEditingController controller;
-  final InputDecoration decoration;
+  final Decoration decoration;
   final String fontFamily;
   final double fontSize;
   final FontWeight fontWeight;
   final double height;
   final String hintText;
+  final InputDecoration inputDecoration;
   final FocusNode keyboardNode;
   final TextInputType keyboardType;
   final String labelText;
@@ -36,6 +37,7 @@ class FormWidget extends StatelessWidget with Scale {
     this.fontWeight = FontWeight.normal,
     this.height = 1.6,
     this.hintText,
+    this.inputDecoration,
     this.keyboardNode,
     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.labelText,
@@ -53,7 +55,7 @@ class FormWidget extends StatelessWidget with Scale {
       child: TextFormField(
         controller: controller,
         cursorColor: globals.subtitleColor,
-        decoration: decoration ??
+        decoration: inputDecoration ??
             InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5 * scale),
@@ -81,6 +83,7 @@ class FormWidget extends StatelessWidget with Scale {
         ),
         textInputAction: TextInputAction.go,
       ),
+      decoration: decoration,
     );
   }
 }

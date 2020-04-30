@@ -4,8 +4,6 @@
 //  Created by Denis Bystruev on 25/04/2020.
 //
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
@@ -97,7 +95,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          OrderScreen(plan: plans.plans[index]),
+                          OrderScreen(plan: plans.plans[index], plans: plans),
                     ),
                   );
                 },
