@@ -201,7 +201,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
 
   void routeToTheNextScreenIfValid() {
     hideCalendarAndKeyboard();
-    routeIfValid(
+    pushRouteIfValid(
       context,
       builder: (context) => AuthorizationScreen(
         order: Order(
@@ -211,6 +211,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
           service: services[selectedServiceIndex],
         ),
       ),
+      name: 'AuthorizationScreen',
       validator: validator,
     );
   }

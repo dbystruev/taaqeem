@@ -4,6 +4,7 @@
 //  Created by Denis Bystruev on 30/04/2020.
 //
 
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
@@ -16,9 +17,11 @@ import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class AuthorizationScreen extends StatefulWidget {
+  static int attemptsRemaining;
   final Order order;
   final String phone;
   final String phonePrefix = '+971 ';
+  final Random random = Random();
   final String verificationCode;
 
   AuthorizationScreen({
@@ -85,7 +88,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                 prefixText: isCode ? null : widget.phonePrefix,
               ),
               onChanged: (String text) {
-                if (isCode && 3 < text.length || 9 < text.length)
+                final String digitsText = digits(text);
+                if (isCode && 3 < digitsText.length || 9 < digitsText.length)
                   routeToTheNextScreenIfValid();
               },
               onEditingComplete: routeToTheNextScreenIfValid,
@@ -131,12 +135,23 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     );
   }
 
+  String digits(String number) => number.replaceAll(RegExp(r'[^\d]'), '');
+
   @override
   void dispose() {
     keyboardNode.dispose();
     formController.dispose();
     super.dispose();
   }
+
+  String getRandomCode({int length = 4}) {
+    String result = '';
+    for (int count = 0; count < length; count++)
+      result += getRandomDigit.toString();
+    return result;
+  }
+
+  int get getRandomDigit => widget.random.nextInt(10);
 
   void hideKeyboard() {
     FocusScope.of(context).unfocus();
@@ -153,23 +168,33 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     final String textToValidate = formController.text;
     hideKeyboard();
     if (isCode) {
-      routeIfValid(
+      if (!pushRouteIfValid(
         context,
         builder: (context) => ProfileScreen(widget.phone),
         maintainState: false,
+        replace: true,
         validator: () => validateCode(textToValidate),
-      );
+      )) {
+        if (--AuthorizationScreen.attemptsRemaining < 1) {
+          Navigator.popUntil(
+            context,
+            ModalRoute.withName('AuthorizationScreen'),
+          );
+        }
+      }
     } else {
-      routeIfValid(
+      final String randomCode = getRandomCode();
+      AuthorizationScreen.attemptsRemaining = 2;
+      if (pushRouteIfValid(
         context,
         builder: (context) => AuthorizationScreen(
           order: widget.order,
           phone: widget.phonePrefix + textToValidate,
-          verificationCode: '9999',
+          verificationCode: randomCode,
         ),
         maintainState: false,
         validator: () => validatePhone(textToValidate),
-      );
+      )) showMessageInContext(context, 'your code is: $randomCode');
     }
   }
 
@@ -177,7 +202,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   /// Returns error message if code is not correct
   String validateCode(String code) {
     if (code != widget.verificationCode)
-      return 'Incorrect code.  Correct code is ${widget.verificationCode}.';
+      return 'incorrect code. Try one more time';
     return '';
   }
 
@@ -185,7 +210,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   /// Returns error message if phone is not valid
   String validatePhone(String phone) {
     if (phone == null) return 'empty number';
-    final String phoneDigits = phone.replaceAll(RegExp(r'[^\d]'), '');
+    final String phoneDigits = digits(phone);
     final int numberOfDigits = phoneDigits.length;
     if (numberOfDigits < 9) return 'please enter more digits';
     if (10 < numberOfDigits) return 'please delete extra digits';

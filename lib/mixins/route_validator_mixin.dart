@@ -12,51 +12,68 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 mixin RouteValidator {
-  void routeIfValid(
+  bool pushRouteIfValid(
     BuildContext context, {
     Widget Function(BuildContext context) builder,
     bool maintainState = true,
+    String name,
+    bool replace = false,
     double scale,
     String Function() validator,
   }) {
-    final double localScale = scale ?? Scale.getScale(context);
     if (validator != null) {
       final String message = validator();
       if (message.isNotEmpty) {
-        Flushbar(
-          backgroundColor: Theme.of(context).primaryColor,
-          borderRadius: 7 * localScale,
-          boxShadows: [
-            BoxShadow(
-              blurRadius: 15 * localScale,
-              color: globals.shadowColor,
-            ),
-          ],
-          duration: Duration(seconds: 3),
-          isDismissible: true,
-          flushbarPosition: FlushbarPosition.TOP,
-          flushbarStyle: FlushbarStyle.FLOATING,
-          margin: EdgeInsets.symmetric(
-            horizontal: 20 * localScale,
-            vertical: 24 * localScale,
-          ),
-          messageText: TheText.normal(
-            color: globals.menuItemColor,
-            fontSize: 14,
-            text: capitalize(message),
-            textScaleFactor: localScale,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 18 * localScale,
-            vertical: 14 * localScale,
-          ),
-        )..show(context);
-        return;
+        showMessageInContext(context, message);
+        return false;
       }
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: builder, maintainState: maintainState),
+    final MaterialPageRoute route = MaterialPageRoute(
+      builder: builder,
+      maintainState: maintainState,
+      settings: RouteSettings(name: name),
     );
+    if (replace) {
+      Navigator.pushReplacement(context, route);
+    } else {
+      Navigator.push(context, route);
+    }
+    return true;
+  }
+
+  void showMessageInContext(
+    BuildContext context,
+    String message, {
+    double scale,
+  }) {
+    final double localScale = scale ?? Scale.getScale(context);
+    Flushbar(
+      backgroundColor: Theme.of(context).primaryColor,
+      borderRadius: 7 * localScale,
+      boxShadows: [
+        BoxShadow(
+          blurRadius: 15 * localScale,
+          color: globals.shadowColor,
+        ),
+      ],
+      duration: Duration(seconds: 3),
+      isDismissible: true,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20 * localScale,
+        vertical: 24 * localScale,
+      ),
+      messageText: TheText.normal(
+        color: globals.menuItemColor,
+        fontSize: 14,
+        text: capitalize(message) + '.',
+        textScaleFactor: localScale,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: 18 * localScale,
+        vertical: 14 * localScale,
+      ),
+    )..show(context);
   }
 }
