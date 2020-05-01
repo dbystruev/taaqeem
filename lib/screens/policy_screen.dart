@@ -5,7 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/policy.dart';
 import 'package:taaqeem/models/policy+all.dart';

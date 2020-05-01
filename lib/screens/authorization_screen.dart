@@ -5,10 +5,12 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
+import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/screens/policy_screen.dart';
+import 'package:taaqeem/screens/profile_screen.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
@@ -25,7 +27,8 @@ class AuthorizationScreen extends StatefulWidget {
   _AuthorizationScreenState createState() => _AuthorizationScreenState();
 }
 
-class _AuthorizationScreenState extends State<AuthorizationScreen> with Scale {
+class _AuthorizationScreenState extends State<AuthorizationScreen>
+    with RouteValidator, Scale {
   FocusNode keyboardNode;
   TextEditingController phoneController;
 
@@ -77,12 +80,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> with Scale {
                 debugPrint(
                     'lib/screens/authorization_screen.dart:78 onChanged text = $text');
               },
-              onEditingComplete: () {
-                hideKeyboard();
-                debugPrint(
-                  'lib/screens/authorization_screen.dart:83 onEditingComplete ${phoneController.text}',
-                );
-              },
+              onEditingComplete: routeToTheNextScreenIfValid,
               scale: scale,
             ),
             SizedBox(height: 79 * scale),
@@ -120,12 +118,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> with Scale {
           ),
         ),
         focusNode: keyboardNode,
-        onTapAction: () {
-          hideKeyboard();
-          debugPrint(
-            'lib/screens/authorization_screen.dart:126 onTapAction ${phoneController.text}',
-          );
-        },
+        onTapAction: routeToTheNextScreenIfValid,
       ),
     );
   }
@@ -146,5 +139,26 @@ class _AuthorizationScreenState extends State<AuthorizationScreen> with Scale {
     super.initState();
     keyboardNode = FocusNode();
     phoneController = TextEditingController();
+  }
+
+  void routeToTheNextScreenIfValid() {
+    hideKeyboard();
+    final String phone = phoneController.text;
+    routeIfValid(
+      context,
+      builder: (context) => ProfileScreen(phone),
+      validator: () => validatePhone(phone),
+    );
+  }
+
+  /// Returns empty String if evertyhing is OK
+  /// Returns error message if phone is not valid
+  String validatePhone(String phone) {
+    if (phone == null) return 'empty number';
+    final String phoneDigits = phone.replaceAll(RegExp(r'[^\d]'), '');
+    final int numberOfDigits = phoneDigits.length;
+    if (numberOfDigits < 9) return 'not enough digits';
+    if (10 < numberOfDigits) return 'too many digits';
+    return '';
   }
 }

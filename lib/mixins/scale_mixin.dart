@@ -1,5 +1,5 @@
 //
-//  lib/design/scale.dart
+//  lib/mixins/scale_mixin.dart
 //
 //  Created by Denis Bystruev on 11/03/2020, updated 18/04/2020.
 //
@@ -56,7 +56,7 @@ mixin Scale {
     final double verticalScale = getScreenHeight(context) / height;
     final double scale = min(horizontalScale, verticalScale);
     // debugPrint(
-    //   'lib/design/scale.dart:59' +
+    //   'lib/mixins/scale_mixin.dart:59' +
     //       ' design $width x $height' +
     //       ', screen ${getScreenWidth(context)} x ${getScreenHeight(context)}' +
     //       ', scale = $scale',

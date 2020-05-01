@@ -5,7 +5,8 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
+import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
@@ -34,7 +35,7 @@ class OrderScreen extends StatefulWidget {
       _OrderScreenState(plan: plan, plans: plans);
 }
 
-class _OrderScreenState extends State<OrderScreen> with Scale {
+class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   CalendarController calendarController;
   FocusNode keyboardNode;
   final Plan plan;
@@ -134,7 +135,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       Opacity(
         child: ButtonWidget(
           'Book Service',
-          onPressed: validateAndAuthorize,
+          onPressed: routeToTheNextScreenIfValid,
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
@@ -169,7 +170,8 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
         },
         selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
       ),
-      floatingActionButton: PlusButtonWidget(onTap: validateAndAuthorize),
+      floatingActionButton:
+          PlusButtonWidget(onTap: routeToTheNextScreenIfValid),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -201,31 +203,38 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
     squareMetersController = TextEditingController();
   }
 
-  bool isPlanValid(Plan plan) =>
-      plan?.id != null &&
-      selectedServiceIndex != null &&
-      squareMeters != null &&
-      0 < squareMeters &&
-      selectedDay != null &&
-      selectedDay.isAfter(
-        DateTime.now(),
-      );
-
-  void validateAndAuthorize() {
+  void routeToTheNextScreenIfValid() {
     hideCalendarAndKeyboard();
+    routeIfValid(
+      context,
+      builder: (context) => AuthorizationScreen(
+        day: selectedDay,
+        meters: squareMeters,
+        plan: plan,
+        service: services[selectedServiceIndex],
+      ),
+      validator: validator,
+    );
+  }
+
+  String validatePlan(Plan plan) {
+    if (plan?.id == null) return 'please choose the type of area';
+    if (selectedServiceIndex == null ||
+        selectedServiceIndex < 0 ||
+        services.length <= selectedServiceIndex)
+      return 'please choose the type of service';
+    if (squareMeters == null || squareMeters < 1)
+      return 'please enter a positive number of square meters';
+    if (selectedDay == null ||
+        selectedDay.isBefore(
+          DateTime.now(),
+        )) return 'please select a date in the future';
+    return '';
+  }
+
+  String validator() {
     final Plan plan = this.plan ??
         (selectedPlanIndex == null ? null : plans.plans[selectedPlanIndex]);
-    if (!isPlanValid(plan)) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AuthorizationScreen(
-          day: selectedDay,
-          meters: squareMeters,
-          plan: plan,
-          service: services[selectedServiceIndex],
-        ),
-      ),
-    );
+    return validatePlan(plan);
   }
 }

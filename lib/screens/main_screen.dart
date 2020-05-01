@@ -5,7 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/order_screen.dart';

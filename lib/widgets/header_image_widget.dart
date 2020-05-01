@@ -5,7 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/design/scale.dart';
+import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 
 class HeaderImageWidget extends StatelessWidget with Scale {
