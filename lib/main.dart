@@ -16,7 +16,7 @@ void main() {
   if (globals.isProduction) debugPrint = (String message, {int wrapWidth}) {};
   // Set default locale
   Intl.defaultLocale = globals.locale;
-  initializeDateFormatting().then(
+  initializeDateFormatting(globals.locale).then(
     (_) {
       runApp(
         Main(),

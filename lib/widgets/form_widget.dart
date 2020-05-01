@@ -27,6 +27,7 @@ class FormWidget extends StatelessWidget with Scale {
   final VoidCallback onEditingComplete;
   final double scale;
   final String suffixText;
+  final TextInputAction textInputAction;
 
   FormWidget({
     this.color = globals.menuItemColor,
@@ -46,6 +47,7 @@ class FormWidget extends StatelessWidget with Scale {
     this.onEditingComplete,
     this.scale,
     this.suffixText,
+    this.textInputAction = TextInputAction.done,
   });
 
   @override
@@ -81,7 +83,7 @@ class FormWidget extends StatelessWidget with Scale {
           fontWeight: fontWeight,
           height: height,
         ),
-        textInputAction: TextInputAction.go,
+        textInputAction: textInputAction,
       ),
       decoration: decoration,
     );

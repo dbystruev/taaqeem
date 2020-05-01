@@ -5,7 +5,6 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:taaqeem/design/scale.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
@@ -19,6 +18,7 @@ import 'package:taaqeem/widgets/calendar_widget.dart';
 import 'package:taaqeem/widgets/dropdown_widget.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
+import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
 import 'package:taaqeem/widgets/plus_button_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -35,9 +35,8 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> with Scale {
-  final CalendarController calendarController = CalendarController();
-  KeyboardActionsConfig keyboardConfig;
-  final FocusNode keyboardNode = FocusNode();
+  CalendarController calendarController;
+  FocusNode keyboardNode;
   final Plan plan;
   final Plans plans;
   int selectedPlanIndex;
@@ -46,10 +45,10 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
     'Sanitation & disinfection',
     'Cleaning & maintenance',
   ];
-  final ScrollController scrollController = ScrollController();
+  ScrollController scrollController;
   DateTime selectedDay;
   bool showCalendar = false;
-  final TextEditingController squareMetersController = TextEditingController();
+  TextEditingController squareMetersController;
   double squareMeters;
 
   _OrderScreenState({this.plan, this.plans});
@@ -74,6 +73,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
           hint: 'Type of area',
           onChanged: (int index) {
             setState(() => selectedPlanIndex = index < 0 ? null : index);
+            hideCalendarAndKeyboard();
           },
           selectedItemIndex: selectedPlanIndex,
         ),
@@ -82,7 +82,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
         hint: 'Type of service',
         onChanged: (int index) {
           setState(() => selectedServiceIndex = index < 0 ? null : index);
-          hideKeyboard();
+          hideCalendarAndKeyboard();
         },
         selectedItemIndex: selectedServiceIndex,
       ),
@@ -90,10 +90,10 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
         controller: squareMetersController,
         hintText: 'Square meters²',
         keyboardNode: keyboardNode,
-        onEditingComplete: () {},
+        onEditingComplete: hideCalendarAndKeyboard,
         onChanged: (String text) {
           squareMeters = double.tryParse(text);
-          if (showCalendar) setState(() => showCalendar = false);
+          hideCalendar();
         },
         suffixText: ' m²',
       ),
@@ -110,14 +110,10 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
               initialSelectedDay: selectedDay,
               locale: globals.locale,
               onDaySelected: (DateTime selectedDay, _) {
-                setState(() {
-                  this.selectedDay = selectedDay;
-                  this.showCalendar = false;
-                });
+                this.selectedDay = selectedDay;
+                hideCalendarAndKeyboard();
               },
-              onUnavailableDaySelected: () => setState(
-                () => this.showCalendar = false,
-              ),
+              onUnavailableDaySelected: hideCalendarAndKeyboard,
               startDay: DateTime.now(),
               weekendDays: const [DateTime.friday, DateTime.saturday],
             )
@@ -138,26 +134,7 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
       Opacity(
         child: ButtonWidget(
           'Book Service',
-          onPressed: () {
-            hideKeyboard();
-            final Plan plan = this.plan ??
-                (services == null ? null : plans.plans[selectedPlanIndex]);
-            if (plan == null ||
-                selectedServiceIndex == null ||
-                squareMeters == null ||
-                selectedDay == null) return;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AuthorizationScreen(
-                  day: selectedDay,
-                  meters: squareMeters,
-                  plan: plan,
-                  service: services[selectedServiceIndex],
-                ),
-              ),
-            );
-          },
+          onPressed: validateAndAuthorize,
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
@@ -165,15 +142,14 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
     ];
     return Scaffold(
       body: GestureDetector(
-        child: KeyboardActions(
-          config: keyboardConfig,
+        child: KeyboardActionsWidget(
           child: ListView(
             children: children
                 .map(
                   (child) => GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     child: child,
-                    onTap: hideKeyboard,
+                    onTap: hideCalendarAndKeyboard,
                   ),
                 )
                 .toList(),
@@ -182,8 +158,10 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
               Scale.getSafeMargin(context),
             ),
           ),
+          focusNode: keyboardNode,
+          onTapAction: hideCalendarAndKeyboard,
         ),
-        onTap: hideKeyboard,
+        onTap: hideCalendarAndKeyboard,
       ),
       bottomNavigationBar: BottomNavigationWidget(
         onTap: (int index) {
@@ -191,41 +169,63 @@ class _OrderScreenState extends State<OrderScreen> with Scale {
         },
         selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
       ),
-      floatingActionButton: PlusButtonWidget(
-        onTap: () {
-          debugPrint(
-            'lib/screens/main_screen.dart:197 plus button',
-          );
-        },
-      ),
+      floatingActionButton: PlusButtonWidget(onTap: validateAndAuthorize),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   @override
   void dispose() {
-    calendarController.dispose();
-    keyboardNode.dispose();
     squareMetersController.dispose();
     scrollController.dispose();
+    keyboardNode.dispose();
+    calendarController.dispose();
     super.dispose();
+  }
+
+  void hideCalendar() {
+    if (showCalendar) setState(() => showCalendar = false);
+  }
+
+  void hideCalendarAndKeyboard() {
+    FocusScope.of(context).unfocus();
+    hideCalendar();
   }
 
   @override
   void initState() {
     super.initState();
-    keyboardConfig = KeyboardActionsConfig(
-      actions: [
-        KeyboardAction(
-          displayArrows: false,
-          focusNode: keyboardNode,
-        )
-      ],
-    );
+    calendarController = CalendarController();
+    keyboardNode = FocusNode();
+    scrollController = ScrollController();
+    squareMetersController = TextEditingController();
   }
 
-  void hideKeyboard() {
-    FocusScope.of(context).unfocus();
-    if (showCalendar) setState(() => showCalendar = false);
+  bool isPlanValid(Plan plan) =>
+      plan?.id != null &&
+      selectedServiceIndex != null &&
+      squareMeters != null &&
+      0 < squareMeters &&
+      selectedDay != null &&
+      selectedDay.isAfter(
+        DateTime.now(),
+      );
+
+  void validateAndAuthorize() {
+    hideCalendarAndKeyboard();
+    final Plan plan = this.plan ??
+        (selectedPlanIndex == null ? null : plans.plans[selectedPlanIndex]);
+    if (!isPlanValid(plan)) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuthorizationScreen(
+          day: selectedDay,
+          meters: squareMeters,
+          plan: plan,
+          service: services[selectedServiceIndex],
+        ),
+      ),
+    );
   }
 }
