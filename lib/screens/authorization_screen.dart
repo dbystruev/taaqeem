@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
-import 'package:taaqeem/models/plan.dart';
+import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/screens/policy_screen.dart';
 import 'package:taaqeem/screens/profile_screen.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
@@ -16,12 +16,16 @@ import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class AuthorizationScreen extends StatefulWidget {
-  final DateTime day;
-  final double meters;
-  final Plan plan;
-  final String service;
+  final Order order;
+  final String phone;
+  final String phonePrefix = '+971 ';
+  final String verificationCode;
 
-  AuthorizationScreen({this.day, this.meters, this.plan, this.service});
+  AuthorizationScreen({
+    this.order,
+    this.phone,
+    this.verificationCode,
+  });
 
   @override
   _AuthorizationScreenState createState() => _AuthorizationScreenState();
@@ -29,8 +33,10 @@ class AuthorizationScreen extends StatefulWidget {
 
 class _AuthorizationScreenState extends State<AuthorizationScreen>
     with RouteValidator, Scale {
+  TextEditingController formController;
+  bool get isCode => widget.verificationCode != null;
+  String get item => isCode ? 'verification code' : 'phone number';
   FocusNode keyboardNode;
-  TextEditingController phoneController;
 
   @override
   Widget build(BuildContext context) {
@@ -45,40 +51,44 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
             TheText.w600(
               color: Theme.of(context).accentColor,
               fontSize: 28,
-              text: 'Please enter\nyour phone number',
+              text: 'Please enter\nyour $item',
               textScaleFactor: scale,
             ),
             SizedBox(height: 35 * scale),
             TheText.w600(
               color: globals.textColor,
               fontSize: 18,
-              text: 'We’ll send you a verification code',
+              text: isCode
+                  ? 'We’ve sent the verification code to\n${widget.phone}'
+                  : 'We’ll send you a verification code',
               textScaleFactor: scale,
             ),
             SizedBox(height: 80 * scale),
             FormWidget(
               color: globals.textColor,
-              controller: phoneController,
+              controller: formController,
               decoration: BoxDecoration(border: null),
               fontSize: 28,
               fontWeight: FontWeight.w600,
               keyboardNode: keyboardNode,
-              keyboardType: TextInputType.phone,
+              keyboardType: isCode ? TextInputType.number : TextInputType.phone,
               inputDecoration: InputDecoration(
                 border: InputBorder.none,
                 hintStyle: TextStyle(color: globals.hintColor),
-                hintText: '99-999-9999',
+                hintText: isCode ? '9999' : '99-999-9999',
                 prefixStyle: TextStyle(
                   color: globals.textColor,
                   fontFamily: globals.fontFamily,
                   fontSize: 28 * scale,
                   fontWeight: FontWeight.w600,
                 ),
-                prefixText: '+971 ',
+                prefixText: isCode ? null : widget.phonePrefix,
               ),
               onChanged: (String text) {
                 debugPrint(
-                    'lib/screens/authorization_screen.dart:78 onChanged text = $text');
+                  'lib/screens/authorization_screen.dart:89 onChanged text = $text',
+                );
+                if (isCode && 3 < text.length) routeToTheNextScreenIfValid();
               },
               onEditingComplete: routeToTheNextScreenIfValid,
               scale: scale,
@@ -92,7 +102,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                 styles: [null, underline, null, underline],
                 textAlign: TextAlign.center,
                 texts: [
-                  'By entering phone number you agree with our\n',
+                  'By entering $item you agree with our\n',
                   'Terms of service',
                   ' and ',
                   'Privacy policy',
@@ -125,8 +135,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
 
   @override
   void dispose() {
-    phoneController.dispose();
     keyboardNode.dispose();
+    formController.dispose();
     super.dispose();
   }
 
@@ -137,21 +147,43 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   @override
   void initState() {
     super.initState();
+    formController = TextEditingController();
     keyboardNode = FocusNode();
-    phoneController = TextEditingController();
   }
 
   void routeToTheNextScreenIfValid() {
+    final String textToValidate = formController.text;
     hideKeyboard();
-    final String phone = phoneController.text;
-    routeIfValid(
-      context,
-      builder: (context) => ProfileScreen(phone),
-      validator: () => validatePhone(phone),
-    );
+    if (isCode) {
+      routeIfValid(
+        context,
+        builder: (context) => ProfileScreen(widget.phone),
+        maintainState: false,
+        validator: () => validateCode(textToValidate),
+      );
+    } else {
+      routeIfValid(
+        context,
+        builder: (context) => AuthorizationScreen(
+          order: widget.order,
+          phone: widget.phonePrefix + textToValidate,
+          verificationCode: '9999',
+        ),
+        maintainState: false,
+        validator: () => validatePhone(textToValidate),
+      );
+    }
   }
 
-  /// Returns empty String if evertyhing is OK
+  /// Returns empty String if code is correct
+  /// Returns error message if code is not correct
+  String validateCode(String code) {
+    if (code != widget.verificationCode)
+      return 'Incorrect code.  Correct code is ${widget.verificationCode}.';
+    return '';
+  }
+
+  /// Returns empty String if phone is valid
   /// Returns error message if phone is not valid
   String validatePhone(String phone) {
     if (phone == null) return 'empty number';

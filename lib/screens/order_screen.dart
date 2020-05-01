@@ -9,6 +9,7 @@ import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/authorization_screen.dart';
@@ -31,15 +32,13 @@ class OrderScreen extends StatefulWidget {
   OrderScreen({this.plan, @required this.plans});
 
   @override
-  _OrderScreenState createState() =>
-      _OrderScreenState(plan: plan, plans: plans);
+  _OrderScreenState createState() => _OrderScreenState();
 }
 
 class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   CalendarController calendarController;
   FocusNode keyboardNode;
-  final Plan plan;
-  final Plans plans;
+  List<Plan> plans;
   int selectedPlanIndex;
   int selectedServiceIndex;
   final List<String> services = [
@@ -52,25 +51,23 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   TextEditingController squareMetersController;
   double squareMeters;
 
-  _OrderScreenState({this.plan, this.plans});
-
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
-    final bool showPlanSelection = plan == null;
+    final bool showPlanSelection = widget.plan == null;
     final List<Widget> children = [
       if (showPlanSelection) BackWidget('Create new booking'),
-      if (!showPlanSelection) HeaderImageWidget(plan.image),
+      if (!showPlanSelection) HeaderImageWidget(widget.plan.image),
       if (!showPlanSelection) SizedBox(height: 16 * scale),
       if (!showPlanSelection)
         TitleWidget(
-          plan.title,
+          widget.plan.title,
           subtitle:
               'Fill in the form, please and we will help\nYou immediately',
         ),
       if (showPlanSelection)
         DropdownWidget(
-          plans.plans.map<String>((plan) => plan.type).toList(),
+          plans.map<String>((plan) => plan.type).toList(),
           hint: 'Type of area',
           onChanged: (int index) {
             setState(() => selectedPlanIndex = index < 0 ? null : index);
@@ -199,6 +196,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
     super.initState();
     calendarController = CalendarController();
     keyboardNode = FocusNode();
+    plans = widget.plans.plans;
     scrollController = ScrollController();
     squareMetersController = TextEditingController();
   }
@@ -208,10 +206,12 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
     routeIfValid(
       context,
       builder: (context) => AuthorizationScreen(
-        day: selectedDay,
-        meters: squareMeters,
-        plan: plan,
-        service: services[selectedServiceIndex],
+        order: Order(
+          day: selectedDay,
+          meters: squareMeters,
+          plan: widget.plan,
+          service: services[selectedServiceIndex],
+        ),
       ),
       validator: validator,
     );
@@ -233,8 +233,8 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   }
 
   String validator() {
-    final Plan plan = this.plan ??
-        (selectedPlanIndex == null ? null : plans.plans[selectedPlanIndex]);
+    final Plan plan = widget.plan ??
+        (selectedPlanIndex == null ? null : plans[selectedPlanIndex]);
     return validatePlan(plan);
   }
 }

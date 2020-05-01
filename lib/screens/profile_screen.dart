@@ -11,7 +11,6 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String phone;
-  final String phonePrefix = '+971 ';
 
   ProfileScreen(this.phone);
 
@@ -30,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> with Scale {
             color: globals.textColor,
             fontSize: 18,
             height: 2.11,
-            text: '${widget.phonePrefix}${widget.phone}',
+            text: widget.phone,
             textScaleFactor: scale,
           ),
         ),

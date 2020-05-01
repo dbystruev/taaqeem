@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
+import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
@@ -22,16 +23,14 @@ class MainScreen extends StatefulWidget {
   MainScreen(this.plans);
 
   @override
-  _MainScreenState createState() => _MainScreenState(plans);
+  _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> with Scale {
   int lastIndex;
-  final ScrollController scrollController = ScrollController();
-  final Plans plans;
+  List<Plan> plans;
+  ScrollController scrollController;
   int selectedPlan;
-
-  _MainScreenState(this.plans) : selectedPlan = plans.plans.length;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
             default:
               final int planIndex = index - 3;
               return PlanWidget(
-                plans.plans[planIndex],
+                plans[planIndex],
                 index: planIndex,
                 isSelected: selectedPlan == planIndex,
                 onExpansionChanged: (int index, bool expanded) {
@@ -77,8 +76,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   ).then(
                     (_) {
                       setState(() {
-                        selectedPlan =
-                            expanded ? planIndex : plans.plans.length;
+                        selectedPlan = expanded ? planIndex : plans.length;
                         if (expanded && lastIndex == null)
                           scrollController.scrollTo(
                             index,
@@ -95,7 +93,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          OrderScreen(plan: plans.plans[index], plans: plans),
+                          OrderScreen(plan: plans[index], plans: widget.plans),
                     ),
                   );
                 },
@@ -103,7 +101,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
               );
           }
         },
-        itemCount: plans.plans.length + 3,
+        itemCount: plans.length + 3,
         padding: EdgeInsets.all(
           Scale.getSafeMargin(context),
         ),
@@ -118,12 +116,20 @@ class _MainScreenState extends State<MainScreen> with Scale {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OrderScreen(plans: plans),
+            builder: (context) => OrderScreen(plans: widget.plans),
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    plans = widget.plans.plans;
+    scrollController = ScrollController();
+    selectedPlan = plans.length;
   }
 
   @override
