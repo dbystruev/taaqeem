@@ -14,14 +14,13 @@ import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/authorization_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
-import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/calendar_widget.dart';
 import 'package:taaqeem/widgets/dropdown_widget.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
 import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
-import 'package:taaqeem/widgets/plus_button_widget.dart';
+import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -138,7 +137,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
         opacity: showCalendar ? 0 : 1,
       ),
     ];
-    return Scaffold(
+    return ScaffoldBarWidget(
       body: GestureDetector(
         child: KeyboardActionsWidget(
           child: ListView(
@@ -161,15 +160,14 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
         ),
         onTap: hideCalendarAndKeyboard,
       ),
-      bottomNavigationBar: BottomNavigationWidget(
-        onTap: (int index) {
-          setState(() => BottomNavigationWidget.selectedBottomBarItem = index);
-        },
-        selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
-      ),
-      floatingActionButton:
-          PlusButtonWidget(onTap: routeToTheNextScreenIfValid),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      onPlusTap: routeToTheNextScreenIfValid,
+      onTap: (int index) {
+        setState(
+          () {
+            debugPrint('lib/screens/order_screen.dart:167 index = $index');
+          },
+        );
+      },
     );
   }
 

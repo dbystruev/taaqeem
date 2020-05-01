@@ -10,11 +10,10 @@ import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/screens/order_screen.dart';
-import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
 import 'package:taaqeem/widgets/plan_widget.dart';
-import 'package:taaqeem/widgets/plus_button_widget.dart';
+import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 
 class MainScreen extends StatefulWidget {
@@ -35,7 +34,7 @@ class _MainScreenState extends State<MainScreen> with Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
-    return Scaffold(
+    return ScaffoldBarWidget(
       body: ListView.builder(
         controller: scrollController,
         itemBuilder: (BuildContext context, int index) {
@@ -106,21 +105,15 @@ class _MainScreenState extends State<MainScreen> with Scale {
           Scale.getSafeMargin(context),
         ),
       ),
-      bottomNavigationBar: BottomNavigationWidget(
-        onTap: (int index) {
-          setState(() => BottomNavigationWidget.selectedBottomBarItem = index);
-        },
-        selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
-      ),
-      floatingActionButton: PlusButtonWidget(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OrderScreen(plans: widget.plans),
-          ),
+      onPlusTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrderScreen(plans: widget.plans),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      onTap: (int index) {
+        debugPrint('lib/screens/main_screen.dart:115 index = $index');
+      },
     );
   }
 

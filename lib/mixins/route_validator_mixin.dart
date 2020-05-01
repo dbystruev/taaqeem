@@ -23,8 +23,6 @@ mixin RouteValidator {
     if (validator != null) {
       final String message = validator();
       if (message.isNotEmpty) {
-        debugPrint(
-            'lib/mixins/route_validator_mixin.dart:20 message = $message');
         Flushbar(
           backgroundColor: Theme.of(context).primaryColor,
           borderRadius: 7 * localScale,
