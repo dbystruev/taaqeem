@@ -85,10 +85,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                 prefixText: isCode ? null : widget.phonePrefix,
               ),
               onChanged: (String text) {
-                debugPrint(
-                  'lib/screens/authorization_screen.dart:89 onChanged text = $text',
-                );
-                if (isCode && 3 < text.length) routeToTheNextScreenIfValid();
+                if (isCode && 3 < text.length || 9 < text.length)
+                  routeToTheNextScreenIfValid();
               },
               onEditingComplete: routeToTheNextScreenIfValid,
               scale: scale,
@@ -189,8 +187,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     if (phone == null) return 'empty number';
     final String phoneDigits = phone.replaceAll(RegExp(r'[^\d]'), '');
     final int numberOfDigits = phoneDigits.length;
-    if (numberOfDigits < 9) return 'not enough digits';
-    if (10 < numberOfDigits) return 'too many digits';
+    if (numberOfDigits < 9) return 'please enter more digits';
+    if (10 < numberOfDigits) return 'please delete extra digits';
     return '';
   }
 }

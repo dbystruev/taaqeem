@@ -35,7 +35,7 @@ class BottomNavigationWidget extends StatelessWidget with Scale {
           BoxShadow(
             blurRadius: 15 * scale,
             color: globals.shadowColor,
-          )
+          ),
         ],
       ),
     );
