@@ -19,6 +19,7 @@ class TheText extends StatelessWidget with Scale {
   final List<TextStyle> styles;
   final String text;
   final TextAlign textAlign;
+  final TextDecoration textDecoration;
   final List<String> texts; // for optional rich text
   final double textScaleFactor;
 
@@ -33,6 +34,7 @@ class TheText extends StatelessWidget with Scale {
     this.styles,
     this.text,
     TextAlign textAlign,
+    this.textDecoration,
     this.texts,
     this.textScaleFactor,
   })  : this.color = color ?? globals.textColor,
@@ -48,6 +50,7 @@ class TheText extends StatelessWidget with Scale {
     List<TextStyle> styles,
     String text,
     TextAlign textAlign,
+    TextDecoration textDecoration,
     List<String> texts,
     double textScaleFactor,
   }) =>
@@ -61,6 +64,7 @@ class TheText extends StatelessWidget with Scale {
         styles: styles,
         text: text,
         textAlign: textAlign,
+        textDecoration: textDecoration,
         texts: texts,
         textScaleFactor: textScaleFactor,
       );
@@ -74,6 +78,7 @@ class TheText extends StatelessWidget with Scale {
     List<TextStyle> styles,
     String text,
     TextAlign textAlign,
+    TextDecoration textDecoration,
     List<String> texts,
     double textScaleFactor,
   }) =>
@@ -87,6 +92,7 @@ class TheText extends StatelessWidget with Scale {
         styles: styles,
         text: text,
         textAlign: textAlign,
+        textDecoration: textDecoration,
         texts: texts,
         textScaleFactor: textScaleFactor,
       );
@@ -100,6 +106,7 @@ class TheText extends StatelessWidget with Scale {
     List<TextStyle> styles,
     String text,
     TextAlign textAlign,
+    TextDecoration textDecoration,
     List<String> texts,
     double textScaleFactor,
   }) =>
@@ -113,6 +120,7 @@ class TheText extends StatelessWidget with Scale {
         styles: styles,
         text: text,
         textAlign: textAlign,
+        textDecoration: textDecoration,
         texts: texts,
         textScaleFactor: textScaleFactor,
       );
@@ -126,6 +134,7 @@ class TheText extends StatelessWidget with Scale {
     List<TextStyle> styles,
     String text,
     TextAlign textAlign,
+    TextDecoration textDecoration,
     List<String> texts,
     double textScaleFactor,
   }) =>
@@ -139,6 +148,7 @@ class TheText extends StatelessWidget with Scale {
         styles: styles,
         text: text,
         textAlign: textAlign,
+        textDecoration: textDecoration,
         texts: texts,
         textScaleFactor: textScaleFactor,
       );
@@ -152,6 +162,7 @@ class TheText extends StatelessWidget with Scale {
     List<TextStyle> styles,
     String text,
     TextAlign textAlign,
+    TextDecoration textDecoration,
     List<String> texts,
     double textScaleFactor,
   }) =>
@@ -165,6 +176,7 @@ class TheText extends StatelessWidget with Scale {
         styles: styles,
         text: text,
         textAlign: textAlign,
+        textDecoration: textDecoration,
         texts: texts,
         textScaleFactor: textScaleFactor,
       );
@@ -176,6 +188,7 @@ class TheText extends StatelessWidget with Scale {
     final TextStyle defaultStyle = TextStyle(
       backgroundColor: backgroundColor,
       color: color,
+      decoration: textDecoration,
       fontFamily: fontFamily,
       fontSize: fontSize,
       fontWeight: fontWeight,

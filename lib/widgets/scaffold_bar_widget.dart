@@ -5,33 +5,59 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
+import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/plus_button_widget.dart';
 
 class ScaffoldBarWidget extends StatefulWidget {
   final Widget body;
   final VoidCallback onPlusTap;
-  final ValueChanged<int> onTap;
+  final ScreenData screenData;
 
-  ScaffoldBarWidget({this.body, this.onPlusTap, this.onTap});
+  ScaffoldBarWidget({this.body, this.onPlusTap, this.screenData});
 
   @override
   _ScaffoldBarWidgetState createState() => _ScaffoldBarWidgetState();
 }
 
-class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget> {
+class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
+    with RouteValidator {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.body,
       bottomNavigationBar: BottomNavigationWidget(
-        onTap: (int index) {
-          setState(() => BottomNavigationWidget.selectedBottomBarItem = index);
-          widget.onTap?.call(index);
+        onTap: (int routeIndex) {
+          setState(
+              () => BottomNavigationWidget.selectedBottomBarItem = routeIndex);
+          if (routeIndex == widget.screenData.routeIndex) return;
+          pushRouteIfValid(
+            context,
+            builder: (context) => NavigatorWidget(
+              routeIndex,
+              screenData: widget.screenData,
+            ),
+            name: NavigatorWidget.routeName(routeIndex),
+            replace: true,
+          );
         },
         selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
       ),
-      floatingActionButton: PlusButtonWidget(onTap: widget.onPlusTap),
+      floatingActionButton: PlusButtonWidget(
+        onTap: widget.onPlusTap ??
+            () => pushRouteIfValid(
+                  context,
+                  builder: (context) => NavigatorWidget(
+                    OrderScreen.routeIndex,
+                    screenData: widget.screenData,
+                  ),
+                  name: OrderScreen.routeName,
+                  replace: widget.screenData.isPlanSelected,
+                ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

@@ -16,6 +16,9 @@ const String appName = 'taaqeem';
 const String appPassword = 'aexoo5eiz3Mahahd';
 const String appVersion = '20200425090500';
 
+// Avatar colors
+const Color avatarBackgroundColor = Color(0xFFE0E0E0);
+
 // Colors for discount box
 const Color discountBackgroundColor = Color(0xFF1DB263);
 const Color discountTextColor = Colors.white;
@@ -55,6 +58,9 @@ const String locale = 'en-ae';
 // Menu item color
 const Color menuItemColor = Color(0xFF4F4F4F);
 
+// Phone prefix
+const String phonePrefix = '+971 ';
+
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;
 
@@ -70,4 +76,5 @@ const statusSuccess = 'SUCCESS';
 
 // Default text colors
 const Color subtitleColor = Color(0xFF828282);
+const Color superscriptColor = Color(0xFFDCDCDC);
 const Color textColor = Color(0xFF333333);

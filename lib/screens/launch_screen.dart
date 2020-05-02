@@ -6,11 +6,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans+all.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
@@ -20,7 +22,8 @@ class LaunchScreen extends StatefulWidget {
   _LaunchScreenState createState() => _LaunchScreenState();
 }
 
-class _LaunchScreenState extends State<LaunchScreen> with Scale {
+class _LaunchScreenState extends State<LaunchScreen>
+    with Scale, RouteValidator {
   // Minimum delay — 3 seconds
   final Duration minDelay = Duration(seconds: 3);
   final NetworkController networkController = NetworkController();
@@ -85,9 +88,6 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
             status: appData.status,
           );
     if (!plans.isValid) plans.plans = AllPlans.local;
-    debugPrint(
-      'lib/screens/launch_screen.dart:89: $plans',
-    );
     navigateWithDelay(context);
   }
 
@@ -103,11 +103,13 @@ class _LaunchScreenState extends State<LaunchScreen> with Scale {
     final Duration elapsedTime = DateTime.now().difference(startTime);
     final Duration delay = minDelay - elapsedTime;
     if (0 < delay.inMilliseconds) await Future.delayed(delay);
-    Navigator.push(
+    pushRouteIfValid(
       context,
-      MaterialPageRoute(
-        builder: (context) => MainScreen(plans),
+      builder: (context) => MainScreen(
+        ScreenData(plans: plans),
       ),
+      name: MainScreen.routeName,
+      replace: true,
     );
   }
 }

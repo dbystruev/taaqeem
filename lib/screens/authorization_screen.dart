@@ -9,26 +9,26 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
-import 'package:taaqeem/models/order.dart';
+import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/screens/policy_screen.dart';
-import 'package:taaqeem/screens/profile_screen.dart';
+import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class AuthorizationScreen extends StatefulWidget {
   static int attemptsRemaining;
-  final Order order;
-  final String phone;
-  final String phonePrefix = '+971 ';
+  static const routeIndex = 5;
+  static String get routeName => NavigatorWidget.routeName(routeIndex);
+  
   final Random random = Random();
+  final ScreenData screenData;
   final String verificationCode;
 
-  AuthorizationScreen({
-    this.order,
-    this.phone,
-    this.verificationCode,
-  });
+  AuthorizationScreen(ScreenData screenData, {this.verificationCode})
+      : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
 
   @override
   _AuthorizationScreenState createState() => _AuthorizationScreenState();
@@ -62,7 +62,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
               color: globals.textColor,
               fontSize: 18,
               text: isCode
-                  ? 'We’ve sent the verification code to\n${widget.phone}'
+                  ? 'We’ve sent the verification code to\n${widget.screenData.user.phone}'
                   : 'We’ll send you a verification code',
               textScaleFactor: scale,
             ),
@@ -85,14 +85,14 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                   fontSize: 28 * scale,
                   fontWeight: FontWeight.w600,
                 ),
-                prefixText: isCode ? null : widget.phonePrefix,
+                prefixText: isCode ? null : globals.phonePrefix,
               ),
               onChanged: (String text) {
                 final String digitsText = digits(text);
                 if (isCode && 3 < digitsText.length || 9 < digitsText.length)
-                  routeToTheNextScreenIfValid();
+                  routeToProfileScreenIfValid();
               },
-              onEditingComplete: routeToTheNextScreenIfValid,
+              onEditingComplete: routeToProfileScreenIfValid,
               scale: scale,
             ),
             SizedBox(height: 79 * scale),
@@ -130,7 +130,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
           ),
         ),
         focusNode: keyboardNode,
-        onTapAction: routeToTheNextScreenIfValid,
+        onTapAction: routeToProfileScreenIfValid,
       ),
     );
   }
@@ -164,21 +164,31 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     keyboardNode = FocusNode();
   }
 
-  void routeToTheNextScreenIfValid() {
+  void routeToProfileScreenIfValid() {
     final String textToValidate = formController.text;
     hideKeyboard();
     if (isCode) {
       if (!pushRouteIfValid(
         context,
-        builder: (context) => ProfileScreen(widget.phone),
+        builder: (context) => ProfileLandingScreen(
+          ScreenData.over(
+            widget.screenData,
+            user: User.over(
+              widget.screenData.user,
+              phone: widget.screenData.user.phone,
+            ),
+          ),
+        ),
         maintainState: false,
+        name: ProfileLandingScreen.routeName,
         replace: true,
         validator: () => validateCode(textToValidate),
       )) {
+        setState(() => formController.text = '');
         if (--AuthorizationScreen.attemptsRemaining < 1) {
           Navigator.popUntil(
             context,
-            ModalRoute.withName('AuthorizationScreen'),
+            ModalRoute.withName(ProfileLandingScreen.routeName),
           );
         }
       }
@@ -188,11 +198,16 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
       if (pushRouteIfValid(
         context,
         builder: (context) => AuthorizationScreen(
-          order: widget.order,
-          phone: widget.phonePrefix + textToValidate,
+          ScreenData.over(
+            widget.screenData,
+            user: User.over(
+              widget.screenData.user,
+              phone: globals.phonePrefix + textToValidate,
+            ),
+          ),
           verificationCode: randomCode,
         ),
-        maintainState: false,
+        name: AuthorizationScreen.routeName,
         validator: () => validatePhone(textToValidate),
       )) showMessageInContext(context, 'your code is: $randomCode');
     }

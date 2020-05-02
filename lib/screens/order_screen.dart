@@ -11,8 +11,9 @@ import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
-import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/authorization_screen.dart';
+import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/calendar_widget.dart';
@@ -20,15 +21,23 @@ import 'package:taaqeem/widgets/dropdown_widget.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
 import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class OrderScreen extends StatefulWidget {
-  final Plan plan;
-  final Plans plans;
+  static const routeIndex = 4;
+  static String get routeName => NavigatorWidget.routeName(routeIndex);
+  static const List<String> services = [
+    'Sanitation & disinfection',
+    'Cleaning & maintenance',
+  ];
 
-  OrderScreen({this.plan, @required this.plans});
+  final ScreenData screenData;
+
+  OrderScreen(ScreenData screenData)
+      : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
 
   @override
   _OrderScreenState createState() => _OrderScreenState();
@@ -37,13 +46,10 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   CalendarController calendarController;
   FocusNode keyboardNode;
+  Plan plan;
   List<Plan> plans;
   int selectedPlanIndex;
   int selectedServiceIndex;
-  final List<String> services = [
-    'Sanitation & disinfection',
-    'Cleaning & maintenance',
-  ];
   ScrollController scrollController;
   DateTime selectedDay;
   bool showCalendar = false;
@@ -53,14 +59,14 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   @override
   Widget build(BuildContext context) {
     final double scale = Scale.getScale(context);
-    final bool showPlanSelection = widget.plan == null;
+    final bool showPlanSelection = plan == null;
     final List<Widget> children = [
       if (showPlanSelection) BackWidget('Create new booking'),
-      if (!showPlanSelection) HeaderImageWidget(widget.plan.image),
+      if (!showPlanSelection) HeaderImageWidget(plan.image),
       if (!showPlanSelection) SizedBox(height: 16 * scale),
       if (!showPlanSelection)
         TitleWidget(
-          widget.plan.title,
+          plan.title,
           subtitle:
               'Fill in the form, please and we will help\nYou immediately',
         ),
@@ -75,7 +81,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
           selectedItemIndex: selectedPlanIndex,
         ),
       DropdownWidget(
-        services,
+        OrderScreen.services,
         hint: 'Type of service',
         onChanged: (int index) {
           setState(() => selectedServiceIndex = index < 0 ? null : index);
@@ -131,7 +137,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
       Opacity(
         child: ButtonWidget(
           'Book Service',
-          onPressed: routeToTheNextScreenIfValid,
+          onPressed: routeToProfileLandingScreenIfValid,
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
@@ -160,14 +166,8 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
         ),
         onTap: hideCalendarAndKeyboard,
       ),
-      onPlusTap: routeToTheNextScreenIfValid,
-      onTap: (int index) {
-        setState(
-          () {
-            debugPrint('lib/screens/order_screen.dart:167 index = $index');
-          },
-        );
-      },
+      onPlusTap: routeToProfileLandingScreenIfValid,
+      screenData: widget.screenData,
     );
   }
 
@@ -194,24 +194,32 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
     super.initState();
     calendarController = CalendarController();
     keyboardNode = FocusNode();
-    plans = widget.plans.plans;
+    plans = widget.screenData.plans.plans;
+    final int selectedPlan = widget.screenData.selectedPlan;
+    if (selectedPlan != null && selectedPlan < plans.length)
+      plan = plans[selectedPlan];
     scrollController = ScrollController();
     squareMetersController = TextEditingController();
   }
 
-  void routeToTheNextScreenIfValid() {
+  void routeToProfileLandingScreenIfValid() {
     hideCalendarAndKeyboard();
     pushRouteIfValid(
       context,
-      builder: (context) => AuthorizationScreen(
-        order: Order(
-          day: selectedDay,
-          meters: squareMeters,
-          plan: widget.plan,
-          service: services[selectedServiceIndex],
+      builder: (context) => ProfileLandingScreen(
+        ScreenData.over(
+          widget.screenData,
+          order: Order.over(
+            widget.screenData.order,
+            cleaningDate: selectedDay,
+            meters: squareMeters,
+            plan: plan,
+            service: OrderScreen.services[selectedServiceIndex],
+          ),
         ),
       ),
-      name: 'AuthorizationScreen',
+      name: ProfileLandingScreen.routeName,
+      replace: true,
       validator: validator,
     );
   }
@@ -220,7 +228,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
     if (plan?.id == null) return 'please choose the type of area';
     if (selectedServiceIndex == null ||
         selectedServiceIndex < 0 ||
-        services.length <= selectedServiceIndex)
+        OrderScreen.services.length <= selectedServiceIndex)
       return 'please choose the type of service';
     if (squareMeters == null || squareMeters < 1)
       return 'please enter a positive number of square meters';
@@ -232,7 +240,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
   }
 
   String validator() {
-    final Plan plan = widget.plan ??
+    final Plan plan = this.plan ??
         (selectedPlanIndex == null ? null : plans[selectedPlanIndex]);
     return validatePlan(plan);
   }

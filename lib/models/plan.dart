@@ -53,7 +53,7 @@ class Plan {
     this.type,
     this.subtitle,
   }) : this.id = id ?? ++_maxId {
-    _maxId = max(id, _maxId);
+    _maxId = max(this.id, _maxId);
   }
 
   /// A necessary factory constructor for creating a new Plan instance

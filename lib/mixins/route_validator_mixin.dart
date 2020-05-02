@@ -21,10 +21,14 @@ mixin RouteValidator {
     double scale,
     String Function() validator,
   }) {
+    debugPrint(
+      'lib/mixins/route_validator_mixin.dart:25 pushRouteIfValid(name: \'$name\', replace: $replace)',
+    );
     if (validator != null) {
       final String message = validator();
       if (message.isNotEmpty) {
         showMessageInContext(context, message);
+        debugPrint('pushRouteIfValid() failed: \'$message\'');
         return false;
       }
     }

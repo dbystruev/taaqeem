@@ -23,6 +23,7 @@ class ButtonWidget extends StatelessWidget with Scale {
   final double scale;
   final String text;
   final Color textColor;
+  final TextDecoration textDecoration;
   final double width;
 
   ButtonWidget(
@@ -39,6 +40,7 @@ class ButtonWidget extends StatelessWidget with Scale {
     this.onPressed,
     this.scale,
     this.textColor = globals.primaryColor,
+    this.textDecoration,
     this.width = 300,
   });
 
@@ -50,6 +52,7 @@ class ButtonWidget extends StatelessWidget with Scale {
       fontSize: fontSize,
       height: 1.6,
       text: text,
+      textDecoration: textDecoration,
       textScaleFactor: scale,
     );
     return Row(
@@ -62,7 +65,7 @@ class ButtonWidget extends StatelessWidget with Scale {
                 : Row(
                     children: <Widget>[
                       Image.asset(
-                        imageName,
+                        'assets/images/$imageName.png',
                         height: imageHeight * scale,
                         width: imageWidth * scale,
                       ),

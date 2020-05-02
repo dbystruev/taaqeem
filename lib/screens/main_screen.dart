@@ -5,27 +5,33 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/models/plan.dart';
-import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/discount_widget.dart';
 import 'package:taaqeem/widgets/header_image_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/plan_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/title_widget.dart';
 
 class MainScreen extends StatefulWidget {
-  final Plans plans;
+  static const routeIndex = 0;
+  static String get routeName => NavigatorWidget.routeName(routeIndex);
 
-  MainScreen(this.plans);
+  final ScreenData screenData;
+
+  MainScreen(ScreenData screenData)
+      : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
 
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with Scale {
+class _MainScreenState extends State<MainScreen> with RouteValidator, Scale {
   int lastIndex;
   List<Plan> plans;
   ScrollController scrollController;
@@ -91,8 +97,9 @@ class _MainScreenState extends State<MainScreen> with Scale {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          OrderScreen(plan: plans[index], plans: widget.plans),
+                      builder: (context) => OrderScreen(
+                        ScreenData.over(widget.screenData, selectedPlan: index),
+                      ),
                     ),
                   );
                 },
@@ -105,24 +112,16 @@ class _MainScreenState extends State<MainScreen> with Scale {
           Scale.getSafeMargin(context),
         ),
       ),
-      onPlusTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => OrderScreen(plans: widget.plans),
-        ),
-      ),
-      onTap: (int index) {
-        debugPrint('lib/screens/main_screen.dart:115 index = $index');
-      },
+      screenData: widget.screenData,
     );
   }
 
   @override
   void initState() {
     super.initState();
-    plans = widget.plans.plans;
+    plans = widget.screenData.plans.plans;
     scrollController = ScrollController();
-    selectedPlan = plans.length;
+    selectedPlan = widget.screenData.selectedPlan ?? plans.length;
   }
 
   @override
