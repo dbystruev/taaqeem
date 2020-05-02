@@ -82,6 +82,7 @@ Prevention UAE.''',
           ),
           padding: EdgeInsets.symmetric(horizontal: 20 * scale),
         ),
+        scale: scale,
         subtitle:
             'The first marketplace in UAE to help protect\nYou and keep You in healthy environment',
         title: 'About us',

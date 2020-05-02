@@ -45,7 +45,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
 
   @override
   Widget build(BuildContext context) {
-    final double scale = Scale.getScale(context);
+    final double scale = Scale.getHorizontalScale(context);
     final TextStyle underline =
         const TextStyle(decoration: TextDecoration.underline);
     return Scaffold(

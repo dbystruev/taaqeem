@@ -10,6 +10,7 @@ import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/user.dart';
+import 'package:taaqeem/screens/feedback_screen.dart';
 import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/profile_edit_screen.dart';
 import 'package:taaqeem/widgets/avatar_widget.dart';
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   @override
   Widget build(BuildContext context) {
     final double safeMargin = Scale.getSafeMargin(context);
-    final double scale = Scale.getScale(context);
+    final double scale = Scale.getHorizontalScale(context);
     final User user = widget.screenData.user;
     final bool userHasName = user.name != null && user.name.trim().isNotEmpty;
     final bool userHasEmail =
@@ -98,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
               if (!userHasEmail) SizedBox(height: 183 * scale),
               ButtonWidget(
                 'Give us a feedback',
-                onPressed: () {},
+                onPressed: leaveFeedback,
                 width: 335,
                 scale: scale,
               ),
@@ -143,6 +144,14 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
       context,
       builder: (context) => ProfileEditScreen(widget.screenData),
       name: ProfileEditScreen.routeName,
+    );
+  }
+
+  void leaveFeedback() {
+    pushRouteIfValid(
+      context,
+      builder: (context) => FeedbackScreen(widget.screenData),
+      name: FeedbackScreen.routeName,
     );
   }
 

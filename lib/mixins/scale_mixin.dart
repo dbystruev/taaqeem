@@ -19,11 +19,32 @@ mixin Scale {
   static bool isHorizontal(BuildContext context) =>
       getScreenHeight(context) < getScreenWidth(context);
 
+  static double getHorizontalScale(
+    BuildContext context, {
+    bool deductSafeArea = false,
+    double designWidth,
+  }) {
+    final bool isLandscape = isHorizontal(context);
+    final double safeAreaWidth = isLandscape
+        ? defaultSafeAreaLandscapeWidth
+        : defaultSafeAreaPortraitWidth;
+    final double defaultWidth =
+        isLandscape ? defaultLongerSize : defaultShorterSize;
+    final double deductWidth =
+        deductSafeArea ? defaultWidth - safeAreaWidth : 0;
+    final double width = designWidth == null || designWidth <= 0
+        ? defaultWidth - deductWidth
+        : designWidth;
+    final double horizontalScale = getScreenWidth(context) / width;
+    return horizontalScale;
+  }
+
   static double getMidX(BuildContext context) => getScreenWidth(context) / 2;
 
   static double getMidY(BuildContext context) => getScreenHeight(context) / 2;
 
-  static double getSafeMargin(BuildContext context) => isHorizontal(context) ? 44 : 0;
+  static double getSafeMargin(BuildContext context) =>
+      isHorizontal(context) ? 44 : 0;
 
   static double getScale(
     BuildContext context, {
@@ -55,12 +76,6 @@ mixin Scale {
     final double horizontalScale = getScreenWidth(context) / width;
     final double verticalScale = getScreenHeight(context) / height;
     final double scale = min(horizontalScale, verticalScale);
-    // debugPrint(
-    //   'lib/mixins/scale_mixin.dart:59' +
-    //       ' design $width x $height' +
-    //       ', screen ${getScreenWidth(context)} x ${getScreenHeight(context)}' +
-    //       ', scale = $scale',
-    // );
     return scale;
   }
 
@@ -69,4 +84,24 @@ mixin Scale {
 
   static double getScreenWidth(BuildContext context) =>
       MediaQuery.of(context).size.width;
+
+  static double getVerticalScale(
+    BuildContext context, {
+    bool deductSafeArea = false,
+    double designHeight,
+  }) {
+    final bool isLandscape = isHorizontal(context);
+    final double safeAreaHeight = isLandscape
+        ? defaultSafeAreaLandscapeHeight
+        : defaultSafeAreaPortraitHeight;
+    final double defaultHeight =
+        isLandscape ? defaultShorterSize : defaultLongerSize;
+    final double deductHeight =
+        deductSafeArea ? defaultHeight - safeAreaHeight : 0;
+    final double height = designHeight == null || designHeight <= 0
+        ? defaultHeight - deductHeight
+        : designHeight;
+    final double verticalScale = getScreenHeight(context) / height;
+    return verticalScale;
+  }
 }

@@ -57,10 +57,15 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = Scale.getScale(context);
+    final double scale = Scale.getHorizontalScale(context);
     final bool showPlanSelection = plan == null;
     final List<Widget> children = [
-      if (showPlanSelection) BackWidget('Create new booking'),
+      if (showPlanSelection)
+        BackWidget(
+          'Create new booking',
+          marginTop: 31,
+          scale: scale,
+        ),
       if (!showPlanSelection) HeaderImageWidget(plan.image),
       if (!showPlanSelection) SizedBox(height: 16 * scale),
       if (!showPlanSelection)

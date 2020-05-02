@@ -43,14 +43,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
   @override
   Widget build(BuildContext context) {
     final double safeMargin = Scale.getSafeMargin(context);
-    final double scale = Scale.getScale(context);
+    final double scale = Scale.getHorizontalScale(context);
     return ScaffoldBarWidget(
       body: KeyboardActionsWidget(
         child: ListView(
           children: [
-            SizedBox(height: 31 * scale),
-            BackWidget('Profile info'),
-            SizedBox(height: 45 * scale),
+            BackWidget(
+              'Profile info',
+              marginTop: 31,
+              scale: scale,
+            ),
             FormWidget(
               borderColor: globals.inactiveColor,
               enabled: false,
@@ -93,7 +95,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
             )
           ],
           padding: EdgeInsets.symmetric(
-            horizontal: 20 * scale + safeMargin,
+            horizontal: safeMargin,
             vertical: safeMargin,
           ),
         ),

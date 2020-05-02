@@ -15,6 +15,10 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 class BackWidget extends StatelessWidget with RouteValidator {
   final Color color;
   final double fontSize;
+  final double marginBottom;
+  final double marginLeft;
+  final double marginRight;
+  final double marginTop;
   final double scale;
   final String text;
 
@@ -22,6 +26,10 @@ class BackWidget extends StatelessWidget with RouteValidator {
     this.text, {
     this.color = globals.textColor,
     this.fontSize = 20,
+    this.marginBottom = 45,
+    this.marginLeft = 20,
+    this.marginRight = 20,
+    this.marginTop = 40,
     this.scale,
   });
 
@@ -44,8 +52,10 @@ class BackWidget extends StatelessWidget with RouteValidator {
           ),
         ],
       ),
-      marginBottom: 45,
-      marginTop: 40,
+      marginBottom: marginBottom,
+      marginLeft: marginLeft,
+      marginRight: marginRight,
+      marginTop: marginTop,
     );
   }
 }

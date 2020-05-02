@@ -79,14 +79,14 @@ class SupportScreen extends StatelessWidget with RouteValidator {
                     url:
                         'https://www.facebook.com/taaqeem?roistat_visit=105268',
                   ),
-                  SizedBox(width: 12 * scale),
+                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'instagram_icon',
                     scale: scale,
                     url:
                         'https://www.instagram.com/taaqeem.ae/?roistat_visit=105268',
                   ),
-                  SizedBox(width: 12 * scale),
+                  // SizedBox(width: 12 * scale),
                   // CircleIconWidget('telegram_icon', iconSize: 22, scale: scale),
                   // SizedBox(width: 12 * scale),
                   CircleIconWidget(
@@ -95,7 +95,7 @@ class SupportScreen extends StatelessWidget with RouteValidator {
                     url:
                         'https://wa.me/971508689923?roistat_visit=105268&text=Please%20send%20this%20message%20and%20wait%20for%20a%20response.%20Your%20ticket%20number:%20105268',
                   ),
-                  SizedBox(width: 12 * scale),
+                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'youtube_icon',
                     scale: scale,
@@ -103,7 +103,7 @@ class SupportScreen extends StatelessWidget with RouteValidator {
                         'https://www.youtube.com/channel/UCuBMtezf2_IqaSWAPeKhCpg?roistat_visit=105268',
                   ),
                 ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               ),
               SizedBox(
                 height: max(200, Scale.getScreenHeight(context) - 540) * scale,
@@ -112,6 +112,7 @@ class SupportScreen extends StatelessWidget with RouteValidator {
           ),
           padding: EdgeInsets.symmetric(horizontal: 20 * scale),
         ),
+        scale: scale,
         subtitle:
             'Write to us in messengers, call\nor look at the answers to FAQ',
         title: 'How can we help you?',

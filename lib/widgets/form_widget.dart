@@ -13,6 +13,8 @@ class FormWidget extends StatelessWidget {
   final Color borderColor;
   final double borderRadius;
   final double borderWidth;
+  final double boxHeight;
+  final double boxWidth;
   final Color color;
   final TextEditingController controller;
   final Decoration decoration;
@@ -26,6 +28,7 @@ class FormWidget extends StatelessWidget {
   final InputDecoration inputDecoration;
   final FocusNode keyboardNode;
   final TextInputType keyboardType;
+  final int maxLines;
   final String labelText;
   final bool obscureText;
   final ValueChanged<String> onChanged;
@@ -38,6 +41,8 @@ class FormWidget extends StatelessWidget {
     this.borderColor = globals.subtitleColor,
     this.borderRadius = 5,
     this.borderWidth = 1,
+    this.boxHeight = 52,
+    this.boxWidth,
     this.color = globals.menuItemColor,
     this.controller,
     this.decoration,
@@ -52,6 +57,7 @@ class FormWidget extends StatelessWidget {
     this.keyboardNode,
     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.labelText,
+    this.maxLines = 1,
     this.obscureText = false,
     this.onChanged,
     this.onEditingComplete,
@@ -86,6 +92,7 @@ class FormWidget extends StatelessWidget {
             ),
         enabled: enabled,
         keyboardType: keyboardType,
+        maxLines: maxLines,
         focusNode: keyboardNode,
         obscureText: obscureText,
         onChanged: onChanged,
@@ -100,6 +107,8 @@ class FormWidget extends StatelessWidget {
         textInputAction: textInputAction,
       ),
       decoration: decoration,
+      height: boxHeight,
+      width: boxWidth,
     );
   }
 }

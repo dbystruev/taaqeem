@@ -22,12 +22,17 @@ class PolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double scale = Scale.getScale(context);
+    final double scale = Scale.getHorizontalScale(context);
     final Policy policy = showToS ? AllPolicies.local[1] : AllPolicies.local[0];
     return Scaffold(
       body: Column(
         children: [
-          BackWidget(policy.title, scale: scale),
+          BackWidget(
+            policy.title,
+            marginBottom: 40,
+            marginTop: 31 + Scale.getSafeMargin(context),
+            scale: scale,
+          ),
           Expanded(
             child: ListView.builder(
               itemBuilder: (_, int index) {
@@ -56,7 +61,6 @@ class PolicyScreen extends StatelessWidget {
               itemCount: policy.sections.length,
               padding: EdgeInsets.symmetric(
                 horizontal: 20 * scale + Scale.getSafeMargin(context),
-                vertical: Scale.getSafeMargin(context),
               ),
             ),
           ),
