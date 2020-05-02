@@ -94,13 +94,13 @@ class _MainScreenState extends State<MainScreen> with RouteValidator, Scale {
                   );
                 },
                 onPressed: (int index) {
-                  Navigator.push(
+                  pushRouteIfValid(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => OrderScreen(
-                        ScreenData.over(widget.screenData, selectedPlan: index),
-                      ),
+                    builder: (context) => OrderScreen(
+                      ScreenData.over(widget.screenData, selectedPlan: index),
                     ),
+                    name: OrderScreen.routeName,
+                    replace: true,
                   );
                 },
                 scale: scale,
@@ -112,7 +112,8 @@ class _MainScreenState extends State<MainScreen> with RouteValidator, Scale {
           Scale.getSafeMargin(context),
         ),
       ),
-      screenData: widget.screenData,
+      screenData:
+          ScreenData.over(widget.screenData, selectedPlan: selectedPlan),
     );
   }
 

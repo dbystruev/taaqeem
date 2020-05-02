@@ -19,6 +19,8 @@ const String appVersion = '20200425090500';
 // Avatar colors
 const Color avatarBackgroundColor = Color(0xFFE0E0E0);
 
+// Background color for about and support screens
+const Color backgroundTopColor = Color(0xFF05C15E);
 // Colors for discount box
 const Color discountBackgroundColor = Color(0xFF1DB263);
 const Color discountTextColor = Colors.white;

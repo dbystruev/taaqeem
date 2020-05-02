@@ -12,9 +12,25 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 class ProfileItemWidget extends StatelessWidget with Scale {
   final double scale;
   final String superscript;
+  final Color superscriptColor;
+  final double superscriptFontSize;
+  final double superscriptHeight;
   final String text;
+  final Color textColor;
+  final double textFontSize;
+  final double textHeight;
 
-  ProfileItemWidget(this.superscript, this.text, {this.scale});
+  ProfileItemWidget(
+    this.superscript,
+    this.text, {
+    this.scale,
+    this.superscriptColor = globals.superscriptColor,
+    this.superscriptFontSize = 16,
+    this.superscriptHeight = 1.75,
+    this.textColor = globals.textColor,
+    this.textFontSize = 18,
+    this.textHeight = 2.11,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +38,17 @@ class ProfileItemWidget extends StatelessWidget with Scale {
     return Column(
       children: [
         TheText.normal(
-          color: globals.superscriptColor,
-          fontSize: 16,
-          height: 1.75,
+          color: superscriptColor,
+          fontSize: superscriptFontSize,
+          height: superscriptHeight,
           text: superscript,
           textScaleFactor: scale,
         ),
         SizedBox(height: 6 * scale),
         TheText.w600(
-          color: globals.textColor,
-          fontSize: 18,
-          height: 2.11,
+          color: textColor,
+          fontSize: textFontSize,
+          height: textHeight,
           text: text,
           textScaleFactor: scale,
         ),

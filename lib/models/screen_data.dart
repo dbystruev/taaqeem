@@ -12,6 +12,7 @@ class ScreenData {
   bool get isPlanSelected =>
       selectedPlan != null &&
       plans?.plans != null &&
+      0 <= selectedPlan &&
       selectedPlan < plans.plans.length;
   final Order order;
   final Plans plans;

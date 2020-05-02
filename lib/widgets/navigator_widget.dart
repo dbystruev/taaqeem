@@ -29,9 +29,8 @@ class NavigatorWidget extends StatelessWidget {
 
   final int routeIndex;
   final ScreenData screenData;
-  final String vertificationCode;
 
-  NavigatorWidget(this.routeIndex, {this.screenData, this.vertificationCode});
+  NavigatorWidget(this.routeIndex, {this.screenData});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +46,7 @@ class NavigatorWidget extends StatelessWidget {
       case OrderScreen.routeIndex:
         return OrderScreen(screenData);
       case AuthorizationScreen.routeIndex:
-        return AuthorizationScreen(
-          screenData,
-          verificationCode: vertificationCode,
-        );
+        return AuthorizationScreen(screenData);
       case ProfileScreen.routeIndex:
         return ProfileScreen(screenData);
       default:

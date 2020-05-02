@@ -28,7 +28,7 @@ class _ProfileLandingScreenState extends State<ProfileLandingScreen> {
   @override
   Widget build(BuildContext context) {
     final ScreenData screenData = widget.screenData;
-    return screenData.user == null
+    return screenData.user?.phone == null
         ? AuthorizationScreen(screenData)
         : ProfileScreen(screenData);
   }

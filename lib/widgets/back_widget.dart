@@ -31,11 +31,8 @@ class BackWidget extends StatelessWidget with Scale {
       child: Row(
         children: [
           InkWell(
-            child:
-                ImageWidget('left', height: 15, scale: scale, width: 20),
-            onTap: () {
-              Navigator.pop(context);
-            },
+            child: ImageWidget('left', height: 15, scale: scale, width: 20),
+            onTap: () => Navigator.pop(context),
           ),
           SizedBox(width: 15 * scale),
           TheText.w600(

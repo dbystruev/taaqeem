@@ -22,12 +22,11 @@ class AuthorizationScreen extends StatefulWidget {
   static int attemptsRemaining;
   static const routeIndex = 5;
   static String get routeName => NavigatorWidget.routeName(routeIndex);
-  
+
   final Random random = Random();
   final ScreenData screenData;
-  final String verificationCode;
 
-  AuthorizationScreen(ScreenData screenData, {this.verificationCode})
+  AuthorizationScreen(ScreenData screenData)
       : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
 
   @override
@@ -36,10 +35,13 @@ class AuthorizationScreen extends StatefulWidget {
 
 class _AuthorizationScreenState extends State<AuthorizationScreen>
     with RouteValidator, Scale {
-  TextEditingController formController;
-  bool get isCode => widget.verificationCode != null;
+  TextEditingController codeController;
+  bool get isCode => phone != null && verificationCode != null;
   String get item => isCode ? 'verification code' : 'phone number';
   FocusNode keyboardNode;
+  String phone;
+  TextEditingController phoneController;
+  String verificationCode;
 
   @override
   Widget build(BuildContext context) {
@@ -62,14 +64,14 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
               color: globals.textColor,
               fontSize: 18,
               text: isCode
-                  ? 'We’ve sent the verification code to\n${widget.screenData.user.phone}'
+                  ? 'We’ve sent the verification code to\n$phone'
                   : 'We’ll send you a verification code',
               textScaleFactor: scale,
             ),
             SizedBox(height: 80 * scale),
             FormWidget(
               color: globals.textColor,
-              controller: formController,
+              controller: isCode ? codeController : phoneController,
               decoration: BoxDecoration(border: null),
               fontSize: 28,
               fontWeight: FontWeight.w600,
@@ -115,11 +117,9 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
               onTapDown: (TapDownDetails details) {
                 final bool showToS =
                     details.globalPosition.dx < Scale.getMidX(context);
-                Navigator.push(
+                pushRouteIfValid(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => PolicyScreen(showToS: showToS),
-                  ),
+                  builder: (context) => PolicyScreen(showToS: showToS),
                 );
               },
             ),
@@ -139,8 +139,9 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
 
   @override
   void dispose() {
+    phoneController.dispose();
     keyboardNode.dispose();
-    formController.dispose();
+    codeController.dispose();
     super.dispose();
   }
 
@@ -160,14 +161,16 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   @override
   void initState() {
     super.initState();
-    formController = TextEditingController();
+    codeController = TextEditingController();
     keyboardNode = FocusNode();
+    phone = widget.screenData.user?.phone;
+    phoneController = TextEditingController();
   }
 
   void routeToProfileScreenIfValid() {
-    final String textToValidate = formController.text;
     hideKeyboard();
     if (isCode) {
+      final String codeFromUser = codeController.text;
       if (!pushRouteIfValid(
         context,
         builder: (context) => ProfileLandingScreen(
@@ -175,49 +178,40 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
             widget.screenData,
             user: User.over(
               widget.screenData.user,
-              phone: widget.screenData.user.phone,
+              phone: phone,
             ),
           ),
         ),
         maintainState: false,
         name: ProfileLandingScreen.routeName,
         replace: true,
-        validator: () => validateCode(textToValidate),
+        validator: () => validateCode(codeFromUser),
       )) {
-        setState(() => formController.text = '');
-        if (--AuthorizationScreen.attemptsRemaining < 1) {
-          Navigator.popUntil(
-            context,
-            ModalRoute.withName(ProfileLandingScreen.routeName),
-          );
-        }
+        if (--AuthorizationScreen.attemptsRemaining < 1)
+          setState(() {
+            verificationCode = null;
+          });
       }
     } else {
-      final String randomCode = getRandomCode();
-      AuthorizationScreen.attemptsRemaining = 2;
-      if (pushRouteIfValid(
-        context,
-        builder: (context) => AuthorizationScreen(
-          ScreenData.over(
-            widget.screenData,
-            user: User.over(
-              widget.screenData.user,
-              phone: globals.phonePrefix + textToValidate,
-            ),
-          ),
-          verificationCode: randomCode,
-        ),
-        name: AuthorizationScreen.routeName,
-        validator: () => validatePhone(textToValidate),
-      )) showMessageInContext(context, 'your code is: $randomCode');
+      final String phoneFromUser = phoneController.text;
+      final String errorMessage = validatePhone(phoneFromUser);
+      if (errorMessage.isEmpty) {
+        AuthorizationScreen.attemptsRemaining = 2;
+        final String randomCode = getRandomCode();
+        setState(() {
+          phone = globals.phonePrefix + phoneFromUser;
+          verificationCode = randomCode;
+        });
+        showMessageInContext(context, 'your code is: $randomCode');
+      } else
+        showMessageInContext(context, errorMessage);
     }
   }
 
   /// Returns empty String if code is correct
   /// Returns error message if code is not correct
   String validateCode(String code) {
-    if (code != widget.verificationCode)
-      return 'incorrect code. Try one more time';
+    if (code != verificationCode) return 'incorrect code';
     return '';
   }
 

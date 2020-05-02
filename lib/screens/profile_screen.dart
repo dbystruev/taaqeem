@@ -6,8 +6,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/globals.dart' as globals;
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/models/user.dart';
+import 'package:taaqeem/screens/main_screen.dart';
+import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/avatar_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
@@ -28,18 +32,19 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with Scale {
+class _ProfileScreenState extends State<ProfileScreen>
+    with RouteValidator, Scale {
   @override
   Widget build(BuildContext context) {
-    final double safeMarin = Scale.getSafeMargin(context);
+    final double safeMargin = Scale.getSafeMargin(context);
     final double scale = Scale.getScale(context);
     return ScaffoldBarWidget(
       body: Stack(
         children: [
           Positioned(
             child: AvatarWidget(widget.screenData.user, scale: scale),
-            right: 21 * scale + safeMarin,
-            top: 33 * scale + safeMarin,
+            right: 21 * scale + safeMargin,
+            top: 33 * scale + safeMargin,
           ),
           ListView(
             children: [
@@ -71,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> with Scale {
                 imageHeight: 20,
                 imageName: 'logout',
                 imageWidth: 20,
-                onPressed: () {},
+                onPressed: logout,
                 scale: scale,
                 textColor: Theme.of(context).accentColor,
                 textDecoration: TextDecoration.underline,
@@ -88,13 +93,27 @@ class _ProfileScreenState extends State<ProfileScreen> with Scale {
               ),
             ],
             padding: EdgeInsets.symmetric(
-              horizontal: 20 * scale + safeMarin,
-              vertical: safeMarin,
+              horizontal: 20 * scale + safeMargin,
+              vertical: safeMargin,
             ),
           ),
         ],
       ),
       screenData: widget.screenData,
+    );
+  }
+
+  void logout() {
+    pushRouteIfValid(
+      context,
+      builder: (context) => MainScreen(
+        ScreenData.over(
+          widget.screenData,
+          user: User(),
+        ),
+      ),
+      name: MainScreen.routeName,
+      replace: true,
     );
   }
 }
