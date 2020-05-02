@@ -63,7 +63,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
       if (showPlanSelection)
         BackWidget(
           'Create new booking',
-          marginTop: 31,
+          // marginTop: 31,
           scale: scale,
         ),
       if (!showPlanSelection) HeaderImageWidget(plan.image),
@@ -149,29 +149,27 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
       ),
     ];
     return ScaffoldBarWidget(
-      body: GestureDetector(
-        child: KeyboardActionsWidget(
-          child: ListView(
-            children: children
-                .map(
-                  (child) => GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    child: child,
-                    onTap: hideCalendarAndKeyboard,
-                  ),
-                )
-                .toList(),
-            controller: scrollController,
-            padding: EdgeInsets.all(
-              Scale.getSafeMargin(context),
-            ),
+      body: KeyboardActionsWidget(
+        child: ListView(
+          children: children
+              .map(
+                (child) => GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  child: child,
+                  onTap: hideCalendarAndKeyboard,
+                ),
+              )
+              .toList(),
+          controller: scrollController,
+          padding: EdgeInsets.all(
+            Scale.getSafeMargin(context),
           ),
-          focusNode: keyboardNode,
-          onTapAction: hideCalendarAndKeyboard,
         ),
-        onTap: hideCalendarAndKeyboard,
+        focusNode: keyboardNode,
+        onTapAction: hideCalendarAndKeyboard,
       ),
       onPlusTap: () => routeToProfileLandingScreenIfValid(showPlanSelection),
+      onTap: hideCalendarAndKeyboard,
       removePreviousRoute: showPlanSelection,
       screenData: widget.screenData,
     );

@@ -10,7 +10,6 @@ import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/main_screen.dart';
-import 'package:taaqeem/screens/profile_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
@@ -41,7 +40,7 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
             BackWidget(
               'Give us a feedback',
               marginBottom: 20,
-              marginTop: 31,
+              // marginTop: 31,
               scale: scale,
             ),
             Padding(

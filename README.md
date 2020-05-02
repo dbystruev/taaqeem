@@ -1,6 +1,6 @@
 # Taaqeem App
 
-Cleaning order app for [Taaqeem](https://taaqeem.ae) from [FL.ru](https://www.fl.ru/projects/4364253/prostoe-prilojenie-dlya-android-i-ios.html).
+Cleaning order app for [Taaqeem](https://taaqeem.ae).
 
 ## Launch Screen
 
@@ -12,32 +12,64 @@ Cleaning order app for [Taaqeem](https://taaqeem.ae) from [FL.ru](https://www.fl
 
 ## Order Screen
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot03.png?raw=true)
+![Order Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot03.png?raw=true)
 
 ## Service Selection
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot04.png?raw=true)
+![Service Selection](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot04.png?raw=true)
 
 ## Date Selection
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot05.png?raw=true)
+![Date Selection](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot05.png?raw=true)
 
 ## New Booking
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot06.png?raw=true)
+![New Booking](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot06.png?raw=true)
 
 ## Numeric Keypad
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot07.png?raw=true)
+![Numeric Keypad](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot07.png?raw=true)
 
 ## Phone Number
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot08.png?raw=true)
+![Phone Number](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot08.png?raw=true)
 
 ## Terms of Service
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot09.png?raw=true)
+![Terms of Service](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot09.png?raw=true)
 
 ## Privacy Policy
 
-![Main Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot10.png?raw=true)
+![Privacy Policy](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot10.png?raw=true)
+
+## Code Entry
+
+![Code Entry](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot11.png?raw=true)
+
+## Profile Phone
+
+![Profile Phone](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot12.png?raw=true)
+
+## Profile Email
+
+![Profile Email](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot13.png?raw=true)
+
+## Profile Name
+
+![Profile Name](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot14.png?raw=true)
+
+## Profile Completed
+
+![Profile Completed](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot15.png?raw=true)
+
+## Feedback Form
+
+![Feedback Form](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot16.png?raw=true)
+
+## About Us
+
+![About Us](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot17.png?raw=true)
+
+## Support Screen
+
+![Support Screen](https://github.com/dbystruev/taaqeem/blob/master/screenshots/screenshot18.png?raw=true)

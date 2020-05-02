@@ -49,88 +49,92 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     final TextStyle underline =
         const TextStyle(decoration: TextDecoration.underline);
     return Scaffold(
-      body: KeyboardActionsWidget(
-        child: ListView(
-          children: [
-            SizedBox(height: 53 * scale),
-            TheText.w600(
-              color: Theme.of(context).accentColor,
-              fontSize: 28,
-              text: 'Please enter\nyour $item',
-              textScaleFactor: scale,
-            ),
-            SizedBox(height: 35 * scale),
-            TheText.w600(
-              color: globals.textColor,
-              fontSize: 18,
-              text: isCode
-                  ? 'We’ve sent the verification code to\n$phone'
-                  : 'We’ll send you a verification code',
-              textScaleFactor: scale,
-            ),
-            SizedBox(height: 80 * scale),
-            FormWidget(
-              color: globals.textColor,
-              controller: isCode ? codeController : phoneController,
-              decoration: BoxDecoration(border: null),
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              keyboardNode: keyboardNode,
-              keyboardType: isCode ? TextInputType.number : TextInputType.phone,
-              inputDecoration: InputDecoration(
-                border: InputBorder.none,
-                hintStyle: TextStyle(color: globals.hintColor),
-                hintText: isCode ? '9999' : '99-999-9999',
-                prefixStyle: TextStyle(
-                  color: globals.textColor,
-                  fontFamily: globals.fontFamily,
-                  fontSize: 28 * scale,
-                  fontWeight: FontWeight.w600,
-                ),
-                prefixText: isCode ? null : globals.phonePrefix,
-              ),
-              onChanged: (String text) {
-                final String digitsText = digits(text);
-                if (isCode && 3 < digitsText.length || 9 < digitsText.length)
-                  routeToProfileScreenIfValid();
-              },
-              onEditingComplete: routeToProfileScreenIfValid,
-              scale: scale,
-            ),
-            SizedBox(height: 79 * scale),
-            InkWell(
-              child: TheText.normal(
-                color: globals.subtitleColor,
-                fontSize: 15,
-                height: 1.6,
-                styles: [null, underline, null, underline],
-                textAlign: TextAlign.center,
-                texts: [
-                  'By entering $item you agree with our\n',
-                  'Terms of service',
-                  ' and ',
-                  'Privacy policy',
-                ],
+      body: GestureDetector(
+        child: KeyboardActionsWidget(
+          child: ListView(
+            children: [
+              SizedBox(height: 53 * scale),
+              TheText.w600(
+                color: Theme.of(context).accentColor,
+                fontSize: 28,
+                text: 'Please enter\nyour $item',
                 textScaleFactor: scale,
               ),
-              onTap: () {}, // enables onTapDown
-              onTapDown: (TapDownDetails details) {
-                final bool showToS =
-                    details.globalPosition.dx < Scale.getMidX(context);
-                pushRouteIfValid(
-                  context,
-                  builder: (context) => PolicyScreen(showToS: showToS),
-                );
-              },
+              SizedBox(height: 35 * scale),
+              TheText.w600(
+                color: globals.textColor,
+                fontSize: 18,
+                text: isCode
+                    ? 'We’ve sent the verification code to\n$phone'
+                    : 'We’ll send you a verification code',
+                textScaleFactor: scale,
+              ),
+              SizedBox(height: 80 * scale),
+              FormWidget(
+                color: globals.textColor,
+                controller: isCode ? codeController : phoneController,
+                decoration: BoxDecoration(border: null),
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                keyboardNode: keyboardNode,
+                keyboardType:
+                    isCode ? TextInputType.number : TextInputType.phone,
+                inputDecoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: globals.hintColor),
+                  hintText: isCode ? '9999' : '99-999-9999',
+                  prefixStyle: TextStyle(
+                    color: globals.textColor,
+                    fontFamily: globals.fontFamily,
+                    fontSize: 28 * scale,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  prefixText: isCode ? null : globals.phonePrefix,
+                ),
+                onChanged: (String text) {
+                  final String digitsText = digits(text);
+                  if (isCode && 3 < digitsText.length || 9 < digitsText.length)
+                    routeToProfileScreenIfValid();
+                },
+                onEditingComplete: routeToProfileScreenIfValid,
+                scale: scale,
+              ),
+              SizedBox(height: 79 * scale),
+              InkWell(
+                child: TheText.normal(
+                  color: globals.subtitleColor,
+                  fontSize: 15,
+                  height: 1.6,
+                  styles: [null, underline, null, underline],
+                  textAlign: TextAlign.center,
+                  texts: [
+                    'By entering $item you agree with our\n',
+                    'Terms of service',
+                    ' and ',
+                    'Privacy policy',
+                  ],
+                  textScaleFactor: scale,
+                ),
+                onTap: () {}, // enables onTapDown
+                onTapDown: (TapDownDetails details) {
+                  final bool showToS =
+                      details.globalPosition.dx < Scale.getMidX(context);
+                  pushRouteIfValid(
+                    context,
+                    builder: (context) => PolicyScreen(showToS: showToS),
+                  );
+                },
+              ),
+            ],
+            padding: EdgeInsets.symmetric(
+              horizontal: 20 * scale + Scale.getSafeMargin(context),
+              vertical: Scale.getSafeMargin(context),
             ),
-          ],
-          padding: EdgeInsets.symmetric(
-            horizontal: 20 * scale + Scale.getSafeMargin(context),
-            vertical: Scale.getSafeMargin(context),
           ),
+          focusNode: keyboardNode,
+          onTapAction: routeToProfileScreenIfValid,
         ),
-        focusNode: keyboardNode,
-        onTapAction: routeToProfileScreenIfValid,
+        onTap: hideKeyboard,
       ),
     );
   }

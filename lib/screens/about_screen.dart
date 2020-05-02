@@ -23,6 +23,7 @@ class AboutScreen extends StatelessWidget with RouteValidator {
   static String get routeName => NavigatorWidget.routeName(routeIndex);
 
   final ScreenData screenData;
+  final ScrollController scrollController = ScrollController();
 
   AboutScreen(ScreenData screenData)
       : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
@@ -31,6 +32,7 @@ class AboutScreen extends StatelessWidget with RouteValidator {
   Widget build(BuildContext context) {
     final Color accentColor = Theme.of(context).accentColor;
     final double scale = Scale.getScale(context);
+    // scrollToTop();
     return ScaffoldBarWidget(
       body: BackgroundTopWidget(
         child: Padding(
@@ -52,14 +54,14 @@ class AboutScreen extends StatelessWidget with RouteValidator {
                 color: globals.menuItemColor,
                 fontSize: 16,
                 height: 1.75,
-                text: '''Taaqeem is a platform that helps companies
-and individuals to find the best companies in
-the UAE to provide govt-approved sanitisation
-and disinfection services.
-We only offer sanitation and cleaning services
-from companies that have been approved by
-UAE Municipality and Ministry of Health and
-Prevention UAE.''',
+                text: 'Taaqeem is a platform that helps companies' +
+                    ' and individuals to find the best companies in' +
+                    ' the UAE to provide govt-approved sanitisation' +
+                    ' and disinfection services.\n' +
+                    ' We only offer sanitation and cleaning services' +
+                    ' from companies that have been approved by' +
+                    ' UAE Municipality and Ministry of Health and' +
+                    ' Prevention UAE.',
                 textAlign: TextAlign.center,
                 textScaleFactor: scale,
               ),
@@ -83,11 +85,18 @@ Prevention UAE.''',
           padding: EdgeInsets.symmetric(horizontal: 20 * scale),
         ),
         scale: scale,
+        scrollController: scrollController,
         subtitle:
             'The first marketplace in UAE to help protect\nYou and keep You in healthy environment',
         title: 'About us',
       ),
       screenData: screenData,
     );
+  }
+
+  void scrollToTop() async {
+    final Duration duration = Duration(milliseconds: 250);
+    await Future.delayed(duration);
+    scrollController.animateTo(0, duration: duration, curve: Curves.ease);
   }
 }

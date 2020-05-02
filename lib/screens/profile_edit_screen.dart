@@ -50,7 +50,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
           children: [
             BackWidget(
               'Profile info',
-              marginTop: 31,
+              // marginTop: 31,
               scale: scale,
             ),
             FormWidget(

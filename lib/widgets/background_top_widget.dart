@@ -12,10 +12,17 @@ import 'package:taaqeem/widgets/text_widgets.dart';
 class BackgroundTopWidget extends StatelessWidget {
   final Widget child;
   final double scale;
+  final ScrollController scrollController;
   final String subtitle;
   final String title;
 
-  BackgroundTopWidget({this.child, this.scale, this.subtitle, this.title});
+  BackgroundTopWidget({
+    this.child,
+    this.scale,
+    this.scrollController,
+    this.subtitle,
+    this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +63,7 @@ class BackgroundTopWidget extends StatelessWidget {
             width: double.infinity,
           ),
         ],
+        controller: scrollController,
         padding: EdgeInsets.zero,
       ),
       decoration: BoxDecoration(

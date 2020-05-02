@@ -14,6 +14,7 @@ import 'package:taaqeem/widgets/plus_button_widget.dart';
 
 class ScaffoldBarWidget extends StatefulWidget {
   final Widget body;
+  final VoidCallback onTap;
   final VoidCallback onPlusTap;
   final bool removePreviousRoute;
   final ScreenData screenData;
@@ -21,6 +22,7 @@ class ScaffoldBarWidget extends StatefulWidget {
   ScaffoldBarWidget({
     this.body,
     this.onPlusTap,
+    this.onTap,
     this.removePreviousRoute = false,
     this.screenData,
   });
@@ -34,7 +36,7 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: widget.body,
+      body: GestureDetector(child: widget.body, onTap: widget.onTap ?? hideKeyboard),
       bottomNavigationBar: BottomNavigationWidget(
         onTap: (int routeIndex) {
           setState(
@@ -68,5 +70,9 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+  void hideKeyboard() {
+    FocusScope.of(context).unfocus();
   }
 }

@@ -30,7 +30,7 @@ class PolicyScreen extends StatelessWidget {
           BackWidget(
             policy.title,
             marginBottom: 40,
-            marginTop: 31 + Scale.getSafeMargin(context),
+            // marginTop: 31 + Scale.getSafeMargin(context),
             scale: scale,
           ),
           Expanded(
