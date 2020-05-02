@@ -26,10 +26,10 @@ class ProfileItemWidget extends StatelessWidget {
     this.scale,
     this.superscriptColor = globals.superscriptColor,
     this.superscriptFontSize = 16,
-    this.superscriptHeight = 1.75,
+    this.superscriptHeight, // = 1.75,
     this.textColor = globals.textColor,
     this.textFontSize = 18,
-    this.textHeight = 2.11,
+    this.textHeight,  // = 2.11,
   });
 
   @override

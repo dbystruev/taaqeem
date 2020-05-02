@@ -14,6 +14,7 @@ import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/profile_edit_screen.dart';
 import 'package:taaqeem/widgets/avatar_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/profile_item_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
@@ -37,30 +38,64 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   Widget build(BuildContext context) {
     final double safeMargin = Scale.getSafeMargin(context);
     final double scale = Scale.getScale(context);
+    final User user = widget.screenData.user;
+    final bool userHasName = user.name != null && user.name.trim().isNotEmpty;
+    final bool userHasEmail =
+        user.email != null && user.email.trim().isNotEmpty;
     return ScaffoldBarWidget(
       body: Stack(
         children: [
           Positioned(
-            child: AvatarWidget(widget.screenData.user, scale: scale),
+            child: AvatarWidget(user, scale: scale),
             right: 21 * scale + safeMargin,
             top: 33 * scale + safeMargin,
           ),
           ListView(
             children: [
               SizedBox(height: 33 * scale),
-              ProfileItemWidget('Your phone', widget.screenData.user.phone),
-              SizedBox(height: 35 * scale),
-              InkWell(
-                child: TheText.normal(
-                  color: Theme.of(context).accentColor,
-                  fontSize: 16,
-                  height: 1.75,
-                  text: 'Please introduce yourself',
+              if (userHasName)
+                TheText.w600(
+                  color: globals.textColor,
+                  fontSize: 24,
+                  text: user.name,
                   textScaleFactor: scale,
                 ),
-                onTap: editProfile,
-              ),
-              SizedBox(height: 183 * scale),
+              if (userHasName) SizedBox(height: 35 * scale),
+              ProfileItemWidget('Your phone', user.phone),
+              if (userHasEmail) SizedBox(height: 20 * scale),
+              if (userHasEmail) ProfileItemWidget('Your e-mail', user.email),
+              if (userHasEmail) SizedBox(height: 36 * scale),
+              if (userHasEmail)
+                InkWell(
+                  child: Row(
+                    children: [
+                      TheText.normal(
+                        color: globals.subtitleColor,
+                        fontSize: 16,
+                        height: 1.75,
+                        text: 'Edit info',
+                        textScaleFactor: scale,
+                      ),
+                      SizedBox(width: 12 * scale),
+                      ImageWidget('pen', height: 15, scale: scale, width: 15),
+                    ],
+                  ),
+                  onTap: editProfile,
+                ),
+              if (userHasEmail) SizedBox(height: 54 * scale),
+              if (!userHasEmail) SizedBox(height: 35 * scale),
+              if (!userHasEmail)
+                InkWell(
+                  child: TheText.normal(
+                    color: Theme.of(context).accentColor,
+                    fontSize: 16,
+                    height: 1.75,
+                    text: 'Please introduce yourself',
+                    textScaleFactor: scale,
+                  ),
+                  onTap: editProfile,
+                ),
+              if (!userHasEmail) SizedBox(height: 183 * scale),
               ButtonWidget(
                 'Give us a feedback',
                 onPressed: () {},

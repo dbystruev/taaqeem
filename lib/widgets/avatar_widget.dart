@@ -19,13 +19,15 @@ class AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.name);
     final Color backgroundColor = user?.name == null
         ? globals.inactiveColor
         : Theme.of(context).accentColor;
     final String initials = user?.name == null
         ? ''
-        : user.name
+        : (user.name + ' . .')
             .split(' ')
+            .where((String word) => word.isNotEmpty)
             .map(
               (String word) => word[0].toUpperCase(),
             )
@@ -37,7 +39,7 @@ class AvatarWidget extends StatelessWidget {
       backgroundImage: user?.avatar == null ? null : NetworkImage(user.avatar),
       child: TheText.w600(
         color: Theme.of(context).primaryColor,
-        fontSize: 0.4 * radius,
+        fontSize: 0.7 * radius,
         text: initials,
         textScaleFactor: scale,
       ),
