@@ -16,9 +16,6 @@ const String appName = 'taaqeem';
 const String appPassword = 'aexoo5eiz3Mahahd';
 const String appVersion = '20200425090500';
 
-// Avatar colors
-const Color avatarBackgroundColor = Color(0xFFE0E0E0);
-
 // Background color for about and support screens
 const Color backgroundTopColor = Color(0xFF05C15E);
 // Colors for discount box
@@ -50,6 +47,9 @@ final Map<DateTime, List> holidays = {
   DateTime(2020, 12, 2): [''],
   DateTime(2020, 12, 3): [''],
 };
+
+// Inactive color
+const Color inactiveColor = Color(0xFFE0E0E0);
 
 // True if running in release mode
 const bool isProduction = bool.fromEnvironment('dart.vm.product');

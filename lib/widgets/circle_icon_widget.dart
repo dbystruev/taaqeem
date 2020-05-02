@@ -11,7 +11,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/circle_widget.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 
-class CircleIconWidget extends StatelessWidget with Scale {
+class CircleIconWidget extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final Color color;

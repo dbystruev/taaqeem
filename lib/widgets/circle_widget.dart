@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/scale_mixin.dart';
 
-class CircleWidget extends StatelessWidget with Scale {
+class CircleWidget extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final Widget child;

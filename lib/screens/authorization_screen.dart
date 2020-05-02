@@ -34,7 +34,7 @@ class AuthorizationScreen extends StatefulWidget {
 }
 
 class _AuthorizationScreenState extends State<AuthorizationScreen>
-    with RouteValidator, Scale {
+    with RouteValidator {
   TextEditingController codeController;
   bool get isCode => phone != null && verificationCode != null;
   String get item => isCode ? 'verification code' : 'phone number';

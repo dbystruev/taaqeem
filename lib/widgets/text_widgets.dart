@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 
-class TheText extends StatelessWidget with Scale {
+class TheText extends StatelessWidget {
   final Color backgroundColor;
   final Color color;
   final List<Color> colors; // for optional rich text

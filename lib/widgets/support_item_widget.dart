@@ -11,7 +11,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/circle_icon_widget.dart';
 import 'package:taaqeem/widgets/profile_item_widget.dart';
 
-class SupportItemWidget extends StatelessWidget with Scale {
+class SupportItemWidget extends StatelessWidget {
   final String iconName;
   final double iconSize;
   final double scale;

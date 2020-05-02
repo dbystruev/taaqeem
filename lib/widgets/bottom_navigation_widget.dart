@@ -10,7 +10,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class BottomNavigationWidget extends StatelessWidget with Scale {
+class BottomNavigationWidget extends StatelessWidget {
   final ValueChanged<int> onTap;
   final double scale;
   static int selectedBottomBarItem = 0;

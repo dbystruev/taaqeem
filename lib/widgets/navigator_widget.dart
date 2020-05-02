@@ -23,6 +23,7 @@ class NavigatorWidget extends StatelessWidget {
     'OrderScreen',
     'AuthorizationScreen',
     'ProfileScreen',
+    'ProfileEditScreen',
   ];
 
   static routeName(int index) => routeNames[index];
@@ -52,7 +53,7 @@ class NavigatorWidget extends StatelessWidget {
       default:
         assert(
           false,
-          'lib/widgets/navigator_widget.dart:44 Unknown route index $routeIndex',
+          'lib/widgets/navigator_widget.dart:55 Unknown route index $routeIndex',
         );
         return null;
     }

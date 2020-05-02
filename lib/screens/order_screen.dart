@@ -12,7 +12,6 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/screen_data.dart';
-import 'package:taaqeem/screens/authorization_screen.dart';
 import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -43,7 +42,7 @@ class OrderScreen extends StatefulWidget {
   _OrderScreenState createState() => _OrderScreenState();
 }
 
-class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
+class _OrderScreenState extends State<OrderScreen> with RouteValidator {
   CalendarController calendarController;
   FocusNode keyboardNode;
   Plan plan;
@@ -137,7 +136,8 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
       Opacity(
         child: ButtonWidget(
           'Book Service',
-          onPressed: routeToProfileLandingScreenIfValid,
+          onPressed: () =>
+              routeToProfileLandingScreenIfValid(showPlanSelection),
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
@@ -166,7 +166,8 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
         ),
         onTap: hideCalendarAndKeyboard,
       ),
-      onPlusTap: routeToProfileLandingScreenIfValid,
+      onPlusTap: () => routeToProfileLandingScreenIfValid(showPlanSelection),
+      removePreviousRoute: showPlanSelection,
       screenData: widget.screenData,
     );
   }
@@ -202,7 +203,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
     squareMetersController = TextEditingController();
   }
 
-  void routeToProfileLandingScreenIfValid() {
+  void routeToProfileLandingScreenIfValid(bool showPlanSelection) {
     hideCalendarAndKeyboard();
     pushRouteIfValid(
       context,
@@ -219,6 +220,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator, Scale {
         ),
       ),
       name: ProfileLandingScreen.routeName,
+      removePrevious: showPlanSelection,
       replace: true,
       validator: validator,
     );

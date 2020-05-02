@@ -13,13 +13,12 @@ import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/background_top_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
-import 'package:taaqeem/widgets/circle_icon_widget.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class AboutScreen extends StatelessWidget with Scale, RouteValidator {
+class AboutScreen extends StatelessWidget with RouteValidator {
   static const int routeIndex = 1;
   static String get routeName => NavigatorWidget.routeName(routeIndex);
 
@@ -73,8 +72,8 @@ Prevention UAE.''',
                   name: OrderScreen.routeName,
                   replace: screenData.isPlanSelected,
                 ),
-                width: Scale.getScreenWidth(context),
                 scale: scale,
+                width: 335,
               ),
               SizedBox(
                 height: max(160, Scale.getScreenHeight(context) - 500) * scale,

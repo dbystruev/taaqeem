@@ -9,7 +9,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class ProfileItemWidget extends StatelessWidget with Scale {
+class ProfileItemWidget extends StatelessWidget {
   final double scale;
   final String superscript;
   final Color superscriptColor;

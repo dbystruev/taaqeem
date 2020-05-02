@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 
-class ImageWidget extends StatelessWidget with Scale {
+class ImageWidget extends StatelessWidget {
   final double height;
   final String name;
   final double scale;

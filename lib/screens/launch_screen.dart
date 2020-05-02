@@ -22,8 +22,7 @@ class LaunchScreen extends StatefulWidget {
   _LaunchScreenState createState() => _LaunchScreenState();
 }
 
-class _LaunchScreenState extends State<LaunchScreen>
-    with Scale, RouteValidator {
+class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
   // Minimum delay — 3 seconds
   final Duration minDelay = Duration(seconds: 3);
   final NetworkController networkController = NetworkController();

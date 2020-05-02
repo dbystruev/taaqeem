@@ -11,7 +11,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/screens/main_screen.dart';
-import 'package:taaqeem/screens/profile_landing_screen.dart';
+import 'package:taaqeem/screens/profile_edit_screen.dart';
 import 'package:taaqeem/widgets/avatar_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
@@ -32,8 +32,7 @@ class ProfileScreen extends StatefulWidget {
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with RouteValidator, Scale {
+class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   @override
   Widget build(BuildContext context) {
     final double safeMargin = Scale.getSafeMargin(context);
@@ -59,12 +58,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                   text: 'Please introduce yourself',
                   textScaleFactor: scale,
                 ),
+                onTap: editProfile,
               ),
               SizedBox(height: 183 * scale),
               ButtonWidget(
                 'Give us a feedback',
                 onPressed: () {},
-                width: Scale.getScreenWidth(context),
+                width: 335,
                 scale: scale,
               ),
               SizedBox(height: 10 * scale),
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 scale: scale,
                 textColor: Theme.of(context).accentColor,
                 textDecoration: TextDecoration.underline,
-                width: Scale.getScreenWidth(context),
+                width: 335,
               ),
               SizedBox(height: 40 * scale),
               TheText.w600(
@@ -100,6 +100,14 @@ class _ProfileScreenState extends State<ProfileScreen>
         ],
       ),
       screenData: widget.screenData,
+    );
+  }
+
+  void editProfile() {
+    pushRouteIfValid(
+      context,
+      builder: (context) => ProfileEditScreen(widget.screenData),
+      name: ProfileEditScreen.routeName,
     );
   }
 

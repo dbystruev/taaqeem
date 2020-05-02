@@ -12,23 +12,36 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 mixin RouteValidator {
+  static List<Route> routes;
+
+  void popRoute(BuildContext context) {
+    if (routes != null && 0 < routes.length) routes.removeLast();
+    debugPrint(
+      'lib/mixins/route_validator_mixin.dart:20 popRoute(), ${routes?.length} left',
+    );
+    Navigator.pop(context);
+  }
+
   bool pushRouteIfValid(
     BuildContext context, {
     Widget Function(BuildContext context) builder,
     bool maintainState = true,
     String name,
+    bool removePrevious = false,
     bool replace = false,
     double scale,
     String Function() validator,
   }) {
     debugPrint(
-      'lib/mixins/route_validator_mixin.dart:25 pushRouteIfValid(name: \'$name\', replace: $replace)',
+      'lib/mixins/route_validator_mixin.dart:35 pushRouteIfValid(name: \'$name\', replace: $replace)',
     );
     if (validator != null) {
       final String message = validator();
       if (message.isNotEmpty) {
         showMessageInContext(context, message);
-        debugPrint('pushRouteIfValid() failed: \'$message\'');
+        debugPrint(
+          'pushRouteIfValid() failed: \'$message\', routes in stack: ${routes?.length}',
+        );
         return false;
       }
     }
@@ -37,11 +50,24 @@ mixin RouteValidator {
       maintainState: maintainState,
       settings: RouteSettings(name: name),
     );
+    if (routes == null) routes = List<Route>();
+    if (removePrevious && 1 < routes.length) {
+      Navigator.removeRoute(
+        context,
+        routes.removeAt(routes.length - 2),
+      );
+    }
     if (replace) {
+      if (0 < routes.length) routes.removeLast();
+      routes.add(route);
       Navigator.pushReplacement(context, route);
     } else {
+      routes.add(route);
       Navigator.push(context, route);
     }
+    debugPrint(
+      'pushRouteIfValid() succeeded, routes in stack: ${routes?.length}',
+    );
     return true;
   }
 

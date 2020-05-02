@@ -10,7 +10,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class AvatarWidget extends StatelessWidget with Scale {
+class AvatarWidget extends StatelessWidget {
   final double radius;
   final double scale;
   final User user;
@@ -20,7 +20,7 @@ class AvatarWidget extends StatelessWidget with Scale {
   @override
   Widget build(BuildContext context) {
     final Color backgroundColor = user?.name == null
-        ? globals.avatarBackgroundColor
+        ? globals.inactiveColor
         : Theme.of(context).accentColor;
     final String initials = user?.name == null
         ? ''

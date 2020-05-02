@@ -9,14 +9,19 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 
-class FormWidget extends StatelessWidget with Scale {
+class FormWidget extends StatelessWidget {
+  final Color borderColor;
+  final double borderRadius;
+  final double borderWidth;
   final Color color;
   final TextEditingController controller;
   final Decoration decoration;
+  final bool enabled;
   final String fontFamily;
   final double fontSize;
   final FontWeight fontWeight;
   final double height;
+  final Color hintColor;
   final String hintText;
   final InputDecoration inputDecoration;
   final FocusNode keyboardNode;
@@ -30,13 +35,18 @@ class FormWidget extends StatelessWidget with Scale {
   final TextInputAction textInputAction;
 
   FormWidget({
+    this.borderColor = globals.subtitleColor,
+    this.borderRadius = 5,
+    this.borderWidth = 1,
     this.color = globals.menuItemColor,
     this.controller,
     this.decoration,
+    this.enabled = true,
     this.fontFamily = globals.fontFamily,
     this.fontSize = 15,
     this.fontWeight = FontWeight.normal,
     this.height = 1.6,
+    this.hintColor = globals.subtitleColor,
     this.hintText,
     this.inputDecoration,
     this.keyboardNode,
@@ -54,6 +64,9 @@ class FormWidget extends StatelessWidget with Scale {
   Widget build(BuildContext context) {
     final double scale = this.scale ?? Scale.getScale(context);
     return DecorationPaddingWidget(
+      borderColor: borderColor,
+      borderRadius: borderRadius,
+      borderWidth: borderWidth,
       child: TextFormField(
         controller: controller,
         cursorColor: globals.subtitleColor,
@@ -65,12 +78,13 @@ class FormWidget extends StatelessWidget with Scale {
               ),
               isDense: true,
               hintStyle: TextStyle(
-                color: globals.subtitleColor,
+                color: hintColor,
               ),
               hintText: hintText,
               suffixText: suffixText,
               suffixStyle: TextStyle(color: color),
             ),
+        enabled: enabled,
         keyboardType: keyboardType,
         focusNode: keyboardNode,
         obscureText: obscureText,

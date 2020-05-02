@@ -5,13 +5,14 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/padding_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class BackWidget extends StatelessWidget with Scale {
+class BackWidget extends StatelessWidget with RouteValidator {
   final Color color;
   final double fontSize;
   final double scale;
@@ -32,7 +33,7 @@ class BackWidget extends StatelessWidget with Scale {
         children: [
           InkWell(
             child: ImageWidget('left', height: 15, scale: scale, width: 20),
-            onTap: () => Navigator.pop(context),
+            onTap: () => popRoute(context),
           ),
           SizedBox(width: 15 * scale),
           TheText.w600(

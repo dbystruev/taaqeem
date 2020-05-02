@@ -10,7 +10,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/padding_widget.dart';
 
-class DecorationPaddingWidget extends StatelessWidget with Scale {
+class DecorationPaddingWidget extends StatelessWidget {
   final AlignmentGeometry alignment;
   final Color borderColor;
   final double borderRadius;

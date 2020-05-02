@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 
-class PaddingWidget extends StatelessWidget with Scale {
+class PaddingWidget extends StatelessWidget {
   final Widget child;
   final double marginBottom;
   final double marginLeft;

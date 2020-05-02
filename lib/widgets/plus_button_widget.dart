@@ -10,7 +10,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class PlusButtonWidget extends StatelessWidget with Scale {
+class PlusButtonWidget extends StatelessWidget {
   final Color backgroundColor;
   final double blurRadius;
   final Color color;

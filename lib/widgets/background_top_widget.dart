@@ -9,7 +9,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class BackgroundTopWidget extends StatelessWidget with Scale {
+class BackgroundTopWidget extends StatelessWidget {
   final Widget child;
   final double scale;
   final String subtitle;

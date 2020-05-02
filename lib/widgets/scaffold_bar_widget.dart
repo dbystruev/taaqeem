@@ -15,9 +15,15 @@ import 'package:taaqeem/widgets/plus_button_widget.dart';
 class ScaffoldBarWidget extends StatefulWidget {
   final Widget body;
   final VoidCallback onPlusTap;
+  final bool removePreviousRoute;
   final ScreenData screenData;
 
-  ScaffoldBarWidget({this.body, this.onPlusTap, this.screenData});
+  ScaffoldBarWidget({
+    this.body,
+    this.onPlusTap,
+    this.removePreviousRoute = false,
+    this.screenData,
+  });
 
   @override
   _ScaffoldBarWidgetState createState() => _ScaffoldBarWidgetState();
@@ -41,6 +47,7 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
               screenData: widget.screenData,
             ),
             name: NavigatorWidget.routeName(routeIndex),
+            removePrevious: widget.removePreviousRoute,
             replace: true,
           );
         },
@@ -55,6 +62,7 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
                     screenData: widget.screenData,
                   ),
                   name: OrderScreen.routeName,
+                  removePrevious: widget.removePreviousRoute,
                   replace: widget.screenData.isPlanSelected,
                 ),
       ),

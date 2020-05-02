@@ -9,7 +9,7 @@ import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class ButtonWidget extends StatelessWidget with Scale {
+class ButtonWidget extends StatelessWidget {
   final Color borderColor;
   final double borderWidth;
   final Color buttonColor;

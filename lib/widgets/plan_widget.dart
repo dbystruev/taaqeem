@@ -5,7 +5,6 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -13,7 +12,7 @@ import 'package:taaqeem/widgets/expansion_tile_widget.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class PlanWidget extends StatelessWidget with Scale {
+class PlanWidget extends StatelessWidget {
   final ExpansionTileWidget expansionTile;
   final int index;
   static Map<int, GlobalKey<ExpansionTileWidgetState>> keys = {};

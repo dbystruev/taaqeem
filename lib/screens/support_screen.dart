@@ -18,7 +18,7 @@ import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/support_item_widget.dart';
 
-class SupportScreen extends StatelessWidget with Scale, RouteValidator {
+class SupportScreen extends StatelessWidget with RouteValidator {
   static const routeIndex = 2;
   static String get routeName => NavigatorWidget.routeName(routeIndex);
 
@@ -60,15 +60,15 @@ class SupportScreen extends StatelessWidget with Scale, RouteValidator {
                 scale: scale,
                 superscript: 'Address:',
                 text: 'Dubai, United\nArab Emirates',
-                url: 'https://goo.gl/maps/E2jGrFdQkyxn65aZ8',
+                url: 'https://goo.gl/maps/rugvndYnKKqXu9hL7',
               ),
               SizedBox(height: 48 * scale),
               ButtonWidget(
                 'Сall us +971 55 999 9863',
                 onPressed: () =>
                     NetworkController.launchURL('tel:+971 55 999 9863'),
-                width: Scale.getScreenWidth(context),
                 scale: scale,
+                width: 335,
               ),
               SizedBox(height: 20 * scale),
               Row(
@@ -87,8 +87,8 @@ class SupportScreen extends StatelessWidget with Scale, RouteValidator {
                         'https://www.instagram.com/taaqeem.ae/?roistat_visit=105268',
                   ),
                   SizedBox(width: 12 * scale),
-                  CircleIconWidget('telegram_icon', iconSize: 22, scale: scale),
-                  SizedBox(width: 12 * scale),
+                  // CircleIconWidget('telegram_icon', iconSize: 22, scale: scale),
+                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'whatsapp_icon',
                     scale: scale,

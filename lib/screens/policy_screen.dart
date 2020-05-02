@@ -13,7 +13,7 @@ import 'package:taaqeem/models/policy_section.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class PolicyScreen extends StatelessWidget with Scale {
+class PolicyScreen extends StatelessWidget {
   final bool showToS;
 
   PolicyScreen({this.showToS = false});

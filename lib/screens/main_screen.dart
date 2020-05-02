@@ -31,7 +31,7 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with RouteValidator, Scale {
+class _MainScreenState extends State<MainScreen> with RouteValidator {
   int lastIndex;
   List<Plan> plans;
   ScrollController scrollController;

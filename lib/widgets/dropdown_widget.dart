@@ -11,7 +11,7 @@ import 'package:taaqeem/widgets/decoration_padding_widget.dart';
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class DropdownWidget extends StatelessWidget with Scale {
+class DropdownWidget extends StatelessWidget {
   final String hint;
   final List<String> items;
   final double marginBottom;

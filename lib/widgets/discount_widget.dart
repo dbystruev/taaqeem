@@ -10,7 +10,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
-class DiscountWidget extends StatelessWidget with Scale {
+class DiscountWidget extends StatelessWidget {
   final double scale;
   final String text;
 
