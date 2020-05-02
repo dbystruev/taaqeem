@@ -6,15 +6,18 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
-import 'package:taaqeem/widgets/about_item_widget.dart';
+import 'package:taaqeem/screens/order_screen.dart';
 import 'package:taaqeem/widgets/background_top_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
 import 'package:taaqeem/widgets/circle_icon_widget.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
+import 'package:taaqeem/widgets/text_widgets.dart';
 
 class AboutScreen extends StatelessWidget with Scale, RouteValidator {
   static const int routeIndex = 1;
@@ -27,68 +30,62 @@ class AboutScreen extends StatelessWidget with Scale, RouteValidator {
 
   @override
   Widget build(BuildContext context) {
+    final Color accentColor = Theme.of(context).accentColor;
     final double scale = Scale.getScale(context);
     return ScaffoldBarWidget(
       body: BackgroundTopWidget(
         child: Padding(
           child: Column(
             children: [
-              SizedBox(height: 29 * scale),
-              AboutItemWidget(
-                'mail_icon',
-                iconSize: 20,
-                scale: scale,
-                superscript: 'E-mail address:',
-                text: 'info@taaqeem.ae',
+              SizedBox(height: 40 * scale),
+              ImageWidget('logo', height: 68, width: 166, scale: scale),
+              SizedBox(height: 40 * scale),
+              TheText.w600(
+                color: accentColor,
+                fontSize: 28,
+                height: 1,
+                text: 'We are here to help you!',
+                textAlign: TextAlign.center,
+                textScaleFactor: scale,
               ),
-              SizedBox(height: 32 * scale),
-              AboutItemWidget(
-                'web_icon',
-                iconSize: 25,
-                scale: scale,
-                superscript: 'Website:',
-                text: 'www.taaqeem.ae',
+              SizedBox(height: 20 * scale),
+              TheText.w300(
+                color: globals.menuItemColor,
+                fontSize: 16,
+                height: 1.75,
+                text: '''Taaqeem is a platform that helps companies
+and individuals to find the best companies in
+the UAE to provide govt-approved sanitisation
+and disinfection services.
+We only offer sanitation and cleaning services
+from companies that have been approved by
+UAE Municipality and Ministry of Health and
+Prevention UAE.''',
+                textAlign: TextAlign.center,
+                textScaleFactor: scale,
               ),
-              SizedBox(height: 31 * scale),
-              AboutItemWidget(
-                'point_icon',
-                iconSize: 22,
-                scale: scale,
-                superscript: 'Address:',
-                text: 'Dubai, United\nArab Emirates',
-              ),
-              SizedBox(height: 48 * scale),
+              SizedBox(height: 30 * scale),
               ButtonWidget(
-                'Сall us +971 55 999 9863',
-                onPressed: () {},
+                'Book cleaning',
+                onPressed: () => pushRouteIfValid(
+                  context,
+                  builder: (context) => OrderScreen(screenData),
+                  name: OrderScreen.routeName,
+                  replace: screenData.isPlanSelected,
+                ),
                 width: Scale.getScreenWidth(context),
                 scale: scale,
               ),
-              SizedBox(height: 20 * scale),
-              Row(
-                children: [
-                  CircleIconWidget('facebook_icon', scale: scale),
-                  SizedBox(width: 12 * scale),
-                  CircleIconWidget('instagram_icon', scale: scale),
-                  SizedBox(width: 12 * scale),
-                  CircleIconWidget('telegram_icon', iconSize: 22, scale: scale),
-                  SizedBox(width: 12 * scale),
-                  CircleIconWidget('whatsapp_icon', scale: scale),
-                  SizedBox(width: 12 * scale),
-                  CircleIconWidget('youtube_icon', scale: scale),
-                ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              ),
               SizedBox(
-                height: max(200, Scale.getScreenHeight(context) - 540) * scale,
+                height: max(160, Scale.getScreenHeight(context) - 500) * scale,
               ),
             ],
           ),
           padding: EdgeInsets.symmetric(horizontal: 20 * scale),
         ),
         subtitle:
-            'Write to us in messengers, call\nor look at the answers to FAQ',
-        title: 'How can we help you?',
+            'The first marketplace in UAE to help protect\nYou and keep You in healthy environment',
+        title: 'About us',
       ),
       screenData: screenData,
     );

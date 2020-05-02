@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController {
   // Google Apps Script web url
@@ -53,5 +54,13 @@ class NetworkController {
     } catch (error) {
       return Plans([], message: error.toString(), status: globals.statusError);
     }
+  }
+
+  static Future<String> launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+      return '';
+    } else
+      return 'Could not launch $url';
   }
 }
