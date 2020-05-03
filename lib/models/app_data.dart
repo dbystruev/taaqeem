@@ -8,21 +8,20 @@
 import 'dart:convert' as convert;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:taaqeem/models/data.dart';
+import 'package:taaqeem/models/server_data.dart';
 part 'app_data.g.dart';
 
 @JsonSerializable()
 class AppData {
   final String data;
   Map<String, dynamic> get _decodedData => convert.jsonDecode(data);
-  final int feedbackId;
   String get feedbackUrl => Data.fromJson(_decodedData).feedbackUrl;
   final String message;
-  final int orderId;
   String get plansUrl => Data.fromJson(_decodedData).plansUrl;
+  final ServerData serverData;
   final String status;
   final int time;
   final String token;
-  final int userId;
   String get version => versionDynamic.toString();
 
   @JsonKey(name: 'version')
@@ -31,12 +30,10 @@ class AppData {
   AppData(
     this.status, {
     this.data,
-    this.feedbackId,
     this.message,
-    this.orderId,
+    this.serverData,
     this.time,
     this.token,
-    this.userId,
     this.versionDynamic,
   });
 

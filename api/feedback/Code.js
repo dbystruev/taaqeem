@@ -7,6 +7,154 @@
 // Derived from https://medium.com/mindorks/storing-data-from-the-flutter-app-google-sheets-e4498e9cda5d
 
 // This script address is https://script.google.com/macros/s/AKfycbxOsCVWSMfnCtBukCquUOG83g8R8C33faOkDkhVZfr8ZBSZbv8/exec
+
+// Removes all non-digits and returns a string of pure digits
+function digits(digitsWithNoise) {
+    const regexp = /[^\d]/g;
+    return digitsWithNoise.toString().replace(regexp, '');
+}
+
+function doGet(request) {
+    // Make user sheet available outside of try/catch block
+    let userSheet;
+
+    // Failing by default
+    let message = '';
+    let response = { 'status': 'FAILED', 'message': message };
+
+    try {
+        // Get the token from query parameters
+        const token = request.parameter.token;
+
+        // Check for the token presense
+        if (!token) throw 'token should not be empty';
+
+        // Open Google Sheet bound with this script
+        const mainSheet = SpreadsheetApp.getActiveSpreadsheet();
+
+        // Check maybe not needed, but just for case
+        if (!mainSheet) throw 'Can\'t open the main sheet';
+
+        // Get the users sheet
+        userSheet = mainSheet.getSheetByName('Users');
+
+        if (!userSheet)
+            throw 'The main spreadsheet should have at least users sheet';
+
+        // Find the token hash from spreadsheet
+        const savedTokenHash = getTokenRange(userSheet).getValue();
+
+        // Find the hash of the incoming token (byte to hex https://stackoverflow.com/a/51863912)
+        const tokenHash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_512, token)
+            .map(function (chr) { return (256 + chr).toString(16).slice(-2) })
+            .join('');
+
+        // Check if the tokens match
+        if (savedTokenHash != tokenHash) throw `Token is not correct`;
+
+        // Get the phone from query parameters
+        const phone = request.parameter.phone;
+
+        // Check for the phone presense
+        if (isEmpty(phone)) throw 'The phone field should not be empty';
+
+        // Check if phone has 9 or 10 digits
+        const phoneDigits = digits(phone);
+        const phoneDigitsLength = phoneDigits.length;
+        if (phoneDigitsLength < 9 || 10 < phoneDigitsLength)
+            throw 'The phone should have 9 or 10 digits';
+
+        // Define the range where we'll get the users from
+        const firstRow = userSheet.getFrozenRows() + 1;
+        const lastRow = userSheet.getLastRow();
+        const numberOfRows = lastRow < firstRow ? 1 : lastRow - firstRow + 1;
+        const userRange = userSheet.getRange(firstRow, 1, numberOfRows, 6);
+
+        // Get the users for the whole range
+        const userRangeValues = userRange.getValues();
+
+        // Get the users whose phone matches
+        let matchingUser = userRangeValues.find(row => digits(row[4]) == phoneDigits);
+
+        // Creatr user object for future response
+        let user = {};
+
+        // Check if any matching users found
+        if (isNotEmpty(matchingUser) && 5 < matchingUser.length) {
+            // Get matching user's id
+            const userId = matchingUser[0];
+
+            // Check that the user id is present
+            if (isEmpty(userId)) throw 'User id for the given phone number is empty';
+
+            // Fill user object with data
+            user = {
+                'id': nonEmpty(userId),
+                'avatar': nonEmpty(matchingUser[1]),
+                'email': nonEmpty(matchingUser[2]),
+                'name': nonEmpty(matchingUser[3]),
+                'phone': nonEmpty(matchingUser[4]),
+                'registrationDate': nonEmpty(matchingUser[5])
+            }
+        } else {
+            // No users matched, create new user
+            // We'll need the number of frozen/filled rows
+            const filledRows = userSheet.getLastRow();
+            const frozenRows = userSheet.getFrozenRows();
+
+            // Calculate the id of the last user in the table
+            const lastUserId = filledRows - frozenRows;
+
+            // No user id is found — increment the top user id from the table
+            const userId = lastUserId + 1;
+
+            // Create the user registration date as now
+            const registrationDate = Date();
+
+            // Compose a row for appending to the table
+            const row = [userId, null, null, null, phone, registrationDate];
+
+            // Add row to the table
+            userSheet.appendRow(row);
+
+            // Update version in the user sheet
+            updateVersion(userSheet);
+
+            // Fill the new user object with data we know so far
+            user = {
+                'id': userId,
+                'phone': phone,
+                'registrationDate': registrationDate
+            }
+        }
+
+        // Overwrite the response with the user and success status
+        response = Object.assign({},
+            response,
+            {
+                'message': message,
+                'serverData': { 'user': user },
+                'status': 'SUCCESS',
+                'time': Math.floor(new Date().getTime() / 1000)
+            });
+
+    } catch (error) {
+        // Overwrite the response with the error status
+        response = Object.assign({},
+            response,
+            {
+                'message': 'Feedback API: ' + error,
+                'status': 'ERROR',
+                'time': Math.floor(new Date().getTime() / 1000)
+            });
+
+    }
+    // Return result
+    return ContentService
+        .createTextOutput(JSON.stringify(response))
+        .setMimeType(ContentService.MimeType.JSON);
+}
+
 function doPost(request) {
     // Make sheets available outside of try/catch block
     let orderSheet;
@@ -19,10 +167,10 @@ function doPost(request) {
     let response = { 'status': 'FAILED', 'message': message };
 
     try {
-        // Get the query parameters
+        // Get the token from query parameters
         const token = request.parameter.token;
 
-        // Check the parameters
+        // Check for the token presense
         if (!token) throw 'token should not be empty';
 
         // Open Google Sheet bound with this script
@@ -31,7 +179,7 @@ function doPost(request) {
         // Check maybe not needed, but just for case
         if (!mainSheet) throw 'Can\'t open the main sheet';
 
-        // Get the Answers & Questions sheets
+        // Get the order, user, and user feedback sheets
         orderSheet = mainSheet.getSheetByName('Orders');
         userFeedbackSheet = mainSheet.getSheetByName('Feedback');
         userSheet = mainSheet.getSheetByName('Users');
@@ -40,7 +188,7 @@ function doPost(request) {
             throw 'The spreadsheet should have Feedback, Orders, and Users sheets';
 
         // Find the token hash from spreadsheet
-        const savedTokenHash = getTokenRange(userFeedbackSheet).getValue();
+        const savedTokenHash = getTokenRange(userSheet).getValue();
 
         // Find the hash of the incoming token (byte to hex https://stackoverflow.com/a/51863912)
         const tokenHash = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_512, token)
@@ -62,17 +210,19 @@ function doPost(request) {
 
         // Check if order is present
         const order = serverData.order;
-        if (nonEmpty(order)) {
+        if (isNotEmpty(order)) {
             dataFound = true;
 
             // Compose the row of order data
             // ID is the number of filled rows minus the number of frozen rows + 1
             const filledRows = orderSheet.getLastRow();
             const frozenRows = orderSheet.getFrozenRows();
-            const id = filledRows - frozenRows + 1;
+            const orderId = filledRows - frozenRows + 1;
 
             // Update the response with Order ID
-            response = Object.assign({}, response, { 'orderId': id });
+            response = Object.assign({}, response,
+                { 'server_data': { 'order': { 'id': orderId } } }
+            );
 
             // User ID is the identifier of the corresponding user
             const user = serverData.user;
@@ -97,7 +247,7 @@ function doPost(request) {
             const service = order.service;
 
             // Compose and add the row
-            const row = [id, userId, cleaningDate, creationDate, meters, planId, service];
+            const row = [orderId, userId, cleaningDate, creationDate, meters, planId, service];
             orderSheet.appendRow(row);
 
             // Update version in the order sheet
@@ -106,17 +256,19 @@ function doPost(request) {
 
         // Check if userFeedback is present
         const userFeedback = serverData.userFeedback;
-        if (nonEmpty(userFeedback)) {
+        if (isNotEmpty(userFeedback)) {
             dataFound = true;
 
             // Compose the row of user feedback data
             // ID is the number of filled rows minus the number of frozen rows + 1
             const filledRows = userFeedbackSheet.getLastRow();
             const frozenRows = userFeedbackSheet.getFrozenRows();
-            const id = filledRows - frozenRows + 1;
+            const feedbackId = filledRows - frozenRows + 1;
 
             // Update the response with Feedback ID
-            response = Object.assign({}, response, { 'feedbackId': id });
+            response = Object.assign({}, response,
+                { 'server_data': { 'userFeedback': { 'id': feedbackId } } }
+            );
 
             // User ID is the identifier of the corresponding user
             const user = serverData.user;
@@ -132,7 +284,7 @@ function doPost(request) {
             const text = userFeedback.text;
 
             // Compose and add the row
-            const row = [id, userId, date, text];
+            const row = [feedbackId, userId, date, text];
             userFeedbackSheet.appendRow(row);
 
             // Update the version (reveresed date with time) in the feedback sheet
@@ -141,7 +293,7 @@ function doPost(request) {
 
         // Check if the user is present and order/feedback are not
         const user = serverData.user;
-        if (nonEmpty(user) && isEmpty(order) && isEmpty(userFeedback)) {
+        if (isNotEmpty(user) && isEmpty(order) && isEmpty(userFeedback)) {
             dataFound = true;
 
             // We'll need the number of frozen/filled rows for searching
@@ -155,7 +307,7 @@ function doPost(request) {
             let userId = user.id;
 
             // Check if this user id is in the table
-            if (nonEmpty(userId)) {
+            if (isNotEmpty(userId)) {
                 // If the given user id is outside of this range, that's an error
                 if (userId < 1 || lastUserId < userId)
                     throw 'No userId ' + userId + 'in the table';
@@ -204,7 +356,9 @@ function doPost(request) {
             }
 
             // Update the response with the user ID
-            response = Object.assign({}, response, { 'userId': userId });
+            response = Object.assign({}, response,
+                { 'server_data': { 'user': { 'id': userId } } }
+            );
 
             // Update version in the user sheet
             updateVersion(userSheet);
@@ -247,10 +401,14 @@ function getVersionRange(sheet) {
 }
 
 function isEmpty(value) {
-    return !nonEmpty(value)
+    return !isNotEmpty(value)
 }
 
 function nonEmpty(value) {
+    return value || value === 0 || value === false ? value : undefined;
+}
+
+function isNotEmpty(value) {
     return value || value === 0 || value === false ? true : undefined;
 }
 
