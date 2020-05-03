@@ -11,10 +11,12 @@ import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/models/server_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController {
   // Google Apps Script web url
+  static final NetworkController shared = NetworkController();
   final String url;
 
   // Default constructor
@@ -62,5 +64,40 @@ class NetworkController {
       return '';
     } else
       return 'Could not launch $url';
+  }
+
+  // Async function which posts the server data
+  Future<http.Response> postServerData(
+    ServerData serverData, {
+    String url,
+  }) async {
+    try {
+      final String body = convert.json.encode(serverData);
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final http.Response response =
+          await http.post(url, body: body, headers: headers);
+      return response;
+    } catch (error) {
+      http.Response response = http.Response(error.toString(), 400);
+      return response;
+    }
+  }
+
+  Future<http.Response> postAndRedirect(ServerData serverData, {String url}) async {
+    http.Response response =
+        await NetworkController.shared.postServerData(serverData, url: url);
+    int statusCode = response.statusCode;
+    String uri = response.headers['location'];
+    int count = 0;
+    print('url = $url');
+    while (300 <= statusCode && statusCode < 400 && ++count < 10) {
+      print('count = $count, uri = $uri');
+      response = await http.get(uri);
+      statusCode = response.statusCode;
+      uri = response.headers['location'];
+    }
+    return response;
   }
 }

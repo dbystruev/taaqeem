@@ -3,7 +3,12 @@
 //
 //  Created by Denis Bystruev on 1/05/2020.
 //
+//  https://flutter.dev/docs/development/data-and-backend/json
 
+import 'package:json_annotation/json_annotation.dart';
+part 'user.g.dart';
+
+@JsonSerializable()
 class User {
   final String avatar;
   final String email;
@@ -42,4 +47,8 @@ class User {
         phone: phone ?? user?.phone,
         registrationDate: registrationDate ?? user?.registrationDate,
       );
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }

@@ -4,11 +4,18 @@
 //  Created by Denis Bystruev on 2/05/2020.
 //
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
+import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/models/server_data.dart';
+import 'package:taaqeem/models/user_feedback.dart';
 import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -86,19 +93,53 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
   }
 
   void routeToProfileScreenIfValid(BuildContext context) {
+    debugPrint(
+      'lib/screens/feedback_screen.dart:90 feedbackUrl = ${screenData.url}',
+    );
     pushRouteIfValid(
       context,
       builder: (context) => MainScreen(screenData),
       name: MainScreen.routeName,
       removePrevious: true,
       replace: true,
-      validator: validateFeedback,
+      validator: sendFeedback,
     );
   }
 
-  String validateFeedback() {
-    final String name = feedbackController?.text?.trim();
-    if (name == null || name.isEmpty) return 'please leave some commentary';
+  /// Returns empty String if the sending is good
+  /// Returns error message if feedback was not sent
+  String sendFeedback() {
+    final String comment = feedbackController?.text?.trim();
+    if (comment == null || comment.isEmpty)
+      return 'please leave some commentary';
+    final ServerData serverData = ServerData(
+      userFeedback: UserFeedback(comment),
+    );
+    final String url = screenData.url;
+    NetworkController.shared
+        .postAndRedirect(serverData, url: url)
+        .then((Response response) {
+      try {
+        final Map<String, dynamic> appDataMap = jsonDecode(response.body);
+        final AppData appData = AppData.fromJson(appDataMap);
+        if (appData.status == globals.statusSuccess)
+          debugPrint(
+            'lib/screens/feedback_screen.dart:127 SUCCESS\n${appData.message}',
+          );
+        else
+          debugPrint(
+            'lib/screens/feedback_screen.dart:131 ERROR\n${appData.message}',
+          );
+      } catch (error) {
+        final AppData appData = AppData(
+          globals.statusError,
+          message: error.toString(),
+        );
+        debugPrint(
+          'lib/screens/feedback_screen.dart:139 EXCEPTION:\n${appData.message}',
+        );
+      }
+    });
     return '';
   }
 }

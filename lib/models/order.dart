@@ -5,14 +5,16 @@
 //
 
 import 'dart:math';
-import 'package:taaqeem/models/plan.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'order.g.dart';
 
+@JsonSerializable()
 class Order {
   final DateTime cleaningDate;
   final DateTime creationDate;
   final int id;
   final double meters;
-  final Plan plan;
+  final int planId;
   final String service;
 
   static int _maxId = 0;
@@ -23,7 +25,7 @@ class Order {
     DateTime creationDate,
     int id,
     this.meters,
-    this.plan,
+    this.planId,
     this.service,
   })  : this.creationDate = creationDate ?? DateTime.now(),
         this.id = id ?? ++_maxId {
@@ -36,7 +38,7 @@ class Order {
     DateTime creationDate,
     int id,
     double meters,
-    Plan plan,
+    int planId,
     String service,
   }) =>
       Order(
@@ -44,7 +46,11 @@ class Order {
         creationDate: creationDate ?? order?.creationDate,
         id: id ?? order?.id,
         meters: meters ?? order?.meters,
-        plan: plan ?? order?.plan,
+        planId: planId ?? order?.planId,
         service: service ?? order?.service,
       );
+
+  factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrderToJson(this);
 }

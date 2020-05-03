@@ -217,7 +217,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
             widget.screenData.order,
             cleaningDate: selectedDay,
             meters: squareMeters,
-            plan: plan,
+            planId: plan.id,
             service: OrderScreen.services[selectedServiceIndex],
           ),
         ),

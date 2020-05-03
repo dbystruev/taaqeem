@@ -24,8 +24,8 @@ class LaunchScreen extends StatefulWidget {
 
 class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
   // Minimum delay — 3 seconds
+  String feedbackUrl;
   final Duration minDelay = Duration(seconds: 3);
-  final NetworkController networkController = NetworkController();
   Plans plans;
   final startTime = DateTime.now();
   bool tapped = false;
@@ -70,16 +70,13 @@ class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
     );
   }
 
-  @override
-  void dispose() {
-    networkController.dispose();
-    super.dispose();
-  }
-
   void getPlans() async {
-    AppData appData = await networkController.getAppData();
+    AppData appData = await NetworkController.shared.getAppData();
+    feedbackUrl = appData.status == globals.statusSuccess
+        ? '${appData.feedbackUrl}?token=${appData.token}'
+        : null;
     plans = appData.status == globals.statusSuccess
-        ? await networkController.getPlans(
+        ? await NetworkController.shared.getPlans(
             token: appData.token, url: appData.plansUrl)
         : Plans(
             [],
@@ -105,7 +102,7 @@ class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
     pushRouteIfValid(
       context,
       builder: (context) => MainScreen(
-        ScreenData(plans: plans),
+        ScreenData(plans: plans, url: feedbackUrl),
       ),
       name: MainScreen.routeName,
       replace: true,

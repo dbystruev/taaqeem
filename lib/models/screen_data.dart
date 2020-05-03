@@ -7,6 +7,7 @@
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/models/user.dart';
+import 'package:taaqeem/models/user_feedback.dart';
 
 class ScreenData {
   bool get isPlanSelected =>
@@ -18,14 +19,18 @@ class ScreenData {
   final Plans plans;
   final int routeIndex;
   final int selectedPlan;
+  final String url;
   final User user;
+  final UserFeedback userFeedback;
 
   ScreenData({
     this.order,
     this.plans,
     this.routeIndex,
     this.selectedPlan,
+    this.url,
     this.user,
+    this.userFeedback,
   });
 
   factory ScreenData.over(
@@ -34,13 +39,17 @@ class ScreenData {
     Plans plans,
     int routeIndex,
     int selectedPlan,
+    String url,
     User user,
+    UserFeedback userFeedback,
   }) =>
       ScreenData(
         order: order ?? screenData.order,
         plans: plans ?? screenData.plans,
         routeIndex: routeIndex ?? screenData.routeIndex,
         selectedPlan: selectedPlan ?? screenData.selectedPlan,
+        url: url ?? screenData.url,
         user: user ?? screenData.user,
+        userFeedback: userFeedback ?? screenData.userFeedback,
       );
 }
