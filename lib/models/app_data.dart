@@ -14,12 +14,15 @@ part 'app_data.g.dart';
 class AppData {
   final String data;
   Map<String, dynamic> get _decodedData => convert.jsonDecode(data);
+  final int feedbackId;
   String get feedbackUrl => Data.fromJson(_decodedData).feedbackUrl;
   final String message;
+  final int orderId;
   String get plansUrl => Data.fromJson(_decodedData).plansUrl;
   final String status;
   final int time;
   final String token;
+  final int userId;
   String get version => versionDynamic.toString();
 
   @JsonKey(name: 'version')
@@ -28,9 +31,12 @@ class AppData {
   AppData(
     this.status, {
     this.data,
+    this.feedbackId,
     this.message,
+    this.orderId,
     this.time,
     this.token,
+    this.userId,
     this.versionDynamic,
   });
 

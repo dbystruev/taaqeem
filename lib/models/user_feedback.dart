@@ -10,9 +10,11 @@ part 'user_feedback.g.dart';
 @JsonSerializable()
 class UserFeedback {
   final DateTime date;
+  final int id;
   final String text;
 
-  UserFeedback(this.text, {DateTime date}) : this.date = date ?? DateTime.now();
+  UserFeedback(this.text, {DateTime date, this.id})
+      : this.date = date ?? DateTime.now();
 
   factory UserFeedback.over(UserFeedback feedback,
           {DateTime date, String text}) =>

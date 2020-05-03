@@ -4,8 +4,6 @@
 //  Created by Denis Bystruev on 18/03/2020, updated 19/04/2020.
 //
 
-import 'dart:math';
-
 // https://flutter.dev/docs/development/data-and-backend/json
 import 'package:json_annotation/json_annotation.dart';
 
@@ -41,20 +39,15 @@ class Plan {
   final String type;
   final String subtitle;
 
-  static int _maxId = 0;
-  static int get maxId => _maxId;
-
   Plan(
     this.title, {
     this.description,
     this.icon,
-    int id,
+    this.id,
     this.image,
     this.type,
     this.subtitle,
-  }) : this.id = id ?? ++_maxId {
-    _maxId = max(this.id, _maxId);
-  }
+  });
 
   /// A necessary factory constructor for creating a new Plan instance
   /// from a map. Pass the map to the generated `_$PlanFromJson()` constructor.
@@ -65,8 +58,6 @@ class Plan {
   /// to JSON. The implementation simply calls the private, generated
   /// helper method `_$PlanToJson`.
   Map<String, dynamic> toJson() => _$PlanToJson(this);
-
-  void dispose() => _maxId -= id == _maxId ? 1 : 0;
 
   @override
   String toString() =>

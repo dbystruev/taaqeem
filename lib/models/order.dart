@@ -4,7 +4,6 @@
 //  Created by Denis Bystruev on 1/05/2020.
 //
 
-import 'dart:math';
 import 'package:json_annotation/json_annotation.dart';
 part 'order.g.dart';
 
@@ -17,20 +16,14 @@ class Order {
   final int planId;
   final String service;
 
-  static int _maxId = 0;
-  static get maxId => _maxId;
-
   Order({
     this.cleaningDate,
     DateTime creationDate,
-    int id,
+    this.id,
     this.meters,
     this.planId,
     this.service,
-  })  : this.creationDate = creationDate ?? DateTime.now(),
-        this.id = id ?? ++_maxId {
-    _maxId = max(this.id, _maxId);
-  }
+  })  : this.creationDate = creationDate ?? DateTime.now();
 
   factory Order.over(
     Order order, {

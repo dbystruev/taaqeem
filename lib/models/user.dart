@@ -14,7 +14,6 @@ class User {
   final String email;
   final int id;
   final String name;
-  final List<int> orderIds;
   final String phone;
   final DateTime registrationDate;
 
@@ -23,7 +22,6 @@ class User {
     this.email,
     this.id,
     this.name,
-    this.orderIds,
     this.phone,
     DateTime registrationDate,
   }) : this.registrationDate = registrationDate ?? DateTime.now();
@@ -34,7 +32,6 @@ class User {
     String email,
     int id,
     String name,
-    List<int> orderIds,
     String phone,
     DateTime registrationDate,
   }) =>
@@ -43,7 +40,6 @@ class User {
         email: email ?? user?.email,
         id: id ?? user?.id,
         name: name ?? user?.name,
-        orderIds: orderIds ?? user?.orderIds,
         phone: phone ?? user?.phone,
         registrationDate: registrationDate ?? user?.registrationDate,
       );
