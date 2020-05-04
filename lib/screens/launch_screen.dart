@@ -72,12 +72,21 @@ class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
 
   void getPlans() async {
     AppData appData = await NetworkController.shared.getAppData();
-    feedbackUrl = appData.status == globals.statusSuccess
-        ? '${appData.feedbackUrl}?token=${appData.token}'
+    final String responseToken = appData.status == globals.statusSuccess
+        ? NetworkController.shared.getResponseToken(appData.token)
         : null;
+    feedbackUrl = appData.status == globals.statusSuccess
+        ? '${appData.feedbackUrl}?token=${appData.token}&responseToken=$responseToken'
+        : null;
+    debugPrint(
+      'lib/screens/launch_screen.dart:82 feedbackUrl = \n$feedbackUrl\nresponseToken = $responseToken',
+    );
     plans = appData.status == globals.statusSuccess
         ? await NetworkController.shared.getPlans(
-            token: appData.token, url: appData.plansUrl)
+            token: appData.token,
+            responseToken: responseToken,
+            url: appData.plansUrl,
+          )
         : Plans(
             [],
             message: appData.message,

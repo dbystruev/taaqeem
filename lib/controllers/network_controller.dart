@@ -7,6 +7,8 @@
 //
 
 import 'dart:convert' as convert;
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
@@ -43,19 +45,55 @@ class NetworkController {
     }
   }
 
+  // Calculate SHA-512 digest
+  String getHash(String token) {
+    final List<int> bytes = convert.utf8.encode(token);
+    final Digest digest = sha512.convert(bytes);
+    final String hash = digest.toString();
+    debugPrint(
+      'lib/controllers/network_controllers.dart:54 hash of $token is $hash',
+    );
+    return hash;
+  }
+
   // Async function which returns the plans
   Future<Plans> getPlans({
+    String responseToken,
     String token,
     String url,
   }) async {
     try {
-      final String request = '$url?token=$token';
+      final String request = '$url?token=$token&responseToken=$responseToken';
       http.Response response = await http.get(request);
       final Map<String, dynamic> plansMap = convert.jsonDecode(response.body);
       return Plans.fromJson(plansMap);
     } catch (error) {
       return Plans([], message: error.toString(), status: globals.statusError);
     }
+  }
+
+  // Calculate the response token based on the incoming token
+  String getResponseToken(String token) {
+    // Calculate the token hash
+    final String tokenHash = getHash(token);
+
+    // Split the token hash to array for easier replacement
+    final List<String> hash = tokenHash.split('');
+
+    // Calculate the hash length
+    final int len = hash.length;
+
+    // Calculate the response token
+    hash[305 % len] = hash[1973 % len];
+    hash[708 % len] = hash[1975 % len];
+    hash[1310 % len] = hash[2000 % len];
+    hash[303 % len] = hash[2012 % len];
+
+    // Assemble the hash array back to String
+    final String hashString = hash.join();
+
+    // Return the hash of calculated response
+    return getHash(hashString);
   }
 
   static Future<String> launchURL(String url) async {
@@ -85,7 +123,8 @@ class NetworkController {
     }
   }
 
-  Future<http.Response> postAndRedirect(ServerData serverData, {String url}) async {
+  Future<http.Response> postAndRedirect(ServerData serverData,
+      {String url}) async {
     http.Response response =
         await NetworkController.shared.postServerData(serverData, url: url);
     int statusCode = response.statusCode;

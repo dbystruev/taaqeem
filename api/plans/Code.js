@@ -36,7 +36,7 @@ function doGet(request) {
             .join('');
 
         // Check if the tokens match
-        if (savedTokenHash != tokenHash) throw `Token is not correct`;
+        if (savedTokenHash != tokenHash) throw 'Token is not correct';
 
         // Get the version number
         const version = sheet.getRange('B2').getCell(1, 1).getValue();
