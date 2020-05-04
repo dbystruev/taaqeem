@@ -16,6 +16,7 @@ class User {
   final String name;
   final String phone;
   final DateTime registrationDate;
+  final String token;
 
   User({
     this.avatar,
@@ -24,6 +25,7 @@ class User {
     this.name,
     this.phone,
     DateTime registrationDate,
+    this.token,
   }) : this.registrationDate = registrationDate ?? DateTime.now();
 
   factory User.over(
@@ -34,6 +36,7 @@ class User {
     String name,
     String phone,
     DateTime registrationDate,
+    String token,
   }) =>
       User(
         avatar: avatar ?? user?.avatar,
@@ -42,6 +45,7 @@ class User {
         name: name ?? user?.name,
         phone: phone ?? user?.phone,
         registrationDate: registrationDate ?? user?.registrationDate,
+        token: token ?? user?.token,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

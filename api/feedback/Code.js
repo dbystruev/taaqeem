@@ -70,11 +70,11 @@ function doGet(request) {
             // Fill user object with data
             user = {
                 'id': userId,
-                'avatar': nonEmpty(matchingUser[1]),
-                'email': nonEmpty(matchingUser[2]),
-                'name': nonEmpty(matchingUser[3]),
-                'phone': nonEmpty(matchingUser[4]),
-                'registrationDate': nonEmpty(matchingUser[5])
+                'avatar': nonEmptyValue(matchingUser[1]),
+                'email': nonEmptyValue(matchingUser[2]),
+                'name': nonEmptyValue(matchingUser[3]),
+                'phone': nonEmptyValue(matchingUser[4]),
+                'registrationDate': nonEmptyValue(matchingUser[5])
             }
         } else {
             // No users matched, create new user
@@ -98,6 +98,38 @@ function doGet(request) {
                 'phone': phone,
                 'registrationDate': registrationDate
             }
+        }
+
+        // Check that the response code was provided
+        const responseCode = request.parameter.responseCode;
+        if (isEmpty(responseCode)) {
+            // It wasn't — we need to generate one
+            // Temporarily we use a response code generated in the app
+            const generatedCode = request.parameter.generatedCode;
+
+            // Let the app know that it needs to provide the code
+            if (isEmpty(generatedCode))
+                throw 'You need to provide generated code';
+
+            // Save generated code for future check
+            getUserResponseCodeRange(userSheet, user.id).setValue(generatedCode);
+
+        } else {
+            // Response code was sent — we need to check its validity
+            const savedCode = getUserResponseCodeRange(userSheet, user.id).getValue();
+            if (responseCode != savedCode)
+                throw 'The response code is not correct';
+
+            // If response code was correct we need to generate individual user token
+            const userToken = getHash(new Date().getTime());
+
+            // Save user token hash for future check
+            getUserTokenRange(userSheet, user.id).setValue(getHash(userToken));
+
+            // Add user token to user data
+            user = getMergedObject(user, {
+                'userToken': userToken
+            });
         }
 
         // Overwrite the response with the user and success status
@@ -163,6 +195,12 @@ function doPost(request) {
         // Check if we have serverData container
         if (isEmpty(clientData)) throw 'No server data is found in post data';
 
+        // Get the user associated with the order
+        let user = clientData.user;
+
+        // Check that the user is present, their id and user token are valid
+        tryToValidateUser(userSheet, user);
+
         // Check if order is present
         let order = clientData.order;
         if (isNotEmpty(order)) {
@@ -171,12 +209,6 @@ function doPost(request) {
             // Compose the row of order data
             // Id is the number of filled rows minus the number of frozen rows + 1
             const orderId = getNextId(orderSheet);
-
-            // Get the user associated with the order
-            const user = clientData.user;
-
-            // Check that the user is present and their id is valid
-            tryToValidateUser(user, userSheet);
 
             // Update the order with the new id
             order = getMergedObject(order, { 'id': orderId });
@@ -211,12 +243,6 @@ function doPost(request) {
             // Id is the number of filled rows minus the number of frozen rows + 1
             const feedbackId = getNextId(userFeedbackSheet);
 
-            // Get the user associated with the order
-            const user = clientData.user;
-
-            // Check that the user is present and their id is valid
-            tryToValidateUser(user, userSheet);
-
             // Update the user feedback with the new id
             userFeedback = getMergedObject(userFeedback, { 'id': feedbackId });
 
@@ -234,83 +260,48 @@ function doPost(request) {
         }
 
         // Check if the user is present and order/feedback are not
-        let user = clientData.user;
         if (isNotEmpty(user) && isEmpty(order) && isEmpty(userFeedback)) {
             dataFound = true;
-
-            // We'll need the number of frozen/filled rows for searching
-            const filledRows = userSheet.getLastRow();
-            const frozenRows = userSheet.getFrozenRows();
-
-            // Calculate the id of the last user in the table
-            const lastUserId = filledRows - frozenRows;
 
             // Get the user id from the load
             let userId = user.id;
 
-            // Check if this user id is in the table
-            if (isNotEmpty(userId)) {
-                // If the given user id is outside of this range, that's an error
-                if (!Number.isInteger(userId) || userId < 1 || lastUserId < userId)
-                    throw 'No userId ' + userId + ' in the table';
+            // User's position in the table is their id + number of frozen rows
+            const userRow = userSheet.getFrozenRows() + userId;
 
-                // User's position in the table is their id + number of frozen rows
-                const userRow = frozenRows + userId;
+            // Get saved user data from the table
+            const savedUserRange = userSheet.getRange(userRow, 1, 1, 6);
+            let savedUserValues = savedUserRange.getValues();
+            let savedUserRow = savedUserValues[0];
 
-                // Get saved user data from the table
-                const savedUserRange = userSheet.getRange(userRow, 1, 1, 6);
-                let savedUserValues = savedUserRange.getValues();
-                let savedUserRow = savedUserValues[0];
+            // Sanity check if we got everything right
+            if (userId != savedUserRow[0])
+                throw 'Found id '
+                + savedUserRow[0]
+                + ' in the position of user id '
+                + userId
+                + ' in the user table';
 
-                // Sanity check if we got everything right
-                if (userId != savedUserRow[0])
-                    throw 'Found id '
-                    + savedUserRow[0]
-                    + ' in the position of user id '
-                    + userId
-                    + ' in the user table';
+            // Merge provided data with the table
+            savedUserRow[1] = getMergedValue(savedUserRow[1], user.avatar);
+            savedUserRow[2] = getMergedValue(savedUserRow[2], user.email);
+            savedUserRow[3] = getMergedValue(savedUserRow[3], user.name);
+            savedUserRow[4] = getMergedValue(savedUserRow[4], user.phone);
+            savedUserRow[5] = getMergedValue(savedUserRow[5], user.registrationDate);
 
-                // Merge provided data with the table
-                savedUserRow[1] = getMergedValue(savedUserRow[1], user.avatar);
-                savedUserRow[2] = getMergedValue(savedUserRow[2], user.email);
-                savedUserRow[3] = getMergedValue(savedUserRow[3], user.name);
-                savedUserRow[4] = getMergedValue(savedUserRow[4], user.phone);
-                savedUserRow[5] = getMergedValue(savedUserRow[5], user.registrationDate);
+            // Save values back to the table
+            savedUserValues = [savedUserRow];
+            savedUserRange.setValues(savedUserValues);
 
-                // Save values back to the table
-                savedUserValues = [savedUserRow];
-                savedUserRange.setValues(savedUserValues);
-
-                // Update the user with the merged data for response
-                user = getMergedObject(user, {
-                    'id': userId,
-                    'avatar': savedUserRow[1],
-                    'email': savedUserRow[2],
-                    'name': savedUserRow[3],
-                    'phone': savedUserRow[4],
-                    'registrationDate': savedUserRow[5]
-                });
-
-            } else {
-                // No user id is coming — increment the top user id in the table
-                userId = getNextId(userSheet);
-
-                // Compose a row for appending to the table
-                const userRow = [
-                    userId,
-                    user.avatar,
-                    user.email,
-                    user.name,
-                    user.phone,
-                    user.registrationDate
-                ];
-
-                // Add row to the table
-                userSheet.appendRow(userRow);
-
-                // Update the user with the new id for the response
-                user = getMergedObject(user, { 'id': userId });
-            }
+            // Update the user with the merged data for response
+            user = getMergedObject(user, {
+                'id': userId,
+                'avatar': savedUserRow[1],
+                'email': savedUserRow[2],
+                'name': savedUserRow[3],
+                'phone': savedUserRow[4],
+                'registrationDate': savedUserRow[5]
+            });
 
             // Update the response with the updated user data
             response = getMergedObject(response, {
@@ -362,6 +353,13 @@ function getDigits(rawDigits) {
     return rawDigits.toString().replace(regexp, '');
 }
 
+// Find the hash of the value (byte to hex https://stackoverflow.com/a/51863912)
+function getHash(value) {
+    return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_512, value)
+        .map(function (chr) { return (256 + chr).toString(16).slice(-2) })
+        .join('');
+}
+
 // Merge two objects and return the result
 function getMergedObject(firstObject, secondObject) {
     return Object.assign({}, firstObject, secondObject);
@@ -380,21 +378,6 @@ function getNextId(sheet) {
 
     // Get the first free id for the table
     return filledRows < frozenRows ? 1 : filledRows - frozenRows + 1;
-}
-
-function getTokenRange(sheet) {
-    return sheet.getRange('D2');
-}
-
-function getVersionRange(sheet) {
-    return sheet.getRange('D1');
-}
-
-// Find the hash of the value (byte to hex https://stackoverflow.com/a/51863912)
-function getHash(value) {
-    return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_512, value)
-        .map(function (chr) { return (256 + chr).toString(16).slice(-2) })
-        .join('');
 }
 
 // Calculate the response token based on the incoming token hash
@@ -423,16 +406,36 @@ function getSecondsFromEpoch() {
     return Math.floor(new Date().getTime() / 1000);
 }
 
+function getTokenRange(sheet) {
+    return sheet.getRange('D2');
+}
+
+// Get the range of reponse code for the phone number
+function getUserResponseCodeRange(sheet, userId) {
+    const userRow = userId + sheet.getFrozenRows();
+    return sheet.getRange(userRow, 7, 1, 1);
+}
+
+// Get the range of user's individual token
+function getUserTokenRange(sheet, userId) {
+    const userRow = userId + sheet.getFrozenRows();
+    return sheet.getRange(userRow, 8, 1, 1);
+}
+
+function getVersionRange(sheet) {
+    return sheet.getRange('D1');
+}
+
 function isEmpty(value) {
     return !isNotEmpty(value)
 }
 
-function nonEmpty(value) {
-    return value || value === 0 || value === false ? value : undefined;
-}
-
 function isNotEmpty(value) {
     return value || value === 0 || value === false ? true : undefined;
+}
+
+function nonEmptyValue(value) {
+    return value || value === 0 || value === false ? value : undefined;
 }
 
 // Update sheet version if it is edited
@@ -527,7 +530,7 @@ function tryToGetToken(request) {
 }
 
 // Check that the user is present and their id is valid
-function tryToValidateUser(user, userSheet) {
+function tryToValidateUser(userSheet, user) {
     // Check that the user is present
     if (isEmpty(user)) throw 'No user in server data';
 
@@ -542,6 +545,21 @@ function tryToValidateUser(user, userSheet) {
     const maxUserId = getNextId(userSheet) - 1;
     if (userId < 1 || maxUserId < userId)
         throw 'Wrong user id ' + userId + ' for the user';
+
+    // Check that user token hash matches the saved hash
+    tryToValidateUserToken(userSheet, user);
+}
+
+// Check that the user is present and their id is valid
+function tryToValidateUserToken(userSheet, user) {
+    // Check that the token is not empty
+    if (isEmpty(user.token)) throw 'No user token for the user';
+
+    // Check that user token hash matches the saved hash
+    const userTokenHash = getHash(user.token);
+    const savedUserTokenHash = getUserTokenRange(userSheet, user.id).getValue();
+    if (userTokenHash != savedUserTokenHash)
+        throw 'Wrong user token';
 }
 
 function updateVersion(sheet) {
