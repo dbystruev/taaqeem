@@ -6,11 +6,13 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/user.dart';
+import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/policy_screen.dart';
 import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
@@ -41,6 +43,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   FocusNode keyboardNode;
   String phone;
   TextEditingController phoneController;
+  ScreenData screenData;
   String verificationCode;
 
   @override
@@ -167,30 +170,41 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     super.initState();
     codeController = TextEditingController();
     keyboardNode = FocusNode();
-    phone = widget.screenData.user?.phone;
+    screenData = widget.screenData;
+    phone = screenData.user?.phone;
     phoneController = TextEditingController();
+    debugPrint(
+      'lib/screens/authorization_screen.dart:176 screenData = $screenData',
+    );
   }
 
-  void routeToProfileScreenIfValid() {
+  void routeToProfileScreenIfValid() async {
     hideKeyboard();
     if (isCode) {
       final String codeFromUser = codeController.text;
-      if (!pushRouteIfValid(
-        context,
-        builder: (context) => ProfileLandingScreen(
-          ScreenData.over(
-            widget.screenData,
-            user: User.over(
-              widget.screenData.user,
-              phone: phone,
-            ),
+      final String errorMessage = await validateCode(codeFromUser);
+      if (errorMessage.isEmpty) {
+        screenData = ScreenData.over(
+          ScreenData.clearErrorCodes(screenData),
+          user: User.over(
+            screenData.user,
+            phone: phone,
           ),
-        ),
-        maintainState: false,
-        name: ProfileLandingScreen.routeName,
-        replace: true,
-        validator: () => validateCode(codeFromUser),
-      )) {
+        );
+        final bool isPending = screenData.user.isFilled &&
+            screenData.user.isLoggedIn &&
+            (screenData.order.isPending || screenData.userFeedback.isPending);
+        final Widget build = isPending ? MainScreen(screenData) : ProfileLandingScreen(screenData);
+        final String routeName = isPending ? MainScreen.routeName : ProfileLandingScreen.routeName;
+        pushRouteIfValid(
+          context,
+          builder: (context) => build,
+          maintainState: false,
+          name: routeName,
+          replace: true,
+        );
+      } else {
+        showMessageInContext(context, errorMessage);
         if (--AuthorizationScreen.attemptsRemaining < 1)
           setState(() {
             verificationCode = null;
@@ -200,13 +214,28 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
       final String phoneFromUser = phoneController.text;
       final String errorMessage = validatePhone(phoneFromUser);
       if (errorMessage.isEmpty) {
-        AuthorizationScreen.attemptsRemaining = 2;
         final String randomCode = getRandomCode();
-        setState(() {
-          phone = globals.phonePrefix + phoneFromUser;
-          verificationCode = randomCode;
-        });
-        showMessageInContext(context, 'your code is: $randomCode');
+        screenData = await NetworkController.shared.getRequest(
+          query: {
+            'generatedCode': randomCode,
+            'phone': globals.phonePrefix + phoneFromUser,
+          },
+          screenData: screenData,
+        );
+        verificationCode = screenData.user?.token;
+        if (verificationCode == null) {
+          showMessageInContext(
+            context,
+            'server was not available.  Please try again',
+          );
+        } else {
+          AuthorizationScreen.attemptsRemaining = 2;
+          setState(() {
+            phone = globals.phonePrefix + phoneFromUser;
+          });
+          if (randomCode == verificationCode)
+            showMessageInContext(context, 'your code is: $randomCode');
+        }
       } else
         showMessageInContext(context, errorMessage);
     }
@@ -214,8 +243,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
 
   /// Returns empty String if code is correct
   /// Returns error message if code is not correct
-  String validateCode(String code) {
-    if (code != verificationCode) return 'incorrect code';
+  Future<String> validateCode(String code) async {
+    screenData = await NetworkController.shared.getRequest(
+      query: {'phone': screenData.user?.phone, 'responseCode': code},
+      screenData: screenData,
+    );
+    if (!screenData.user.isLoggedIn) return 'incorrect code';
     return '';
   }
 

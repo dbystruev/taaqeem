@@ -5,11 +5,13 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/user.dart';
+import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/profile_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -116,6 +118,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
     nameController = TextEditingController(text: screenData.user.name);
     nameNode = FocusNode();
     showName = false;
+    debugPrint(
+      'lib/screens/profile_edit_screen.dart:121 screenData = $screenData',
+    );
   }
 
   @override
@@ -127,11 +132,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
     super.dispose();
   }
 
-  void nextFieldOrRoute() {
+  void nextFieldOrRoute() async {
     if (!showName) {
-      final String message = validateEmail();
-      if (message.isNotEmpty) {
-        showMessageInContext(context, message);
+      final String errorMessage = validateEmail();
+      if (errorMessage.isNotEmpty) {
+        showMessageInContext(context, errorMessage);
         return;
       }
       screenData = ScreenData.over(
@@ -139,19 +144,34 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
         user: User.over(screenData.user, email: emailController.text),
       );
       setState(() => showName = true);
+      screenData = await NetworkController.shared.postRequest(screenData);
+      return;
+    }
+    final String errorMessage = validateName();
+    if (errorMessage.isNotEmpty) {
+      showMessageInContext(context, errorMessage);
       return;
     }
     screenData = ScreenData.over(
       screenData,
       user: User.over(screenData.user, name: nameController.text),
     );
+
+    final bool isPending =
+        screenData.order.isPending || screenData.userFeedback.isPending;
+    final build = isPending
+        ? MainScreen(screenData)
+        : ProfileScreen(screenData);
+    final String routeName =
+        isPending ? MainScreen.routeName : ProfileScreen.routeName;
+    if (!isPending)
+      screenData = await NetworkController.shared.postRequest(screenData);
     pushRouteIfValid(
       context,
-      builder: (context) => ProfileScreen(screenData),
-      name: ProfileScreen.routeName,
+      builder: (BuildContext context) => build,
+      name: routeName,
       removePrevious: true,
       replace: true,
-      validator: validateName,
     );
   }
 

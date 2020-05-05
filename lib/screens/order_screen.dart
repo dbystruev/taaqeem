@@ -12,6 +12,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
 import 'package:taaqeem/widgets/button_widget.dart';
@@ -45,8 +46,12 @@ class OrderScreen extends StatefulWidget {
 class _OrderScreenState extends State<OrderScreen> with RouteValidator {
   CalendarController calendarController;
   FocusNode keyboardNode;
-  Plan plan;
+  Plan get plan => selectedPlan != null && selectedPlan < plans.length
+      ? plans[selectedPlan]
+      : null;
   List<Plan> plans;
+  ScreenData screenData;
+  int get selectedPlan => screenData.selectedPlan;
   int selectedPlanIndex;
   int selectedServiceIndex;
   ScrollController scrollController;
@@ -80,6 +85,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
           hint: 'Type of area',
           onChanged: (int index) {
             setState(() => selectedPlanIndex = index < 0 ? null : index);
+            screenData = ScreenData.over(screenData, selectedPlan: selectedPlanIndex);
             hideCalendarAndKeyboard();
           },
           selectedItemIndex: selectedPlanIndex,
@@ -141,8 +147,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
       Opacity(
         child: ButtonWidget(
           'Book Service',
-          onPressed: () =>
-              routeToProfileLandingScreenIfValid(showPlanSelection),
+          onPressed: () => routeToMainOrProfileScreenIfValid(showPlanSelection),
           width: 335,
         ),
         opacity: showCalendar ? 0 : 1,
@@ -168,10 +173,10 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
         focusNode: keyboardNode,
         onTapAction: hideCalendarAndKeyboard,
       ),
-      onPlusTap: () => routeToProfileLandingScreenIfValid(showPlanSelection),
+      onPlusTap: () => routeToMainOrProfileScreenIfValid(showPlanSelection),
       onTap: hideCalendarAndKeyboard,
       removePreviousRoute: showPlanSelection,
-      screenData: widget.screenData,
+      screenData: screenData,
     );
   }
 
@@ -198,31 +203,37 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
     super.initState();
     calendarController = CalendarController();
     keyboardNode = FocusNode();
-    plans = widget.screenData.plans.plans;
-    final int selectedPlan = widget.screenData.selectedPlan;
-    if (selectedPlan != null && selectedPlan < plans.length)
-      plan = plans[selectedPlan];
+    screenData = widget.screenData;
+    plans = screenData.plans.plans;
     scrollController = ScrollController();
     squareMetersController = TextEditingController();
+    debugPrint(
+      'lib/screens/order_screen.dart:210 screenData = $screenData',
+    );
   }
 
-  void routeToProfileLandingScreenIfValid(bool showPlanSelection) {
+  void routeToMainOrProfileScreenIfValid(bool showPlanSelection) {
     hideCalendarAndKeyboard();
+    screenData = ScreenData.over(
+      screenData,
+      order: Order.over(
+        screenData.order,
+        cleaningDate: selectedDay,
+        meters: squareMeters,
+        planId: plan?.id,
+        service: OrderScreen.services[selectedServiceIndex],
+      ),
+    );
+    final builder = screenData.user.isLoggedIn
+        ? (BuildContext context) => MainScreen(screenData)
+        : (BuildContext context) => ProfileLandingScreen(screenData);
+    final String name = screenData.user.isLoggedIn
+        ? MainScreen.routeName
+        : ProfileLandingScreen.routeName;
     pushRouteIfValid(
       context,
-      builder: (context) => ProfileLandingScreen(
-        ScreenData.over(
-          widget.screenData,
-          order: Order.over(
-            widget.screenData.order,
-            cleaningDate: selectedDay,
-            meters: squareMeters,
-            planId: plan.id,
-            service: OrderScreen.services[selectedServiceIndex],
-          ),
-        ),
-      ),
-      name: ProfileLandingScreen.routeName,
+      builder: builder,
+      name: name,
       removePrevious: showPlanSelection,
       replace: true,
       validator: validator,

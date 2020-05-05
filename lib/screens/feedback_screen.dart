@@ -71,13 +71,13 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
               keyboardNode: feedbackNode,
               keyboardType: TextInputType.text,
               maxLines: 3,
-              onEditingComplete: () => routeToProfileScreenIfValid(context),
+              onEditingComplete: () => routeToMainScreenIfValid(context),
               scale: scale,
             ),
             SizedBox(height: 5 * scale),
             ButtonWidget(
               'Send a feedback',
-              onPressed: () => routeToProfileScreenIfValid(context),
+              onPressed: () => routeToMainScreenIfValid(context),
               scale: scale,
               width: 335,
             )
@@ -85,61 +85,44 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
           padding: EdgeInsets.all(safeMargin),
         ),
         focusNode: feedbackNode,
-        onTapAction: () => routeToProfileScreenIfValid(context),
+        onTapAction: () => routeToMainScreenIfValid(context),
       ),
       removePreviousRoute: true,
       screenData: screenData,
     );
   }
 
-  void routeToProfileScreenIfValid(BuildContext context) {
+  void routeToMainScreenIfValid(BuildContext context) {
     debugPrint(
-      'lib/screens/feedback_screen.dart:90 feedbackUrl = ${screenData.url}',
+      'lib/screens/feedback_screen.dart:97 feedbackUrl = ${screenData.url}',
     );
-    pushRouteIfValid(
-      context,
-      builder: (context) => MainScreen(screenData),
-      name: MainScreen.routeName,
-      removePrevious: true,
-      replace: true,
-      validator: sendFeedback,
-    );
+    final String errorMessage = validateFeedback();
+    if (errorMessage.isNotEmpty)
+      showMessageInContext(context, errorMessage);
+    else {
+      final ScreenData screenData = ScreenData.over(
+        this.screenData,
+        userFeedback: UserFeedback.over(
+          this.screenData.userFeedback,
+          text: feedbackController.text,
+        ),
+      );
+      pushRouteIfValid(
+        context,
+        builder: (context) => MainScreen(screenData),
+        name: MainScreen.routeName,
+        removePrevious: true,
+        replace: true,
+      );
+    }
   }
 
   /// Returns empty String if the sending is good
   /// Returns error message if feedback was not sent
-  String sendFeedback() {
+  String validateFeedback() {
     final String comment = feedbackController?.text?.trim();
     if (comment == null || comment.isEmpty)
       return 'please leave some commentary';
-    final ServerData serverData = ServerData(
-      userFeedback: UserFeedback(comment),
-    );
-    final String url = screenData.url;
-    NetworkController.shared
-        .postAndRedirect(serverData, url: url)
-        .then((Response response) {
-      try {
-        final Map<String, dynamic> appDataMap = jsonDecode(response.body);
-        final AppData appData = AppData.fromJson(appDataMap);
-        if (appData.status == globals.statusSuccess)
-          debugPrint(
-            'lib/screens/feedback_screen.dart:127 SUCCESS\n${appData.message}',
-          );
-        else
-          debugPrint(
-            'lib/screens/feedback_screen.dart:131 ERROR\n${appData.message}',
-          );
-      } catch (error) {
-        final AppData appData = AppData(
-          globals.statusError,
-          message: error.toString(),
-        );
-        debugPrint(
-          'lib/screens/feedback_screen.dart:139 EXCEPTION:\n${appData.message}',
-        );
-      }
-    });
     return '';
   }
 }

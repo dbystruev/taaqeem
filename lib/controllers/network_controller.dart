@@ -13,13 +13,17 @@ import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/plans.dart';
+import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/server_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController {
   // Google Apps Script web url
   static final NetworkController shared = NetworkController();
+  bool requestIsBeingProcessed = false;
   final String url;
+  final String line =
+      '===============================================================================================';
 
   // Default constructor
   NetworkController({
@@ -30,11 +34,20 @@ class NetworkController {
 
   void dispose() {}
 
+  void awaitRequestCompletion() async {
+    while (requestIsBeingProcessed)
+      await Future.delayed(
+        Duration(seconds: 1),
+      );
+  }
+
   // Async function which returns feedback and plans urls
   Future<AppData> getAppData({
     String appName = globals.appName,
     String appPassword = globals.appPassword,
   }) async {
+    awaitRequestCompletion();
+    requestIsBeingProcessed = true;
     try {
       final String request = '$url?appName=$appName&password=$appPassword';
       http.Response response = await http.get(request);
@@ -42,17 +55,16 @@ class NetworkController {
       return AppData.fromJson(appDataMap);
     } catch (error) {
       return AppData(globals.statusError, message: error.toString());
+    } finally {
+      requestIsBeingProcessed = false;
     }
   }
 
   // Calculate SHA-512 digest
-  String getHash(String token) {
+  static String getHash(String token) {
     final List<int> bytes = convert.utf8.encode(token);
     final Digest digest = sha512.convert(bytes);
     final String hash = digest.toString();
-    debugPrint(
-      'lib/controllers/network_controllers.dart:54 hash of $token is $hash',
-    );
     return hash;
   }
 
@@ -62,6 +74,8 @@ class NetworkController {
     String token,
     String url,
   }) async {
+    awaitRequestCompletion();
+    requestIsBeingProcessed = true;
     try {
       final String request = '$url?token=$token&responseToken=$responseToken';
       http.Response response = await http.get(request);
@@ -69,7 +83,41 @@ class NetworkController {
       return Plans.fromJson(plansMap);
     } catch (error) {
       return Plans([], message: error.toString(), status: globals.statusError);
+    } finally {
+      requestIsBeingProcessed = false;
     }
+  }
+
+  // Get requests: authorization SMS and token
+  Future<ScreenData> getRequest({
+    Map<String, String> query,
+    @required ScreenData screenData,
+  }) async {
+    if (requestIsBeingProcessed) return screenData;
+    requestIsBeingProcessed = true;
+    final http.Client client = http.Client();
+    try {
+      final String generatedCode =
+          query == null ? null : query['generatedCode'];
+      final String phone = query == null ? null : query['phone'];
+      final String responseCode = query == null ? null : query['responseCode'];
+      final String request = screenData.url +
+          (generatedCode == null ? '' : '&generatedCode=$generatedCode') +
+          (phone == null ? '' : '&phone=${Uri.encodeQueryComponent(phone)}') +
+          (responseCode == null ? '' : '&responseCode=$responseCode');
+      final http.Response response = await client.get(request);
+      screenData = getScreenDataFromResponse(response, screenData: screenData);
+    } catch (error) {
+      screenData = ScreenData.over(
+        screenData,
+        lastError: error.toString(),
+        lastErrorTime: DateTime.now(),
+      );
+    } finally {
+      client.close();
+      requestIsBeingProcessed = false;
+    }
+    return screenData;
   }
 
   // Calculate the response token based on the incoming token
@@ -96,6 +144,16 @@ class NetworkController {
     return getHash(hashString);
   }
 
+  ScreenData getScreenDataFromResponse(
+    http.Response response, {
+    @required ScreenData screenData,
+  }) {
+    final Map<String, dynamic> appDataMap = convert.jsonDecode(response.body);
+    final AppData appData = AppData.fromJson(appDataMap);
+    if (appData.status != globals.statusSuccess) throw appData.message;
+    return ScreenData.fromServerData(screenData, appData.serverData);
+  }
+
   static Future<String> launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -104,16 +162,40 @@ class NetworkController {
       return 'Could not launch $url';
   }
 
+  Future<http.Response> postAndRedirect(
+    ServerData serverData, {
+    String url,
+  }) async {
+    http.Response response =
+        await NetworkController.shared.postServerData(serverData, url: url);
+    int statusCode = response.statusCode;
+    String uri = response.headers['location'];
+    int count = 0;
+    while (300 <= statusCode && statusCode < 400 && ++count < 10) {
+      response = await http.get(uri);
+      statusCode = response.statusCode;
+      uri = response.headers['location'];
+    }
+    debugPrint(
+      '$line\nresponse.body = ${response.body}\n$line',
+    );
+    return response;
+  }
+
   // Async function which posts the server data
   Future<http.Response> postServerData(
     ServerData serverData, {
     String url,
   }) async {
     try {
-      final String body = convert.json.encode(serverData);
+      final String body = convert.json.encode({'serverData': serverData});
       final Map<String, String> headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
+      debugPrint(
+        '$line\nlib/controllers/network_controllers.dart:193 postServerData(), url =\n$url\n' +
+            '$line\nbody = $body',
+      );
       final http.Response response =
           await http.post(url, body: body, headers: headers);
       return response;
@@ -123,20 +205,30 @@ class NetworkController {
     }
   }
 
-  Future<http.Response> postAndRedirect(ServerData serverData,
-      {String url}) async {
-    http.Response response =
-        await NetworkController.shared.postServerData(serverData, url: url);
-    int statusCode = response.statusCode;
-    String uri = response.headers['location'];
-    int count = 0;
-    print('url = $url');
-    while (300 <= statusCode && statusCode < 400 && ++count < 10) {
-      print('count = $count, uri = $uri');
-      response = await http.get(uri);
-      statusCode = response.statusCode;
-      uri = response.headers['location'];
+  // Main post request
+  Future<ScreenData> postRequest(ScreenData screenData) async {
+    if (requestIsBeingProcessed) return screenData;
+    requestIsBeingProcessed = true;
+    try {
+      final String userToken = screenData.user.token;
+      final String url = screenData.url + '&userToken=$userToken';
+      ServerData serverData = ServerData.fromScreenData(screenData);
+      final http.Response response =
+          await postAndRedirect(serverData, url: url);
+      screenData = getScreenDataFromResponse(response, screenData: screenData);
+      debugPrint(
+        'lib/controllers/network_controllers.dart:219 postRequest()' +
+            ', screenData.order.id = ${screenData.order.id}\n$line',
+      );
+    } catch (error) {
+      screenData = ScreenData.over(
+        screenData,
+        lastError: error.toString(),
+        lastErrorTime: DateTime.now(),
+      );
+    } finally {
+      requestIsBeingProcessed = false;
     }
-    return response;
+    return screenData;
   }
 }

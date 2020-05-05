@@ -19,7 +19,6 @@ class AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(user.name);
     final Color backgroundColor = user?.name == null
         ? globals.inactiveColor
         : Theme.of(context).accentColor;
@@ -36,7 +35,7 @@ class AvatarWidget extends StatelessWidget {
     final double scale = this.scale ?? Scale.getScale(context);
     return CircleAvatar(
       backgroundColor: backgroundColor,
-      backgroundImage: user?.avatar == null ? null : NetworkImage(user.avatar),
+      backgroundImage: user?.avatar == null || user.avatar.isEmpty ? null : NetworkImage(user.avatar),
       child: TheText.w600(
         color: Theme.of(context).primaryColor,
         fontSize: 0.7 * radius,

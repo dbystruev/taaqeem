@@ -5,6 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
@@ -32,10 +33,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with RouteValidator {
+  DateTime lastCall;
   int lastIndex;
   List<Plan> plans;
+  ScreenData screenData;
   ScrollController scrollController;
   int selectedPlan;
+  bool sendingOrderOrFeedbackInProcess;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +101,7 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
                   pushRouteIfValid(
                     context,
                     builder: (context) => OrderScreen(
-                      ScreenData.over(widget.screenData, selectedPlan: index),
+                      ScreenData.over(screenData, selectedPlan: index),
                     ),
                     name: OrderScreen.routeName,
                     replace: true,
@@ -112,22 +116,81 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
           Scale.getSafeMargin(context),
         ),
       ),
-      screenData:
-          ScreenData.over(widget.screenData, selectedPlan: selectedPlan),
+      screenData: ScreenData.over(screenData, selectedPlan: selectedPlan),
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    plans = widget.screenData.plans.plans;
-    scrollController = ScrollController();
-    selectedPlan = widget.screenData.selectedPlan ?? plans.length;
+  void delay([double seconds = 0.25]) async {
+    final int ms = (seconds / 1000).round();
+    final Duration duration = Duration(milliseconds: ms);
+    await Future.delayed(duration);
   }
 
   @override
   void dispose() {
     scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    screenData = widget.screenData;
+    plans = screenData.plans.plans;
+    scrollController = ScrollController();
+    selectedPlan = screenData.selectedPlan ?? plans.length;
+    sendingOrderOrFeedbackInProcess = false;
+    WidgetsBinding.instance.addPostFrameCallback(sendOrderOrFeedbackAsNeeded);
+    debugPrint(
+      'lib/screens/main_screen.dart:144 screenData = $screenData',
+    );
+  }
+
+  void sendOrderOrFeedbackAsNeeded(Duration duration) async {
+    final DateTime now = DateTime.now();
+    const Duration second = Duration(seconds: 1);
+    if (lastCall != null && now.difference(lastCall) < second) return;
+    lastCall = now;
+    if (!screenData.user.isLoggedIn) return;
+    if (!screenData.order.isPending && !screenData.userFeedback.isPending)
+      return;
+    if (screenData.order.id != null || screenData.userFeedback.id != null) {
+      showAndClearPendingTasks();
+      return;
+    }
+    if (sendingOrderOrFeedbackInProcess) return;
+    sendingOrderOrFeedbackInProcess = true;
+    screenData = await NetworkController.shared.postRequest(screenData);
+    showAndClearPendingTasks();
+    sendingOrderOrFeedbackInProcess = false;
+  }
+
+  void showAndClearPendingTasks() {
+    if (screenData.order.id != null) {
+      print('BEFORE: screenData.order.id = ${screenData.order.id}' +
+          ', screenData.order.meters = ${screenData.order.meters}');
+      screenData = ScreenData.clearOrder(screenData);
+      showMessageInContext(
+        context,
+        'Thanks for request.\nWe will help You immediately!',
+      );
+      print('screenData.order.id AFTER = ${screenData.order.id}' +
+          ', screenData.order.meters = ${screenData.order.meters}');
+    }
+    if (screenData.userFeedback.id != null) {
+      print(
+        'screenData.userFeedback.id BEFORE = ${screenData.userFeedback.id}' +
+            ', screenData.userFeedback.text = ${screenData.userFeedback.text}',
+      );
+      screenData = ScreenData.clearFeedback(screenData);
+      showMessageInContext(
+        context,
+        'Thanks for feedback!\nWe will take it to an account',
+      );
+      print(
+        'screenData.userFeedback.id AFTER = ${screenData.userFeedback.id}' +
+            ', screenData.userFeedback.text = ${screenData.userFeedback.text}',
+      );
+    }
   }
 }

@@ -40,11 +40,12 @@ function doGet(request) {
         // Check for the phone presense
         if (isEmpty(phone)) throw 'The phone parameter should not be empty';
 
-        // Check if phone has 9 or 10 digits
+        // Check if the phone has from 9 to 15 digits
+        // https://www.quora.com/What-is-maximum-and-minimum-length-of-any-mobile-number-across-the-world
         const phoneDigits = getDigits(phone);
         const phoneDigitsLength = phoneDigits.length;
-        if (phoneDigitsLength < 9 || 10 < phoneDigitsLength)
-            throw 'The phone should have 9 or 10 digits';
+        if (phoneDigitsLength < 9 || 15 < phoneDigitsLength)
+            throw 'The phone should have between 9 and 15 digits';
 
         // Define the range where we'll get the users from
         const userRange = getDataRange(userSheet);
@@ -81,10 +82,15 @@ function doGet(request) {
             const userId = getNextId(userSheet);
 
             // Create the user registration date as now
-            const registrationDate = Date();
+            const registrationDate = getFormattedDate(
+                new Date(),
+                dateSplitter = '-',
+                dateTimeSplitter = ' ',
+                timeSplitter = ':'
+            );
 
             // Compose a row for appending to the table
-            const row = [userId, null, null, null, phone, registrationDate];
+            const row = [userId, null, null, null, '\'' + phone, registrationDate];
 
             // Add row to the table
             userSheet.appendRow(row);
@@ -114,6 +120,11 @@ function doGet(request) {
             // Save generated code for future check
             getUserResponseCodeRange(userSheet, user.id).setValue(generatedCode);
 
+            // Add generated code to the user data as user token (will be overwritten later)
+            user = getMergedObject(user, {
+                'token': generatedCode
+            });
+
         } else {
             // Response code was sent — we need to check its validity
             const savedCode = getUserResponseCodeRange(userSheet, user.id).getValue();
@@ -128,7 +139,7 @@ function doGet(request) {
 
             // Add user token to user data
             user = getMergedObject(user, {
-                'userToken': userToken
+                'token': userToken
             });
         }
 
@@ -190,20 +201,20 @@ function doPost(request) {
 
         // Parse the POST body
         const body = JSON.parse(jsonString);
-        const clientData = body.serverData;
+        let serverData = body.serverData;
 
         // Check if we have serverData container
-        if (isEmpty(clientData)) throw 'No server data is found in post data';
+        if (isEmpty(serverData)) throw 'No server data is found in post data';
 
         // Get the user associated with the order
-        let user = clientData.user;
+        let user = serverData.user;
 
         // Check that the user is present, their id and user token are valid
         tryToValidateUser(userSheet, user);
 
-        // Check if order is present
-        let order = clientData.order;
-        if (isNotEmpty(order)) {
+        // Check if order is present and wasn't submitted earlier
+        let order = serverData.order;
+        if (isValidOrder(order) && isEmpty(order.id)) {
             dataFound = true;
 
             // Compose the row of order data
@@ -226,17 +237,16 @@ function doPost(request) {
             orderSheet.appendRow(orderRow);
 
             // Update the response with the order
-            response = getMergedObject(response, {
-                'serverData': { 'order': order }
-            });
+            serverData = getMergedObject(serverData, { 'order': order });
+            response = getMergedObject(response, { 'serverData': serverData });
 
             // Update the version (reveresed date with time) of the order sheet
             updateVersion(orderSheet);
         }
 
-        // Check if userFeedback is present
-        let userFeedback = clientData.userFeedback;
-        if (isNotEmpty(userFeedback)) {
+        // Check if userFeedback is present and wasn't submitted earlier
+        let userFeedback = serverData.userFeedback;
+        if (isValidFeedback(userFeedback) && isEmpty(userFeedback.id)) {
             dataFound = true;
 
             // Compose the row of user feedback data
@@ -251,16 +261,17 @@ function doPost(request) {
             userFeedbackSheet.appendRow(feedbackRow);
 
             // Update the response with the user feedback
-            response = getMergedObject(response, {
-                'serverData': { 'userFeedback': userFeedback }
-            });
+            serverData = getMergedObject(serverData, { 'userFeedback': userFeedback });
+            response = getMergedObject(response, { 'serverData': serverData });
 
             // Update the version of the feedback sheet
             updateVersion(userFeedbackSheet);
         }
 
         // Check if the user is present and order/feedback are not
-        if (isNotEmpty(user) && isEmpty(order) && isEmpty(userFeedback)) {
+        if (isNotEmpty(user)
+            // && !isValidOrder(order) && !isValidFeedback(userFeedback)
+        ) {
             dataFound = true;
 
             // Get the user id from the load
@@ -304,9 +315,8 @@ function doPost(request) {
             });
 
             // Update the response with the updated user data
-            response = getMergedObject(response, {
-                'serverData': { 'user': user }
-            });
+            serverData = getMergedObject(serverData, { 'user': user });
+            response = getMergedObject(response, { 'serverData': serverData });
 
             // Update the version of the user sheet
             updateVersion(userSheet);
@@ -351,6 +361,23 @@ function getDataRange(sheet) {
 function getDigits(rawDigits) {
     const regexp = /[^\d]/g;
     return rawDigits.toString().replace(regexp, '');
+}
+
+// Format the date to 20200504191500 or 2000-05-04 19:15:00
+function getFormattedDate(date, dateSplitter = '', dateTimeSplitter = '', timeSplitter = '') {
+    // Calculate the version depending on date + time
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
+    return '' + year + dateSplitter +
+        padded(month) + dateSplitter +
+        padded(day) + dateTimeSplitter +
+        padded(hour) + timeSplitter +
+        padded(minute) + timeSplitter +
+        padded(second);
 }
 
 // Find the hash of the value (byte to hex https://stackoverflow.com/a/51863912)
@@ -432,6 +459,19 @@ function isEmpty(value) {
 
 function isNotEmpty(value) {
     return value || value === 0 || value === false ? true : undefined;
+}
+
+function isValidFeedback(feedback) {
+    return isNotEmpty(feedback) &&
+        isNotEmpty(feedback.text);
+}
+
+function isValidOrder(order) {
+    return isNotEmpty(order) &&
+        isNotEmpty(order.cleaningDate) &&
+        isNotEmpty(order.meters) &&
+        isNotEmpty(order.planId) &&
+        isNotEmpty(order.service);
 }
 
 function nonEmptyValue(value) {
@@ -564,15 +604,7 @@ function tryToValidateUserToken(userSheet, user) {
 
 function updateVersion(sheet) {
     // Calculate the version depending on date + time
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-    const second = date.getSeconds();
-    const version = '' +
-        year + padded(month) + padded(day) + padded(hour) + padded(minute) + padded(second);
+    const version = getFormattedDate(new Date());
 
     // Update the version cell
     getVersionRange(sheet).setValue(version);

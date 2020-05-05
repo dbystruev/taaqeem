@@ -22,7 +22,7 @@ mixin RouteValidator {
     Navigator.pop(context);
   }
 
-  bool pushRouteIfValid(
+  bool pushRouteIfValid (
     BuildContext context, {
     Widget Function(BuildContext context) builder,
     bool maintainState = true,
@@ -33,7 +33,7 @@ mixin RouteValidator {
     String Function() validator,
   }) {
     debugPrint(
-      'lib/mixins/route_validator_mixin.dart:35 pushRouteIfValid(name: \'$name\', replace: $replace)',
+      'lib/mixins/route_validator_mixin.dart:36 pushRouteIfValid(name: \'$name\', replace: $replace)',
     );
     if (validator != null) {
       final String message = validator();

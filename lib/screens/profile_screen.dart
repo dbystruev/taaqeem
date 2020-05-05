@@ -147,6 +147,14 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    debugPrint(
+      'lib/screens/profile_screen.dart:154 screenData = ${widget.screenData}',
+    );
+  }
+
   void leaveFeedback() {
     pushRouteIfValid(
       context,
@@ -159,10 +167,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
     pushRouteIfValid(
       context,
       builder: (context) => MainScreen(
-        ScreenData.over(
-          widget.screenData,
-          user: User(),
-        ),
+        ScreenData.logout(widget.screenData),
       ),
       name: MainScreen.routeName,
       replace: true,
