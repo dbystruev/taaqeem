@@ -12,21 +12,25 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
+import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/server_data.dart';
+import 'package:taaqeem/models/user_feedback.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController {
-  // Google Apps Script web url
+  // Last submitted feedback and order
+  UserFeedback lastUserFeedback = UserFeedback(null);
+  Order lastOrder = Order();
+
   static final NetworkController shared = NetworkController();
   bool requestIsBeingProcessed = false;
   final String url;
-  final String line =
-      '===============================================================================================';
 
   // Default constructor
   NetworkController({
+    // Google Apps Script web url
     this.url = 'https://script.google.com/macros/s/' +
         'AKfycbyVJAPvLhbZtKwJ6-p00NERFQbEK22B4xTdkTL4ReHYYdKMRIV8' +
         '/exec',
@@ -176,9 +180,6 @@ class NetworkController {
       statusCode = response.statusCode;
       uri = response.headers['location'];
     }
-    debugPrint(
-      '$line\nresponse.body = ${response.body}\n$line',
-    );
     return response;
   }
 
@@ -192,10 +193,6 @@ class NetworkController {
       final Map<String, String> headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
-      debugPrint(
-        '$line\nlib/controllers/network_controllers.dart:193 postServerData(), url =\n$url\n' +
-            '$line\nbody = $body',
-      );
       final http.Response response =
           await http.post(url, body: body, headers: headers);
       return response;
@@ -210,16 +207,16 @@ class NetworkController {
     if (requestIsBeingProcessed) return screenData;
     requestIsBeingProcessed = true;
     try {
+      if (lastOrder.isSimilar(screenData.order))
+        screenData.order.id = lastOrder.id;
+      if (lastUserFeedback.isSimilar(screenData.userFeedback))
+        screenData.userFeedback.id = lastUserFeedback.id;
       final String userToken = screenData.user.token;
       final String url = screenData.url + '&userToken=$userToken';
       ServerData serverData = ServerData.fromScreenData(screenData);
       final http.Response response =
           await postAndRedirect(serverData, url: url);
       screenData = getScreenDataFromResponse(response, screenData: screenData);
-      debugPrint(
-        'lib/controllers/network_controllers.dart:219 postRequest()' +
-            ', screenData.order.id = ${screenData.order.id}\n$line',
-      );
     } catch (error) {
       screenData = ScreenData.over(
         screenData,
@@ -227,6 +224,22 @@ class NetworkController {
         lastErrorTime: DateTime.now(),
       );
     } finally {
+      if (screenData.order?.id != null) {
+        if (lastOrder.isSimilar(screenData.order)) {
+          lastOrder.id = screenData.order.id;
+          screenData.order.id = null;
+        }
+        else
+          lastOrder.copy(screenData.order);
+      }
+      if (screenData.userFeedback?.id != null) {
+        if (lastUserFeedback.isSimilar(screenData.userFeedback)) {
+          lastUserFeedback.id = screenData.userFeedback.id;
+          screenData.userFeedback.id = null;
+        }
+        else
+          lastUserFeedback.copy(screenData.userFeedback);
+      }
       requestIsBeingProcessed = false;
     }
     return screenData;

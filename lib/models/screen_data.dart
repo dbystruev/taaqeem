@@ -16,15 +16,15 @@ class ScreenData {
       plans?.plans != null &&
       0 <= selectedPlan &&
       selectedPlan < plans.plans.length;
-  final String lastError;
-  final DateTime lastErrorTime;
-  final Order order;
-  final Plans plans;
-  final int routeIndex;
-  final int selectedPlan;
-  final String url;
-  final User user;
-  final UserFeedback userFeedback;
+  String lastError;
+  DateTime lastErrorTime;
+  Order order;
+  Plans plans;
+  int routeIndex;
+  int selectedPlan;
+  String url;
+  User user;
+  UserFeedback userFeedback;
 
   ScreenData({
     this.lastError,
@@ -135,5 +135,51 @@ class ScreenData {
   user: '$user',
   userFeedback: '$userFeedback', // isPending: ${userFeedback.isPending}
 )''';
+  }
+
+  assign(
+    String lastError,
+    DateTime lastErrorTime,
+    Order order,
+    Plans plans,
+    int routeIndex,
+    int selectedPlan,
+    String url,
+    User user,
+    UserFeedback userFeedback,
+  ) {
+    this.lastError = lastError ?? this.lastError;
+    this.lastErrorTime = lastErrorTime ?? this.lastErrorTime;
+    this.order = order ?? this.order;
+    this.plans = plans ?? this.plans;
+    this.routeIndex = routeIndex ?? this.routeIndex;
+    this.selectedPlan = selectedPlan ?? this.selectedPlan;
+    this.url = url ?? this.url;
+    this.user = user ?? this.user;
+    this.userFeedback = userFeedback ?? this.userFeedback;
+  }
+
+  clear() {
+    lastError = null;
+    lastErrorTime = null;
+    order = null;
+    plans = null;
+    routeIndex = null;
+    selectedPlan = null;
+    url = null;
+    user = null;
+    userFeedback = null;
+  }
+
+  merge(ScreenData screenData) {
+    lastError = screenData.lastError ?? lastError;
+    lastErrorTime = screenData.lastErrorTime ?? lastErrorTime;
+    order = screenData.order ?? order;
+    plans = screenData.plans ?? plans;
+    routeIndex = screenData.routeIndex ?? routeIndex;
+    selectedPlan = screenData.selectedPlan ?? selectedPlan;
+    url = screenData.url ?? url;
+    user = screenData.user ?? user;
+    userFeedback = screenData.userFeedback ?? userFeedback;
   }
 }

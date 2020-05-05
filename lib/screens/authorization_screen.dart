@@ -6,6 +6,7 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
@@ -174,7 +175,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     phone = screenData.user?.phone;
     phoneController = TextEditingController();
     debugPrint(
-      'lib/screens/authorization_screen.dart:176 screenData = $screenData',
+      'lib/screens/authorization_screen.dart:177 screenData = $screenData',
     );
   }
 
@@ -194,8 +195,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
         final bool isPending = screenData.user.isFilled &&
             screenData.user.isLoggedIn &&
             (screenData.order.isPending || screenData.userFeedback.isPending);
-        final Widget build = isPending ? MainScreen(screenData) : ProfileLandingScreen(screenData);
-        final String routeName = isPending ? MainScreen.routeName : ProfileLandingScreen.routeName;
+        final Widget build = isPending
+            ? MainScreen(screenData)
+            : ProfileLandingScreen(screenData);
+        final String routeName =
+            isPending ? MainScreen.routeName : ProfileLandingScreen.routeName;
+        savePrefs();
         pushRouteIfValid(
           context,
           builder: (context) => build,
@@ -239,6 +244,17 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
       } else
         showMessageInContext(context, errorMessage);
     }
+  }
+
+  void savePrefs() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+
+    // save user's phone and token
+    prefs.setString('email', screenData.user.email);
+    prefs.setString('name', screenData.user.name);
+    prefs.setString('phone', phone);
+    prefs.setString('token', screenData.user.token);
   }
 
   /// Returns empty String if code is correct

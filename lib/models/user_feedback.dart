@@ -9,10 +9,10 @@ part 'user_feedback.g.dart';
 
 @JsonSerializable()
 class UserFeedback {
-  final DateTime date;
-  final int id;
+  DateTime date;
+  int id;
   bool get isPending => text != null && text.isNotEmpty;
-  final String text;
+  String text;
 
   UserFeedback(this.text, {DateTime date, this.id})
       : this.date = date ?? DateTime.now();
@@ -46,5 +46,36 @@ class UserFeedback {
     date: '$date',
     id: $id
   )''';
+  }
+
+  assign(
+    DateTime date,
+    int id,
+    String text,
+  ) {
+    this.date = date ?? this.date;
+    this.id = id ?? this.id;
+    this.text = text ?? this.text;
+  }
+
+  clear() {
+    date = null;
+    id = null;
+    text = null;
+  }
+
+  copy(UserFeedback feedback) {
+    date = feedback.date;
+    id = feedback.id;
+    text = feedback.text;
+  }
+
+  bool isSimilar(UserFeedback feedback) =>
+      date == feedback.date && text == feedback.text;
+
+  merge(UserFeedback feedback) {
+    date = feedback.date ?? date;
+    id = feedback.id ?? id;
+    text = feedback.text ?? text;
   }
 }

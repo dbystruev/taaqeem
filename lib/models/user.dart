@@ -10,15 +10,15 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  final String avatar;
-  final String email;
-  final int id;
+  String avatar;
+  String email;
+  int id;
   bool get isFilled => email != null && name != null && phone != null;
   bool get isLoggedIn => token != null && token.length == 128;
-  final String name;
-  final String phone;
-  final DateTime registrationDate;
-  final String token;
+  String name;
+  String phone;
+  DateTime registrationDate;
+  String token;
 
   User({
     this.avatar,
@@ -78,5 +78,43 @@ class User {
     registrationDate: '$registrationDate',
     token: '$token',
   )''';
+  }
+
+  assign({
+    String avatar,
+    String email,
+    int id,
+    String name,
+    String phone,
+    DateTime registrationDate,
+    String token,
+  }) {
+    this.avatar = avatar ?? this.avatar;
+    this.email = email ?? this.email;
+    this.id = id ?? this.id;
+    this.name = name ?? this.name;
+    this.phone = phone ?? this.phone;
+    this.registrationDate = registrationDate ?? this.registrationDate;
+    this.token = token ?? this.token;
+  }
+
+  clear() {
+    avatar = null;
+    email = null;
+    id = null;
+    name = null;
+    phone = null;
+    registrationDate = null;
+    token = null;
+  }
+
+  merge(User user) {
+    avatar = user.avatar ?? avatar;
+    email = user.email ?? email;
+    id = user.id ?? id;
+    name = user.name ?? name;
+    phone = user.phone ?? phone;
+    registrationDate = user.registrationDate ?? registrationDate;
+    token = user.token ?? token;
   }
 }
