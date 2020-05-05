@@ -50,17 +50,14 @@ class User {
     DateTime registrationDate,
     String token,
   }) =>
-      User.merge(
-        user,
-        User(
-          avatar: avatar,
-          email: email,
-          id: id,
-          name: name,
-          phone: phone,
-          registrationDate: registrationDate,
-          token: token,
-        ),
+      User(
+        avatar: avatar ?? user.avatar,
+        email: email ?? user.email,
+        id: id ?? user.id,
+        name: name ?? user.name,
+        phone: phone ?? user.phone,
+        registrationDate: registrationDate ?? user.registrationDate,
+        token: token ?? user.token,
       );
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

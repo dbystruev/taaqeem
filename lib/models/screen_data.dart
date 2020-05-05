@@ -98,6 +98,19 @@ class ScreenData {
         userFeedback: screenData.userFeedback,
       );
 
+  factory ScreenData.merge(ScreenData screenData, ScreenData newScreenData) =>
+      ScreenData(
+        lastError: newScreenData.lastError ?? screenData.lastError,
+        lastErrorTime: newScreenData.lastErrorTime ?? screenData.lastErrorTime,
+        order: newScreenData.order ?? screenData.order,
+        plans: newScreenData.plans ?? screenData.plans,
+        routeIndex: newScreenData.routeIndex ?? screenData.routeIndex,
+        selectedPlan: newScreenData.selectedPlan ?? screenData.selectedPlan,
+        url: newScreenData.url ?? screenData.url,
+        user: newScreenData.user ?? screenData.user,
+        userFeedback: newScreenData.userFeedback ?? screenData.userFeedback,
+      );
+
   factory ScreenData.over(
     ScreenData screenData, {
     String lastError,

@@ -12,7 +12,7 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/screens/launch_screen.dart';
 
 void main() {
-  // Disable debugPring in release mode
+  // Disable debugPrint in release mode
   if (globals.isProduction) debugPrint = (String message, {int wrapWidth}) {};
   // Set default locale
   Intl.defaultLocale = globals.locale;

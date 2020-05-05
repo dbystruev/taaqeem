@@ -4,17 +4,11 @@
 //  Created by Denis Bystruev on 2/05/2020.
 //
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
-import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/screen_data.dart';
-import 'package:taaqeem/models/server_data.dart';
 import 'package:taaqeem/models/user_feedback.dart';
 import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
@@ -87,8 +81,8 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
         focusNode: feedbackNode,
         onTapAction: () => routeToMainScreenIfValid(context),
       ),
+      getScreenData: () => screenData,
       removePreviousRoute: true,
-      screenData: screenData,
     );
   }
 
@@ -104,6 +98,7 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
         this.screenData,
         userFeedback: UserFeedback.over(
           this.screenData.userFeedback,
+          date: DateTime.now(),
           text: feedbackController.text,
         ),
       );

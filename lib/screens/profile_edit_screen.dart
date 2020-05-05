@@ -105,7 +105,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
         onTapAction: nextFieldOrRoute,
       ),
       removePreviousRoute: true,
-      screenData: screenData,
+      getScreenData: () => screenData,
     );
   }
 
@@ -119,7 +119,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
     nameNode = FocusNode();
     showName = false;
     debugPrint(
-      'lib/screens/profile_edit_screen.dart:121 screenData = $screenData',
+      'lib/screens/profile_edit_screen.dart:122 screenData = $screenData',
     );
   }
 
@@ -144,7 +144,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
         user: User.over(screenData.user, email: emailController.text),
       );
       setState(() => showName = true);
-      screenData = await NetworkController.shared.postRequest(screenData);
+      NetworkController.shared.postRequest(screenData).then(
+          (serverScreenData) =>
+              screenData = ScreenData.merge(screenData, serverScreenData));
       return;
     }
     final String errorMessage = validateName();
@@ -159,9 +161,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
 
     final bool isPending =
         screenData.order.isPending || screenData.userFeedback.isPending;
-    final build = isPending
-        ? MainScreen(screenData)
-        : ProfileScreen(screenData);
+    final build =
+        isPending ? MainScreen(screenData) : ProfileScreen(screenData);
     final String routeName =
         isPending ? MainScreen.routeName : ProfileScreen.routeName;
     if (!isPending)

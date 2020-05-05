@@ -48,16 +48,13 @@ class Order {
     int planId,
     String service,
   }) =>
-      Order.merge(
-        order,
-        Order(
-          cleaningDate: cleaningDate,
-          creationDate: creationDate,
-          id: id,
-          meters: meters,
-          planId: planId,
-          service: service,
-        ),
+      Order(
+        cleaningDate: cleaningDate ?? order.cleaningDate,
+        creationDate: creationDate ?? order.creationDate,
+        id: id ?? order.id,
+        meters: meters ?? order.meters,
+        planId: planId ?? order.planId,
+        service: service ?? order.service,
       );
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);

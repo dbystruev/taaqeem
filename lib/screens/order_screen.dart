@@ -5,7 +5,6 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/extensions/scroll_controller+extension.dart';
@@ -13,7 +12,6 @@ import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/screen_data.dart';
-import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
@@ -177,9 +175,9 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
         onTapAction: hideCalendarAndKeyboard,
       ),
       onPlusTap: () => routeToMainOrProfileScreenIfValid(showPlanSelection),
-      onTap: hideCalendarAndKeyboard,
+      onCanvasTap: hideCalendarAndKeyboard,
       removePreviousRoute: showPlanSelection,
-      screenData: screenData,
+      getScreenData: () => screenData,
     );
   }
 
@@ -210,32 +208,6 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
     plans = screenData.plans.plans;
     scrollController = ScrollController();
     squareMetersController = TextEditingController();
-    if (!screenData.user.isLoggedIn) loadPrefs();
-    debugPrint(
-      'lib/screens/order_screen.dart:210 screenData = $screenData',
-    );
-  }
-
-  void loadPrefs() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-
-    // save user's phone and token
-    final String email = prefs.getString('email');
-    final String name = prefs.getString('name');
-    final String phone = prefs.getString('phone');
-    final String token = prefs.getString('token');
-
-    screenData = ScreenData.over(
-      screenData,
-      user: User.over(
-        screenData.user,
-        email: email,
-        name: name,
-        phone: phone,
-        token: token,
-      ),
-    );
   }
 
   void routeToMainOrProfileScreenIfValid(bool showPlanSelection) {
@@ -245,6 +217,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
       order: Order.over(
         screenData.order,
         cleaningDate: selectedDay,
+        creationDate: DateTime.now(),
         meters: squareMeters,
         planId: plan?.id,
         service: OrderScreen.services[selectedServiceIndex],

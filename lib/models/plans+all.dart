@@ -16,7 +16,7 @@ extension AllPlans on Plan {
           id: 1,
           image: 'residence',
           type: 'Villa & Apartment',
-          subtitle: 'up to 30 m²',
+          subtitle: 'start from 30 m²',
         ),
         Plan(
           'Service for offices',
@@ -25,7 +25,7 @@ extension AllPlans on Plan {
           id: 2,
           image: 'office',
           type: 'Offices',
-          subtitle: 'up to 50 m²',
+          subtitle: 'start from 50 m²',
         ),
         Plan(
           'Service for F&B outlets',
@@ -35,7 +35,7 @@ extension AllPlans on Plan {
           id: 3,
           image: 'f&b',
           type: 'F&B Outlets',
-          subtitle: 'up to 100 m²',
+          subtitle: 'start from 100 m²',
         ),
         Plan(
           'Service for industrial area ',
@@ -45,7 +45,7 @@ extension AllPlans on Plan {
           id: 4,
           image: 'industrial',
           type: 'Industrial areas',
-          subtitle: 'up to 500 m²',
+          subtitle: 'start from 500 m²',
         ),
       ];
 }

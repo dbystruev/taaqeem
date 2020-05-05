@@ -10,12 +10,14 @@ import 'dart:convert' as convert;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/app_data.dart';
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/server_data.dart';
+import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/models/user_feedback.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -183,6 +185,40 @@ class NetworkController {
     return response;
   }
 
+  Future<ScreenData> loadPrefs() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+
+    // get user's phone and token
+    final String email = prefs.getString('email');
+    final int id = prefs.getInt('id');
+    final String name = prefs.getString('name');
+    final String phone = prefs.getString('phone');
+    final String token = prefs.getString('token');
+
+    debugPrint(
+      'lib/controllers/network_controllers.dart:200 loadPrefs() ' +
+          'email = $email, id = $id, name = $name, phone = $phone, token = $token',
+    );
+
+    final ScreenData screenData = ScreenData(
+      user: User(
+        email: email,
+        id: id,
+        name: name,
+        phone: phone,
+        token: token,
+      ),
+    );
+
+    debugPrint(
+      'lib/controllers/network_controllers.dart:215 loadPrefs()' +
+          'screenData.user = ${screenData.user}',
+    );
+
+    return screenData;
+  }
+
   // Async function which posts the server data
   Future<http.Response> postServerData(
     ServerData serverData, {
@@ -228,20 +264,51 @@ class NetworkController {
         if (lastOrder.isSimilar(screenData.order)) {
           lastOrder.id = screenData.order.id;
           screenData.order.id = null;
-        }
-        else
+        } else
           lastOrder.copy(screenData.order);
       }
       if (screenData.userFeedback?.id != null) {
         if (lastUserFeedback.isSimilar(screenData.userFeedback)) {
           lastUserFeedback.id = screenData.userFeedback.id;
           screenData.userFeedback.id = null;
-        }
-        else
+        } else
           lastUserFeedback.copy(screenData.userFeedback);
       }
       requestIsBeingProcessed = false;
     }
     return screenData;
+  }
+
+  void removePrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+    prefs.remove('id');
+    prefs.remove('name');
+    prefs.remove('phone');
+    prefs.remove('token');
+    debugPrint('lib/controllers/network_controllers.dart:289 removePrefs()');
+  }
+
+  void savePrefs(ScreenData screenData) async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+
+    final String email = screenData.user.email;
+    final int id = screenData.user.id;
+    final String name = screenData.user.name;
+    final String phone = screenData.user.phone;
+    final String token = screenData.user.token;
+
+    // save user's phone and token
+    prefs.setString('email', email);
+    prefs.setInt('id', id);
+    prefs.setString('name', name);
+    prefs.setString('phone', phone);
+    prefs.setString('token', token);
+
+    debugPrint(
+      'lib/controllers/network_controllers.dart:310 savePrefs() ' +
+          'email = $email, id = $id, name = $name, phone = $phone, token = $token',
+    );
   }
 }

@@ -90,7 +90,7 @@ class AboutScreen extends StatelessWidget with RouteValidator {
             'The first marketplace in UAE to help protect\nYou and keep You in healthy environment',
         title: 'About us',
       ),
-      screenData: screenData,
+      getScreenData: () => screenData,
     );
   }
 

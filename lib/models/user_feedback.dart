@@ -29,10 +29,7 @@ class UserFeedback {
     DateTime date,
     String text,
   }) =>
-      UserFeedback.merge(
-        feedback,
-        UserFeedback(text, date: date),
-      );
+      UserFeedback(text ?? feedback.text, date: date ?? feedback.date);
 
   factory UserFeedback.fromJson(Map<String, dynamic> json) =>
       _$UserFeedbackFromJson(json);

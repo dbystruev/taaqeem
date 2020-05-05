@@ -6,7 +6,6 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
@@ -96,8 +95,9 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                   prefixText: isCode ? null : globals.phonePrefix,
                 ),
                 onChanged: (String text) {
-                  final String digitsText = digits(text);
-                  if (isCode && 3 < digitsText.length || 9 < digitsText.length)
+                  if (isCode && digits(text).length == 4 ||
+                      validatePhone(text).isEmpty &&
+                          validatePhone(text + '0').isNotEmpty)
                     routeToProfileScreenIfValid();
                 },
                 onEditingComplete: routeToProfileScreenIfValid,
@@ -175,9 +175,14 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     phone = screenData.user?.phone;
     phoneController = TextEditingController();
     debugPrint(
-      'lib/screens/authorization_screen.dart:177 screenData = $screenData',
+      'lib/screens/authorization_screen.dart:178 screenData = $screenData',
     );
   }
+
+  bool isTestingPhone(String phone) =>
+      phone.trim().startsWith('+') &&
+      digits(phone).startsWith('7') &&
+      digits(phone).length == 11;
 
   void routeToProfileScreenIfValid() async {
     hideKeyboard();
@@ -200,7 +205,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
             : ProfileLandingScreen(screenData);
         final String routeName =
             isPending ? MainScreen.routeName : ProfileLandingScreen.routeName;
-        savePrefs();
+        NetworkController.shared.savePrefs(screenData);
         pushRouteIfValid(
           context,
           builder: (context) => build,
@@ -223,7 +228,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
         screenData = await NetworkController.shared.getRequest(
           query: {
             'generatedCode': randomCode,
-            'phone': globals.phonePrefix + phoneFromUser,
+            'phone': testingPrefix(phoneFromUser) + phoneFromUser,
           },
           screenData: screenData,
         );
@@ -236,7 +241,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
         } else {
           AuthorizationScreen.attemptsRemaining = 2;
           setState(() {
-            phone = globals.phonePrefix + phoneFromUser;
+            phone = testingPrefix(phoneFromUser) + phoneFromUser;
           });
           if (randomCode == verificationCode)
             showMessageInContext(context, 'your code is: $randomCode');
@@ -246,16 +251,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     }
   }
 
-  void savePrefs() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-
-    // save user's phone and token
-    prefs.setString('email', screenData.user.email);
-    prefs.setString('name', screenData.user.name);
-    prefs.setString('phone', phone);
-    prefs.setString('token', screenData.user.token);
-  }
+  String testingPrefix(String phone) =>
+      isTestingPhone(phone) ? '' : globals.phonePrefix;
 
   /// Returns empty String if code is correct
   /// Returns error message if code is not correct
@@ -274,6 +271,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     if (phone == null) return 'empty number';
     final String phoneDigits = digits(phone);
     final int numberOfDigits = phoneDigits.length;
+    if (isTestingPhone(phone)) return '';
     if (numberOfDigits < 9) return 'please enter more digits';
     if (10 < numberOfDigits) return 'please delete extra digits';
     return '';

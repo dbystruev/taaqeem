@@ -117,7 +117,7 @@ class SupportScreen extends StatelessWidget with RouteValidator {
             'Write to us in messengers, call\nor look at the answers to FAQ',
         title: 'How can we help you?',
       ),
-      screenData: screenData,
+      getScreenData: () => screenData,
     );
   }
 }

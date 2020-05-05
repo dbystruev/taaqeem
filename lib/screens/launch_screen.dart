@@ -23,11 +23,10 @@ class LaunchScreen extends StatefulWidget {
 }
 
 class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
-  // Minimum delay — 3 seconds
   String feedbackUrl;
-  final Duration minDelay = Duration(seconds: 3);
+  final Duration minDelay = Duration(milliseconds: 1);    // no delay
   Plans plans;
-  final startTime = DateTime.now();
+  final DateTime startTime = DateTime.now();
   bool tapped = false;
 
   @override
@@ -38,7 +37,7 @@ class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
         child: Stack(
           children: <Widget>[
             Positioned(
-              child: ImageWidget('logo', height: 58, width: 135),
+              child: ImageWidget('logo', height: 58, scale: scale, width: 135),
               left: 20 * scale + Scale.getSafeMargin(context),
               top: 30 * scale,
             ),
@@ -116,5 +115,6 @@ class _LaunchScreenState extends State<LaunchScreen> with RouteValidator {
       name: MainScreen.routeName,
       replace: true,
     );
+    tapped = false;
   }
 }

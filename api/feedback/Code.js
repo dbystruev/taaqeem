@@ -111,7 +111,12 @@ function doGet(request) {
         if (isEmpty(responseCode)) {
             // It wasn't — we need to generate one
             // Temporarily we use a response code generated in the app
-            const generatedCode = request.parameter.generatedCode;
+            let generatedCode = phoneDigits[0] == '7'  // test phones get random number
+                ? Math.floor(10000 * Math.random()).toString()
+                : request.parameter.generatedCode;
+
+            // Add padding 0s
+            while (generatedCode.length < 4) generatedCode = '0' + generatedCode;
 
             // Let the app know that it needs to provide the code
             if (isEmpty(generatedCode))

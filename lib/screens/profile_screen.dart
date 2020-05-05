@@ -5,7 +5,7 @@
 //
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taaqeem/controllers/network_controller.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
@@ -136,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
           ),
         ],
       ),
-      screenData: widget.screenData,
+      getScreenData: () => widget.screenData,
     );
   }
 
@@ -151,9 +151,9 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   @override
   void initState() {
     super.initState();
-    savePrefs();
+    NetworkController.shared.savePrefs(widget.screenData);
     debugPrint(
-      'lib/screens/profile_screen.dart:154 screenData = ${widget.screenData}',
+      'lib/screens/profile_screen.dart:157 screenData = ${widget.screenData}',
     );
   }
 
@@ -166,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   }
 
   void logout() {
-    removePrefs();
+    NetworkController.shared.removePrefs();
     pushRouteIfValid(
       context,
       builder: (context) => MainScreen(
@@ -177,22 +177,4 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
     );
   }
 
-  void removePrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('email');
-    prefs.remove('name');
-    prefs.remove('phone');
-    prefs.remove('token');
-  }
-
-  void savePrefs() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-
-    // save user's phone and token
-    prefs.setString('email', widget.screenData.user?.email);
-    prefs.setString('name', widget.screenData.user?.name);
-    prefs.setString('phone', widget.screenData.user?.phone);
-    prefs.setString('token', widget.screenData.user?.token);
-  }
 }

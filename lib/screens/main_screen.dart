@@ -116,7 +116,7 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
           Scale.getSafeMargin(context),
         ),
       ),
-      screenData: ScreenData.over(screenData, selectedPlan: selectedPlan),
+      getScreenData: () => ScreenData.over(screenData, selectedPlan: selectedPlan),
     );
   }
 
@@ -141,8 +141,17 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
     selectedPlan = screenData.selectedPlan ?? plans.length;
     sendingOrderOrFeedbackInProcess = false;
     WidgetsBinding.instance.addPostFrameCallback(sendOrderOrFeedbackAsNeeded);
+    if (screenData.user.isLoggedIn) {
+      NetworkController.shared.savePrefs(screenData);
+    } else
+      NetworkController.shared.loadPrefs().then((ScreenData prefsScreenData) {
+        screenData = ScreenData.merge(screenData, prefsScreenData);
+        debugPrint(
+          'lib/screens/main_screen.dart:152 screenData.user = ${screenData.user}',
+        );
+      });
     debugPrint(
-      'lib/screens/main_screen.dart:144 screenData = $screenData',
+      'lib/screens/main_screen.dart:156 screenData = $screenData',
     );
   }
 
