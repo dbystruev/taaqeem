@@ -123,6 +123,9 @@ class NetworkController {
       client.close();
       requestIsBeingProcessed = false;
     }
+    debugPrint(
+      'lib/controllers/network_controllers.dart:127 getRequest() screenData = $screenData',
+    );
     return screenData;
   }
 
@@ -196,11 +199,6 @@ class NetworkController {
     final String phone = prefs.getString('phone');
     final String token = prefs.getString('token');
 
-    debugPrint(
-      'lib/controllers/network_controllers.dart:200 loadPrefs() ' +
-          'email = $email, id = $id, name = $name, phone = $phone, token = $token',
-    );
-
     final ScreenData screenData = ScreenData(
       user: User(
         email: email,
@@ -209,11 +207,6 @@ class NetworkController {
         phone: phone,
         token: token,
       ),
-    );
-
-    debugPrint(
-      'lib/controllers/network_controllers.dart:215 loadPrefs()' +
-          'screenData.user = ${screenData.user}',
     );
 
     return screenData;
@@ -276,6 +269,9 @@ class NetworkController {
       }
       requestIsBeingProcessed = false;
     }
+    debugPrint(
+      'lib/controllers/network_controllers.dart:273 postRequest() screenData = $screenData',
+    );
     return screenData;
   }
 
@@ -286,7 +282,6 @@ class NetworkController {
     prefs.remove('name');
     prefs.remove('phone');
     prefs.remove('token');
-    debugPrint('lib/controllers/network_controllers.dart:289 removePrefs()');
   }
 
   void savePrefs(ScreenData screenData) async {
@@ -305,10 +300,5 @@ class NetworkController {
     prefs.setString('name', name);
     prefs.setString('phone', phone);
     prefs.setString('token', token);
-
-    debugPrint(
-      'lib/controllers/network_controllers.dart:310 savePrefs() ' +
-          'email = $email, id = $id, name = $name, phone = $phone, token = $token',
-    );
   }
 }

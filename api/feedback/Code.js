@@ -109,14 +109,30 @@ function doGet(request) {
         // Check that the response code was provided
         const responseCode = request.parameter.responseCode;
         if (isEmpty(responseCode)) {
-            // It wasn't — we need to generate one
-            // Temporarily we use a response code generated in the app
-            let generatedCode = phoneDigits[0] == '7'  // test phones get random number
-                ? Math.floor(10000 * Math.random()).toString()
-                : request.parameter.generatedCode;
+            // It wasn't — we need to generate one a random one from 0 to 9999
+            let generatedCode = Math.floor(10000 * Math.random()).toString();
 
-            // Add padding 0s
+            // Add padding 0s for 0000...0009, 0010...0099, and 0100...0999
             while (generatedCode.length < 4) generatedCode = '0' + generatedCode;
+
+            // Phones which start with 7 (+7 included) are test phones
+            if (phoneDigits[0] == '7') {
+                // For test phones use app provided code
+                generatedCode = request.parameter.generatedCode;
+            } else {
+                // For all other phones call the SMSGlobal API to send SMS
+                const url = 'https://api.smsglobal.com/http-api.php' +
+                    '?action=sendsms' +
+                    '&user=0bublnb0' +
+                    '&password=StiA5ary' +
+                    '&from=Taaqeem' +
+                    '&to=' + phoneDigits +
+                    '&text=Your%20Taaqeem%20app%20code:%20' + generatedCode;
+                const response = UrlFetchApp.fetch(url, { 'muteHttpExceptions': true });
+
+                // Save API response to the sheet
+                getUserAPIResultRange(userSheet, user.id).setValue(response);
+            }
 
             // Let the app know that it needs to provide the code
             if (isEmpty(generatedCode))
@@ -442,7 +458,13 @@ function getTokenRange(sheet) {
     return sheet.getRange('D2');
 }
 
-// Get the range of reponse code for the phone number
+// Get the range of response to API call
+function getUserAPIResultRange(sheet, userId) {
+    const userRow = userId + sheet.getFrozenRows();
+    return sheet.getRange(userRow, 9, 1, 1);
+}
+
+// Get the range of response code for the phone number
 function getUserResponseCodeRange(sheet, userId) {
     const userRow = userId + sheet.getFrozenRows();
     return sheet.getRange(userRow, 7, 1, 1);

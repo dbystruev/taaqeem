@@ -95,6 +95,9 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                   prefixText: isCode ? null : globals.phonePrefix,
                 ),
                 onChanged: (String text) {
+                  // debugPrint(
+                  //   'lib/screens/authorization_screen.dart:99 onChanged($text)',
+                  // );
                   if (isCode && digits(text).length == 4 ||
                       validatePhone(text).isEmpty &&
                           validatePhone(text + '0').isNotEmpty)
@@ -174,15 +177,20 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     screenData = widget.screenData;
     phone = screenData.user?.phone;
     phoneController = TextEditingController();
-    debugPrint(
-      'lib/screens/authorization_screen.dart:178 screenData = $screenData',
-    );
+    // debugPrint(
+    //   'lib/screens/authorization_screen.dart:181 screenData = $screenData',
+    // );
   }
 
-  bool isTestingPhone(String phone) =>
-      phone.trim().startsWith('+') &&
-      digits(phone).startsWith('7') &&
-      digits(phone).length == 11;
+  bool isTestingPhone(String phone) {
+    final bool result = phone.trim().startsWith('+') &&
+        digits(phone).startsWith('7') &&
+        digits(phone).length == 11;
+    // debugPrint(
+    //   'lib/screens/authorization_screen.dart:190 isTestingPhone($phone) = $result',
+    // );
+    return result;
+  }
 
   void routeToProfileScreenIfValid() async {
     hideKeyboard();
@@ -268,12 +276,22 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
   /// Returns empty String if phone is valid
   /// Returns error message if phone is not valid
   String validatePhone(String phone) {
-    if (phone == null) return 'empty number';
-    final String phoneDigits = digits(phone);
-    final int numberOfDigits = phoneDigits.length;
-    if (isTestingPhone(phone)) return '';
-    if (numberOfDigits < 9) return 'please enter more digits';
-    if (10 < numberOfDigits) return 'please delete extra digits';
-    return '';
+    String errorMessage = '';
+    if (!isTestingPhone(phone)) {
+      if (phone == null || phone.trim().isEmpty)
+        errorMessage = 'empty number';
+      else {
+        final String phoneDigits = digits(phone);
+        final int numberOfDigits = phoneDigits.length;
+        if (numberOfDigits < 8)
+          errorMessage = 'please enter more digits';
+        else if (10 < numberOfDigits)
+          errorMessage = 'please delete extra digits';
+      }
+    }
+    // debugPrint(
+    //   'lib/screens/authorization_screen.dart:293 validatePhone($phone) = $errorMessage',
+    // );
+    return errorMessage;
   }
 }
