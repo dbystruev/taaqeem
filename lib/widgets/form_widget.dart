@@ -94,10 +94,7 @@ class FormWidget extends StatelessWidget {
         cursorColor: globals.subtitleColor,
         decoration: inputDecoration ??
             InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5 * scale),
-                borderSide: BorderSide.none,
-              ),
+              border: InputBorder.none,
               isDense: true,
               hintStyle: TextStyle(
                 color: hintColor,

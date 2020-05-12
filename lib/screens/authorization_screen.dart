@@ -97,17 +97,18 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                     if (!isCode)
                       Column(
                         children: [
+                          SizedBox(height: 7 * scale),
                           TheText.w600(
                             color: globals.textColor,
                             fontSize: 28,
                             text: globals.phonePrefix,
                             textScaleFactor: scale,
                           ),
-                          SizedBox(height: 10 * scale),
                         ],
                       ),
                     FormWidget(
-                      boxWidth: isCode ? 76 : 202,
+                      boxWidth: isCode ? 80 * scale : 220 * scale,
+                      boxHeight: 80 * scale,
                       color: globals.textColor,
                       controller: isCode ? codeController : phoneController,
                       decoration: BoxDecoration(border: null),
@@ -139,8 +140,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                     ),
                     Column(
                       children: [
+                        SizedBox(height: 7 * scale),
                         ImageWidget('pen', height: 15, scale: scale, width: 15),
-                        SizedBox(height: 10 * scale),
                       ],
                     ),
                   ],
