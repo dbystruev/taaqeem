@@ -25,46 +25,46 @@ class PolicyScreen extends StatelessWidget {
     final double scale = Scale.getHorizontalScale(context);
     final Policy policy = showToS ? AllPolicies.local[1] : AllPolicies.local[0];
     return Scaffold(
-      body: Column(
-        children: [
-          BackWidget(
-            policy.title,
-            marginBottom: 40,
-            // marginTop: 31 + Scale.getSafeMargin(context),
-            scale: scale,
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (_, int index) {
-                final PolicySection section = policy.sections[index];
-                return Column(
-                  children: [
-                    TheText.w600(
-                      color: globals.textColor,
-                      fontSize: 18,
-                      text: section.name,
-                      textScaleFactor: scale,
-                    ),
-                    SizedBox(height: 20 * scale),
-                    TheText.normal(
-                      color: globals.subtitleColor,
-                      fontSize: 14,
-                      height: 1.57,
-                      text: section.text,
-                      textScaleFactor: scale,
-                    ),
-                    SizedBox(height: 40 * scale),
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                );
-              },
-              itemCount: policy.sections.length,
-              padding: EdgeInsets.symmetric(
-                horizontal: 20 * scale + Scale.getSafeMargin(context),
+      body: SafeArea(
+        child: Column(
+          children: [
+            BackWidget(
+              policy.title,
+              marginBottom: 40,
+              // marginTop: 31 + Scale.getSafeMargin(context),
+              scale: scale,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemBuilder: (_, int index) {
+                  final PolicySection section = policy.sections[index];
+                  return Column(
+                    children: [
+                      TheText.w600(
+                        color: globals.textColor,
+                        fontSize: 18,
+                        text: section.name,
+                        textScaleFactor: scale,
+                      ),
+                      SizedBox(height: 20 * scale),
+                      TheText.normal(
+                        color: globals.subtitleColor,
+                        fontSize: 14,
+                        height: 1.57,
+                        text: section.text,
+                        textScaleFactor: scale,
+                      ),
+                      SizedBox(height: 40 * scale),
+                    ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  );
+                },
+                itemCount: policy.sections.length,
+                padding: EdgeInsets.symmetric(horizontal: 20 * scale),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

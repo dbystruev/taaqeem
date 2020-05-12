@@ -18,6 +18,7 @@ class DiscountWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets safePadding = Scale.getSafePadding(context);
     final double scale = this.scale ?? Scale.getScale(context);
     return Padding(
       child: Stack(
@@ -63,7 +64,9 @@ class DiscountWidget extends StatelessWidget {
             ),
             left: Scale.getMidX(context) +
                 77.5 * scale -
-                Scale.getSafeMargin(context),
+                safePadding.left -
+                safePadding.right -
+                (Scale.isHorizontal(context) ? 40 * scale : 0),
           ),
         ],
       ),

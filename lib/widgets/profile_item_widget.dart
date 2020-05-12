@@ -44,7 +44,7 @@ class ProfileItemWidget extends StatelessWidget {
           text: superscript,
           textScaleFactor: scale,
         ),
-        SizedBox(height: 6 * scale),
+        // SizedBox(height: 6 * scale),
         TheText.w600(
           color: textColor,
           fontSize: textFontSize,

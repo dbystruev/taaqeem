@@ -28,11 +28,19 @@ class FormWidget extends StatelessWidget {
   final InputDecoration inputDecoration;
   final FocusNode keyboardNode;
   final TextInputType keyboardType;
+  final double marginBottom;
+  final double marginLeft;
+  final double marginRight;
+  final double marginTop;
   final int maxLines;
   final String labelText;
   final bool obscureText;
   final ValueChanged<String> onChanged;
   final VoidCallback onEditingComplete;
+  final double paddingBottom;
+  final double paddingLeft;
+  final double paddingRight;
+  final double paddingTop;
   final double scale;
   final String suffixText;
   final TextInputAction textInputAction;
@@ -57,10 +65,18 @@ class FormWidget extends StatelessWidget {
     this.keyboardNode,
     this.keyboardType = const TextInputType.numberWithOptions(decimal: true),
     this.labelText,
+    this.marginBottom,
+    this.marginLeft,
+    this.marginRight,
+    this.marginTop,
     this.maxLines = 1,
     this.obscureText = false,
     this.onChanged,
     this.onEditingComplete,
+    this.paddingBottom,
+    this.paddingLeft,
+    this.paddingRight,
+    this.paddingTop,
     this.scale,
     this.suffixText,
     this.textInputAction = TextInputAction.done,
@@ -108,6 +124,14 @@ class FormWidget extends StatelessWidget {
       ),
       decoration: decoration,
       height: boxHeight,
+      marginBottom: marginBottom,
+      marginLeft: marginLeft,
+      marginRight: marginRight,
+      marginTop: marginTop,
+      paddingBottom: paddingBottom,
+      paddingLeft: paddingLeft,
+      paddingRight: paddingRight,
+      paddingTop: paddingTop,
       width: boxWidth,
     );
   }

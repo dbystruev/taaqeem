@@ -7,7 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
-import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plan.dart';
@@ -64,13 +63,10 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
   Widget build(BuildContext context) {
     final double scale = Scale.getHorizontalScale(context);
     final bool showPlanSelection = plan == null;
+    final CalendarFormat calendarFormat =
+        showPlanSelection ? CalendarFormat.month : CalendarFormat.twoWeeks;
     final List<Widget> children = [
-      if (showPlanSelection)
-        BackWidget(
-          'Create new booking',
-          // marginTop: 31,
-          scale: scale,
-        ),
+      if (showPlanSelection) BackWidget('Create new booking', scale: scale),
       if (!showPlanSelection) HeaderImageWidget(plan.image),
       if (!showPlanSelection) SizedBox(height: 16 * scale),
       if (!showPlanSelection)
@@ -84,10 +80,11 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
           plans.map<String>((plan) => plan.type).toList(),
           hint: 'Type of area',
           onChanged: (int index) {
-            setState(() => selectedPlanIndex = index < 0 ? null : index);
+            selectedPlanIndex = index < 0 ? null : index;
             screenData =
                 ScreenData.over(screenData, selectedPlan: selectedPlanIndex);
             hideCalendarAndKeyboard();
+            removeFirstRoute(context);
           },
           selectedItemIndex: selectedPlanIndex,
         ),
@@ -113,7 +110,10 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
       ),
       showCalendar
           ? TableCalendar(
-              availableCalendarFormats: const {CalendarFormat.month: ''},
+              availableCalendarFormats: const {
+                CalendarFormat.month: 'month',
+                CalendarFormat.twoWeeks: '2 weeks',
+              },
               availableGestures: AvailableGestures.horizontalSwipe,
               calendarController: calendarController,
               calendarStyle: CalendarStyle(
@@ -121,6 +121,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
                 todayColor: globals.subtitleColor,
               ),
               holidays: globals.holidays,
+              initialCalendarFormat: calendarFormat,
               initialSelectedDay: selectedDay,
               locale: globals.locale,
               onDaySelected: (DateTime selectedDay, _) {
@@ -132,17 +133,7 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
               weekendDays: const [DateTime.friday, DateTime.saturday],
             )
           : CalendarWidget(
-              onTap: () {
-                setState(() => showCalendar = true);
-                scrollController.scrollTo(
-                  3,
-                  collapsedHeight: 62,
-                  context: context,
-                  expandedHeight: 391,
-                  expandedIndex: 3,
-                  headerHeight: 391,
-                );
-              },
+              onTap: () => setState(() => showCalendar = true),
               selectedDay: selectedDay,
             ),
       Opacity(
@@ -167,9 +158,6 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
               )
               .toList(),
           controller: scrollController,
-          padding: EdgeInsets.all(
-            Scale.getSafeMargin(context),
-          ),
         ),
         focusNode: keyboardNode,
         onTapAction: hideCalendarAndKeyboard,
@@ -212,29 +200,29 @@ class _OrderScreenState extends State<OrderScreen> with RouteValidator {
 
   void routeToMainOrProfileScreenIfValid(bool showPlanSelection) {
     hideCalendarAndKeyboard();
-    screenData = ScreenData.over(
-      screenData,
-      order: Order.over(
-        screenData.order,
-        cleaningDate: selectedDay,
-        creationDate: DateTime.now(),
-        meters: squareMeters,
-        planId: plan?.id,
-        service: OrderScreen.services[selectedServiceIndex],
-      ),
+    final Order order = Order.over(
+      screenData.order,
+      cleaningDate: selectedDay,
+      creationDate: DateTime.now(),
+      meters: squareMeters,
+      planId: plan?.id,
+      service: selectedServiceIndex == null
+          ? null
+          : OrderScreen.services[selectedServiceIndex],
     );
-    final builder = screenData.user.isLoggedIn
+    screenData = ScreenData.over(screenData, order: order);
+    final bool isLoggedIn = screenData.user.isLoggedIn;
+    final builder = isLoggedIn
         ? (BuildContext context) => MainScreen(screenData)
         : (BuildContext context) => ProfileLandingScreen(screenData);
-    final String name = screenData.user.isLoggedIn
-        ? MainScreen.routeName
-        : ProfileLandingScreen.routeName;
+    final int routeIndex =
+        isLoggedIn ? MainScreen.routeIndex : ProfileLandingScreen.routeIndex;
     pushRouteIfValid(
       context,
       builder: builder,
-      name: name,
       removePrevious: showPlanSelection,
-      replace: true,
+      replace: isLoggedIn,
+      routeIndex: routeIndex,
       validator: validator,
     );
   }

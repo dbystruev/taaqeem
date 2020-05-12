@@ -6,9 +6,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
+import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
-import 'package:taaqeem/extensions/scroll_controller+extension.dart';
 import 'package:taaqeem/models/plan.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/screens/order_screen.dart';
@@ -24,8 +24,9 @@ class MainScreen extends StatefulWidget {
   static String get routeName => NavigatorWidget.routeName(routeIndex);
 
   final ScreenData screenData;
+  final String message;
 
-  MainScreen(ScreenData screenData)
+  MainScreen(ScreenData screenData, {this.message})
       : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
 
   @override
@@ -43,81 +44,83 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
 
   @override
   Widget build(BuildContext context) {
+    checkForNewScreenData();
     final double scale = Scale.getScale(context);
-    return ScaffoldBarWidget(
-      body: ListView.builder(
-        controller: scrollController,
-        itemBuilder: (BuildContext context, int index) {
-          switch (index) {
-            case 0:
-              return HeaderImageWidget(
-                'main',
-                hasLogo: true,
-                height: 205,
-                padding: EdgeInsets.only(top: 60),
-                scale: scale,
-              );
-            case 1:
-              return DiscountWidget(
-                'Get 19% discount\non your first order',
-              );
-            case 2:
-              return TitleWidget(
-                'Choose your area',
-                scale: scale,
-                subtitle: 'Find the best companies in the UAE to provide' +
-                    '\ngovt-approved sanitation and disinfection services',
-                subtitleHeight: 1.57,
-                subtitleSize: 14,
-              );
-            default:
-              final int planIndex = index - 3;
-              return PlanWidget(
-                plans[planIndex],
-                index: planIndex,
-                isSelected: selectedPlan == planIndex,
-                onExpansionChanged: (int index, bool expanded) {
-                  if (expanded && lastIndex != null && lastIndex != index) {
-                    PlanWidget.keys[lastIndex].currentState.collapse();
-                  }
-                  Future.delayed(
-                    Duration(milliseconds: 250),
-                  ).then(
-                    (_) {
-                      setState(() {
-                        selectedPlan = expanded ? planIndex : plans.length;
-                        if (expanded && lastIndex == null)
-                          scrollController.scrollTo(
-                            index,
-                            context: context,
-                            expandedIndex: selectedPlan,
-                          );
-                        lastIndex = expanded ? index : null;
-                      });
-                    },
-                  );
-                },
-                onPressed: (int index) {
-                  pushRouteIfValid(
-                    context,
-                    builder: (context) => OrderScreen(
-                      ScreenData.over(screenData, selectedPlan: index),
-                    ),
-                    name: OrderScreen.routeName,
-                    replace: true,
-                  );
-                },
-                scale: scale,
-              );
-          }
-        },
-        itemCount: plans.length + 3,
-        padding: EdgeInsets.all(
-          Scale.getSafeMargin(context),
-        ),
+    List<Widget> children = [
+      HeaderImageWidget(
+        'main',
+        hasLogo: true,
+        height: 205,
+        padding: EdgeInsets.only(top: 60),
+        scale: scale,
       ),
-      getScreenData: () => ScreenData.over(screenData, selectedPlan: selectedPlan),
+      InkWell(
+        child: DiscountWidget(
+          'Get 19% discount\non your first order',
+        ),
+        onTap: routeToOrder,
+      ),
+      TitleWidget(
+        'Choose your area',
+        scale: scale,
+        subtitle: 'Find the best companies in the UAE to provide' +
+            '\ngovt-approved sanitation and disinfection services',
+        subtitleHeight: 1.57,
+        subtitleSize: 14,
+      ),
+    ];
+    for (int planIndex = 0; planIndex < plans.length; planIndex++) {
+      children.add(
+        PlanWidget(
+          plans[planIndex],
+          index: planIndex,
+          isSelected: selectedPlan == planIndex,
+          onExpansionChanged: (int index, bool expanded) {
+            if (expanded && lastIndex != null && lastIndex != index)
+              PlanWidget.keys[lastIndex].currentState.collapse();
+            lastIndex =
+                expanded ? index : (lastIndex == index ? null : lastIndex);
+            Future.delayed(
+              Duration(milliseconds: 300),
+            ).then((_) {
+              setState(
+                () => selectedPlan = expanded ? planIndex : plans.length,
+              );
+              if (expanded)
+                scrollController.scrollTo(
+                  index,
+                  context: context,
+                  scale: scale,
+                );
+            });
+          },
+          onPressed: routeToOrder,
+          scale: scale,
+        ),
+      );
+    }
+    children.add(
+      SizedBox(height: 204 * scale),
     );
+    return ScaffoldBarWidget(
+      body: ListView(
+        children: children,
+        controller: scrollController,
+        physics: BouncingScrollPhysics(),
+      ),
+      getScreenData: () {
+        checkForNewScreenData();
+        return ScreenData.over(screenData, selectedPlan: selectedPlan);
+      },
+      safeAreaTop: false,
+    );
+  }
+
+  void checkForNewScreenData() {
+    if (NetworkController.shared.hasSreenData) {
+      screenData = NetworkController.shared.getScreenDataIfLoaded(screenData);
+      NetworkController.shared.saveScreenDataToPrefs(screenData);
+    }
   }
 
   void delay([double seconds = 0.25]) async {
@@ -142,16 +145,25 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
     sendingOrderOrFeedbackInProcess = false;
     WidgetsBinding.instance.addPostFrameCallback(sendOrderOrFeedbackAsNeeded);
     if (screenData.user.isLoggedIn) {
-      NetworkController.shared.savePrefs(screenData);
+      NetworkController.shared.saveScreenDataToPrefs(screenData);
     } else
-      NetworkController.shared.loadPrefs().then((ScreenData prefsScreenData) {
+      NetworkController.shared
+          .getScreenDataFromPrefs()
+          .then((ScreenData prefsScreenData) {
         screenData = ScreenData.merge(screenData, prefsScreenData);
-        debugPrint(
-          'lib/screens/main_screen.dart:152 screenData.user = ${screenData.user}',
-        );
       });
-    debugPrint(
-      'lib/screens/main_screen.dart:156 screenData = $screenData',
+  }
+
+  void routeToOrder([int index]) {
+    checkForNewScreenData();
+    pushRouteIfValid(
+      context,
+      builder: (context) => OrderScreen(
+        ScreenData.over(screenData, selectedPlan: index ?? selectedPlan),
+      ),
+      replace:
+          index != null || selectedPlan != null && selectedPlan < plans.length,
+      routeIndex: OrderScreen.routeIndex,
     );
   }
 
@@ -160,6 +172,7 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
     const Duration second = Duration(seconds: 1);
     if (lastCall != null && now.difference(lastCall) < second) return;
     lastCall = now;
+    if (widget.message != null) showMessageInContext(context, widget.message);
     if (!screenData.user.isLoggedIn) return;
     if (!screenData.order.isPending && !screenData.userFeedback.isPending)
       return;
@@ -176,30 +189,20 @@ class _MainScreenState extends State<MainScreen> with RouteValidator {
 
   void showAndClearPendingTasks() {
     if (screenData.order.id != null) {
-      print('BEFORE: screenData.order.id = ${screenData.order.id}' +
-          ', screenData.order.meters = ${screenData.order.meters}');
-      screenData = ScreenData.clearOrder(screenData);
       showMessageInContext(
         context,
         'Thanks for request.\nWe will help You immediately!',
       );
-      print('screenData.order.id AFTER = ${screenData.order.id}' +
-          ', screenData.order.meters = ${screenData.order.meters}');
+      screenData = ScreenData.clearOrder(screenData);
+      NetworkController.shared.saveScreenDataToPrefs(screenData);
     }
     if (screenData.userFeedback.id != null) {
-      print(
-        'screenData.userFeedback.id BEFORE = ${screenData.userFeedback.id}' +
-            ', screenData.userFeedback.text = ${screenData.userFeedback.text}',
-      );
-      screenData = ScreenData.clearFeedback(screenData);
       showMessageInContext(
         context,
         'Thanks for feedback!\nWe will take it to an account',
       );
-      print(
-        'screenData.userFeedback.id AFTER = ${screenData.userFeedback.id}' +
-            ', screenData.userFeedback.text = ${screenData.userFeedback.text}',
-      );
+      screenData = ScreenData.clearFeedback(screenData);
+      NetworkController.shared.saveScreenDataToPrefs(screenData);
     }
   }
 }

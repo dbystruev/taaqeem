@@ -32,11 +32,11 @@ class SupportItemWidget extends StatelessWidget {
     this.superscript,
     this.superscriptColor = globals.superscriptColor,
     this.superscriptFontSize = 16,
-    this.superscriptHeight = 1.75,
+    this.superscriptHeight, // = 1.75,
     this.text,
     this.textColor = globals.accentColor,
     this.textFontSize = 24,
-    this.textHeight = 1.58,
+    this.textHeight, // = 1.58,
     this.url,
   });
 

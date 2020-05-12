@@ -47,16 +47,20 @@ class DecorationPaddingWidget extends StatelessWidget {
     double marginLeft,
     double marginRight,
     double marginTop,
-    this.paddingBottom = 0,
-    this.paddingLeft = 15,
-    this.paddingRight = 15,
-    this.paddingTop = 0,
+    double paddingBottom,
+    double paddingLeft,
+    double paddingRight,
+    double paddingTop,
     this.scale,
     this.width,
   })  : this.marginBottom = marginBottom ?? 5,
         this.marginLeft = marginLeft ?? 20,
         this.marginRight = marginRight ?? 20,
-        this.marginTop = marginTop ?? 5;
+        this.marginTop = marginTop ?? 5,
+        this.paddingBottom = paddingBottom ?? 0,
+        this.paddingLeft = paddingLeft ?? 15,
+        this.paddingRight = paddingRight ?? 15,
+        this.paddingTop = paddingTop ?? 0;
 
   @override
   Widget build(BuildContext context) {

@@ -32,7 +32,6 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
 
   @override
   Widget build(BuildContext context) {
-    final double safeMargin = Scale.getSafeMargin(context);
     final double scale = Scale.getHorizontalScale(context);
     return ScaffoldBarWidget(
       body: KeyboardActionsWidget(
@@ -76,7 +75,6 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
               width: 335,
             )
           ],
-          padding: EdgeInsets.all(safeMargin),
         ),
         focusNode: feedbackNode,
         onTapAction: () => routeToMainScreenIfValid(context),
@@ -87,9 +85,6 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
   }
 
   void routeToMainScreenIfValid(BuildContext context) {
-    debugPrint(
-      'lib/screens/feedback_screen.dart:97 feedbackUrl = ${screenData.url}',
-    );
     final String errorMessage = validateFeedback();
     if (errorMessage.isNotEmpty)
       showMessageInContext(context, errorMessage);
@@ -105,9 +100,9 @@ class FeedbackScreen extends StatelessWidget with RouteValidator {
       pushRouteIfValid(
         context,
         builder: (context) => MainScreen(screenData),
-        name: MainScreen.routeName,
         removePrevious: true,
         replace: true,
+        routeIndex: MainScreen.routeIndex,
       );
     }
   }

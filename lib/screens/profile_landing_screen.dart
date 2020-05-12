@@ -38,8 +38,5 @@ class _ProfileLandingScreenState extends State<ProfileLandingScreen> {
     super.initState();
     BottomNavigationWidget.selectedBottomBarItem =
         ProfileLandingScreen.routeIndex;
-    debugPrint(
-      'lib/screens/profile_landing_screen.dart:42 screenData = ${widget.screenData}',
-    );
   }
 }

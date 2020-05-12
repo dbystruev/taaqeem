@@ -16,8 +16,10 @@ import 'package:taaqeem/screens/main_screen.dart';
 import 'package:taaqeem/screens/policy_screen.dart';
 import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/form_widget.dart';
+import 'package:taaqeem/widgets/image_widget.dart';
 import 'package:taaqeem/widgets/keyboard_actions_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
+import 'package:taaqeem/widgets/scaffold_bar_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class AuthorizationScreen extends StatefulWidget {
@@ -51,98 +53,136 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     final double scale = Scale.getHorizontalScale(context);
     final TextStyle underline =
         const TextStyle(decoration: TextDecoration.underline);
-    return Scaffold(
-      body: GestureDetector(
-        child: KeyboardActionsWidget(
-          child: ListView(
-            children: [
-              SizedBox(height: 53 * scale),
-              TheText.w600(
-                color: Theme.of(context).accentColor,
-                fontSize: 28,
-                text: 'Please enter\nyour $item',
-                textScaleFactor: scale,
-              ),
-              SizedBox(height: 35 * scale),
-              TheText.w600(
-                color: globals.textColor,
-                fontSize: 18,
-                text: isCode
-                    ? 'We’ve sent the verification code to\n$phone'
-                    : 'We’ll send you a verification code',
-                textScaleFactor: scale,
-              ),
-              SizedBox(height: 80 * scale),
-              FormWidget(
-                color: globals.textColor,
-                controller: isCode ? codeController : phoneController,
-                decoration: BoxDecoration(border: null),
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                keyboardNode: keyboardNode,
-                keyboardType:
-                    isCode ? TextInputType.number : TextInputType.phone,
-                inputDecoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: globals.hintColor),
-                  hintText: isCode ? '9999' : '99-999-9999',
-                  prefixStyle: TextStyle(
-                    color: globals.textColor,
-                    fontFamily: globals.fontFamily,
-                    fontSize: 28 * scale,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  prefixText: isCode ? null : globals.phonePrefix,
-                ),
-                onChanged: (String text) {
-                  // debugPrint(
-                  //   'lib/screens/authorization_screen.dart:99 onChanged($text)',
-                  // );
-                  if (isCode && digits(text).length == 4 ||
-                      validatePhone(text).isEmpty &&
-                          validatePhone(text + '0').isNotEmpty)
-                    routeToProfileScreenIfValid();
-                },
-                onEditingComplete: routeToProfileScreenIfValid,
-                scale: scale,
-              ),
-              SizedBox(height: 79 * scale),
-              InkWell(
-                child: TheText.normal(
-                  color: globals.subtitleColor,
-                  fontSize: 15,
-                  height: 1.6,
-                  styles: [null, underline, null, underline],
-                  textAlign: TextAlign.center,
-                  texts: [
-                    'By entering $item you agree with our\n',
-                    'Terms of service',
-                    ' and ',
-                    'Privacy policy',
+    return ScaffoldBarWidget(
+      body: SafeArea(
+        child: GestureDetector(
+          child: KeyboardActionsWidget(
+            child: ListView(
+              children: [
+                SizedBox(height: 53 * scale),
+                Row(
+                  children: [
+                    TheText.w600(
+                      color: Theme.of(context).accentColor,
+                      fontSize: 28,
+                      text: 'Please enter\nyour $item',
+                      textScaleFactor: scale,
+                    ),
+                    if (!isCode) SizedBox(width: 50 * scale),
+                    if (!isCode)
+                      Column(
+                        children: [
+                          InkWell(
+                            child: ImageWidget('left',
+                                height: 15, scale: scale, width: 20),
+                            onTap: () => popRoute(context),
+                          ),
+                          SizedBox(height: 30 * scale),
+                        ],
+                      ),
                   ],
+                ),
+                SizedBox(height: 35 * scale),
+                TheText.w600(
+                  color: globals.textColor,
+                  fontSize: 18,
+                  text: isCode
+                      ? 'We’ve sent the verification code to\n$phone'
+                      : 'We’ll send you a verification code',
                   textScaleFactor: scale,
                 ),
-                onTap: () {}, // enables onTapDown
-                onTapDown: (TapDownDetails details) {
-                  final bool showToS =
-                      details.globalPosition.dx < Scale.getMidX(context);
-                  pushRouteIfValid(
-                    context,
-                    builder: (context) => PolicyScreen(showToS: showToS),
-                  );
-                },
-              ),
-            ],
-            padding: EdgeInsets.symmetric(
-              horizontal: 20 * scale + Scale.getSafeMargin(context),
-              vertical: Scale.getSafeMargin(context),
+                SizedBox(height: 80 * scale),
+                Row(
+                  children: [
+                    if (!isCode)
+                      Column(
+                        children: [
+                          TheText.w600(
+                            color: globals.textColor,
+                            fontSize: 28,
+                            text: globals.phonePrefix,
+                            textScaleFactor: scale,
+                          ),
+                          SizedBox(height: 10 * scale),
+                        ],
+                      ),
+                    FormWidget(
+                      boxWidth: isCode ? 76 : 202,
+                      color: globals.textColor,
+                      controller: isCode ? codeController : phoneController,
+                      decoration: BoxDecoration(border: null),
+                      fontSize: 28,
+                      fontWeight: FontWeight.w600,
+                      keyboardNode: keyboardNode,
+                      keyboardType:
+                          isCode ? TextInputType.number : TextInputType.phone,
+                      inputDecoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                          color: globals.hintColor,
+                          fontSize: 28 * scale,
+                        ),
+                        hintText: isCode ? '9999' : '99-999-9999',
+                      ),
+                      marginLeft: 0,
+                      marginRight: 0,
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      onChanged: (String text) {
+                        if (isCode && digits(text).length == 4 ||
+                            validatePhone(text).isEmpty &&
+                                validatePhone(text + '0').isNotEmpty)
+                          routeToProfileScreenIfValid();
+                      },
+                      onEditingComplete: routeToProfileScreenIfValid,
+                      scale: scale,
+                    ),
+                    Column(
+                      children: [
+                        ImageWidget('pen', height: 15, scale: scale, width: 15),
+                        SizedBox(height: 10 * scale),
+                      ],
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                ),
+                SizedBox(height: 79 * scale),
+                InkWell(
+                  child: TheText.normal(
+                    color: globals.subtitleColor,
+                    fontSize: 15,
+                    height: 1.6,
+                    styles: [null, underline, null, underline],
+                    textAlign: TextAlign.center,
+                    texts: [
+                      'By entering $item you agree with our\n',
+                      'Terms of service',
+                      ' and ',
+                      'Privacy policy',
+                    ],
+                    textScaleFactor: scale,
+                  ),
+                  onTap: () {}, // enables onTapDown
+                  onTapDown: (TapDownDetails details) {
+                    final bool showToS =
+                        details.globalPosition.dx < Scale.getMidX(context);
+                    pushRouteIfValid(
+                      context,
+                      builder: (context) => PolicyScreen(showToS: showToS),
+                    );
+                  },
+                ),
+              ],
+              padding: EdgeInsets.symmetric(horizontal: 20 * scale),
             ),
+            focusNode: keyboardNode,
+            onTapAction: routeToProfileScreenIfValid,
           ),
-          focusNode: keyboardNode,
-          onTapAction: routeToProfileScreenIfValid,
+          onTap: hideKeyboard,
         ),
-        onTap: hideKeyboard,
       ),
+      getScreenData: () => screenData,
     );
   }
 
@@ -177,18 +217,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
     screenData = widget.screenData;
     phone = screenData.user?.phone;
     phoneController = TextEditingController();
-    // debugPrint(
-    //   'lib/screens/authorization_screen.dart:181 screenData = $screenData',
-    // );
   }
 
   bool isTestingPhone(String phone) {
     final bool result = phone.trim().startsWith('+') &&
         digits(phone).startsWith('7') &&
         digits(phone).length == 11;
-    // debugPrint(
-    //   'lib/screens/authorization_screen.dart:190 isTestingPhone($phone) = $result',
-    // );
     return result;
   }
 
@@ -211,15 +245,16 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
         final Widget build = isPending
             ? MainScreen(screenData)
             : ProfileLandingScreen(screenData);
-        final String routeName =
-            isPending ? MainScreen.routeName : ProfileLandingScreen.routeName;
-        NetworkController.shared.savePrefs(screenData);
+        final int routeIndex =
+            isPending ? MainScreen.routeIndex : ProfileLandingScreen.routeIndex;
+        NetworkController.shared.saveScreenDataToPrefs(screenData);
         pushRouteIfValid(
           context,
           builder: (context) => build,
           maintainState: false,
-          name: routeName,
+          removePrevious: true,
           replace: true,
+          routeIndex: routeIndex,
         );
       } else {
         showMessageInContext(context, errorMessage);
@@ -289,9 +324,6 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
           errorMessage = 'please delete extra digits';
       }
     }
-    // debugPrint(
-    //   'lib/screens/authorization_screen.dart:293 validatePhone($phone) = $errorMessage',
-    // );
     return errorMessage;
   }
 }

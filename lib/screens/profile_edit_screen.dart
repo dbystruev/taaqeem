@@ -44,7 +44,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
 
   @override
   Widget build(BuildContext context) {
-    final double safeMargin = Scale.getSafeMargin(context);
     final double scale = Scale.getHorizontalScale(context);
     return ScaffoldBarWidget(
       body: KeyboardActionsWidget(
@@ -96,10 +95,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
               width: 335,
             )
           ],
-          padding: EdgeInsets.symmetric(
-            horizontal: safeMargin,
-            vertical: safeMargin,
-          ),
         ),
         focusNode: showName ? nameNode : emailNode,
         onTapAction: nextFieldOrRoute,
@@ -118,9 +113,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
     nameController = TextEditingController(text: screenData.user.name);
     nameNode = FocusNode();
     showName = false;
-    debugPrint(
-      'lib/screens/profile_edit_screen.dart:122 screenData = $screenData',
-    );
   }
 
   @override
@@ -163,16 +155,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen>
         screenData.order.isPending || screenData.userFeedback.isPending;
     final build =
         isPending ? MainScreen(screenData) : ProfileScreen(screenData);
-    final String routeName =
-        isPending ? MainScreen.routeName : ProfileScreen.routeName;
+    final int routeIndex =
+        isPending ? MainScreen.routeIndex : ProfileScreen.routeIndex;
     if (!isPending)
       screenData = await NetworkController.shared.postRequest(screenData);
     pushRouteIfValid(
       context,
       builder: (BuildContext context) => build,
-      name: routeName,
       removePrevious: true,
       replace: true,
+      routeIndex: routeIndex,
     );
   }
 

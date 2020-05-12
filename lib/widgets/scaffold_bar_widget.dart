@@ -7,24 +7,36 @@
 import 'package:flutter/material.dart';
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
+import 'package:taaqeem/screens/authorization_screen.dart';
 import 'package:taaqeem/screens/order_screen.dart';
+import 'package:taaqeem/screens/profile_landing_screen.dart';
 import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
 import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/plus_button_widget.dart';
 
 class ScaffoldBarWidget extends StatefulWidget {
   final Widget body;
+  final Color color;
   final ScreenData Function() getScreenData;
   final VoidCallback onCanvasTap;
   final VoidCallback onPlusTap;
   final bool removePreviousRoute;
+  final bool safeAreaBottom;
+  final bool safeAreaLeft;
+  final bool safeAreaRight;
+  final bool safeAreaTop;
 
   ScaffoldBarWidget({
     this.body,
+    this.color,
     this.getScreenData,
     this.onCanvasTap,
     this.onPlusTap,
     this.removePreviousRoute = false,
+    this.safeAreaBottom = true,
+    this.safeAreaLeft = true,
+    this.safeAreaRight = true,
+    this.safeAreaTop = true,
   });
 
   @override
@@ -35,23 +47,37 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
     with RouteValidator {
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage('assets/images/background_top.png'), context);
     return Scaffold(
-      body: GestureDetector(
-          child: widget.body, onTap: widget.onCanvasTap ?? hideKeyboard),
+      body: Container(
+        child: SafeArea(
+          bottom: widget.safeAreaBottom,
+          child: GestureDetector(
+              child: widget.body, onTap: widget.onCanvasTap ?? hideKeyboard),
+          left: widget.safeAreaLeft,
+          right: widget.safeAreaRight,
+          top: widget.safeAreaTop,
+        ),
+        color: widget.color,
+      ),
       bottomNavigationBar: BottomNavigationWidget(
-        onTap: (int routeIndex) {
-          setState(
-              () => BottomNavigationWidget.selectedBottomBarItem = routeIndex);
-          if (routeIndex == widget.getScreenData().routeIndex) return;
+        onTap: (int newRouteIndex) {
+          setState(() =>
+              BottomNavigationWidget.selectedBottomBarItem = newRouteIndex);
+          final int oldRouteIndex = widget.getScreenData().routeIndex;
+          if (newRouteIndex == oldRouteIndex ||
+              oldRouteIndex == AuthorizationScreen.routeIndex &&
+                  newRouteIndex == ProfileLandingScreen.routeIndex) return;
           pushRouteIfValid(
             context,
+            animate: false,
             builder: (context) => NavigatorWidget(
-              routeIndex,
+              newRouteIndex,
               screenData: widget.getScreenData(),
             ),
-            name: NavigatorWidget.routeName(routeIndex),
             removePrevious: widget.removePreviousRoute,
-            replace: true,
+            replace: newRouteIndex != ProfileLandingScreen.routeIndex,
+            routeIndex: newRouteIndex,
           );
         },
         selectedIndex: BottomNavigationWidget.selectedBottomBarItem,
@@ -64,9 +90,9 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
                     OrderScreen.routeIndex,
                     screenData: widget.getScreenData(),
                   ),
-                  name: OrderScreen.routeName,
                   removePrevious: widget.removePreviousRoute,
                   replace: widget.getScreenData().isPlanSelected,
+                  routeIndex: OrderScreen.routeIndex,
                 ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

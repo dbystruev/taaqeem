@@ -17,17 +17,21 @@ import 'package:taaqeem/models/order.dart';
 import 'package:taaqeem/models/plans.dart';
 import 'package:taaqeem/models/screen_data.dart';
 import 'package:taaqeem/models/server_data.dart';
-import 'package:taaqeem/models/user.dart';
 import 'package:taaqeem/models/user_feedback.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NetworkController {
+  static final NetworkController shared = NetworkController();
+
+  // Check if there is screen data waiting
+  bool get hasSreenData => screenData != null;
+
   // Last submitted feedback and order
   UserFeedback lastUserFeedback = UserFeedback(null);
   Order lastOrder = Order();
 
-  static final NetworkController shared = NetworkController();
   bool requestIsBeingProcessed = false;
+  ScreenData screenData;
   final String url;
 
   // Default constructor
@@ -123,9 +127,6 @@ class NetworkController {
       client.close();
       requestIsBeingProcessed = false;
     }
-    debugPrint(
-      'lib/controllers/network_controllers.dart:127 getRequest() screenData = $screenData',
-    );
     return screenData;
   }
 
@@ -151,6 +152,38 @@ class NetworkController {
 
     // Return the hash of calculated response
     return getHash(hashString);
+  }
+
+  ScreenData getScreenDataIfLoaded(ScreenData oldScreenData) {
+    if (screenData == null) return oldScreenData;
+    final ScreenData mergedScreenData =
+        ScreenData.merge(oldScreenData, screenData);
+    screenData = null;
+    return mergedScreenData;
+  }
+
+  Future<ScreenData> getScreenDataFromPrefs() async {
+    // obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+
+    // get saved screen data if any
+    final String screenDataString = prefs.getString(globals.prefsKey);
+
+    // return null if no screen data loaded
+    if (screenDataString == null) return null;
+
+    // decode saved screen data
+    final Map<String, dynamic> screenDataMap =
+        convert.jsonDecode(screenDataString);
+
+    // return null if decode failed
+    if (screenDataMap == null) return null;
+
+    // get new screen data from decoded string
+    final ScreenData newScreenData = ScreenData.fromJson(screenDataMap);
+
+    // return decoded screen data
+    return newScreenData;
   }
 
   ScreenData getScreenDataFromResponse(
@@ -186,30 +219,6 @@ class NetworkController {
       uri = response.headers['location'];
     }
     return response;
-  }
-
-  Future<ScreenData> loadPrefs() async {
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-
-    // get user's phone and token
-    final String email = prefs.getString('email');
-    final int id = prefs.getInt('id');
-    final String name = prefs.getString('name');
-    final String phone = prefs.getString('phone');
-    final String token = prefs.getString('token');
-
-    final ScreenData screenData = ScreenData(
-      user: User(
-        email: email,
-        id: id,
-        name: name,
-        phone: phone,
-        token: token,
-      ),
-    );
-
-    return screenData;
   }
 
   // Async function which posts the server data
@@ -269,36 +278,25 @@ class NetworkController {
       }
       requestIsBeingProcessed = false;
     }
-    debugPrint(
-      'lib/controllers/network_controllers.dart:273 postRequest() screenData = $screenData',
-    );
     return screenData;
   }
 
   void removePrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove('email');
-    prefs.remove('id');
-    prefs.remove('name');
-    prefs.remove('phone');
-    prefs.remove('token');
+    prefs.remove(globals.prefsKey);
   }
 
-  void savePrefs(ScreenData screenData) async {
+  void saveScreenDataToPrefs(ScreenData screenData) async {
     // obtain shared preferences
     final prefs = await SharedPreferences.getInstance();
 
-    final String email = screenData.user.email;
-    final int id = screenData.user.id;
-    final String name = screenData.user.name;
-    final String phone = screenData.user.phone;
-    final String token = screenData.user.token;
+    // convert screen data to json map
+    final Map<String, dynamic> screenDataMap = screenData.toJson();
 
-    // save user's phone and token
-    prefs.setString('email', email);
-    prefs.setInt('id', id);
-    prefs.setString('name', name);
-    prefs.setString('phone', phone);
-    prefs.setString('token', token);
+    // convert json map to string
+    final String screenDataString = convert.jsonEncode(screenDataMap);
+
+    // save screen data to preferenses
+    prefs.setString(globals.prefsKey, screenDataString);
   }
 }

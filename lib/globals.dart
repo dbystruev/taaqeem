@@ -63,6 +63,9 @@ const Color menuItemColor = Color(0xFF4F4F4F);
 // Phone prefix
 const String phonePrefix = '+971 ';
 
+// Preferences key for saving/loading screen data locally
+const String prefsKey = 'ae.taaqeem.app.screenData';
+
 // The background color for major parts of the app (toolbars, tab bars, etc)
 const Color primaryColor = Colors.white;
 

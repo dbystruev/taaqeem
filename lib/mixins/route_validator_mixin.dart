@@ -9,6 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:strings/strings.dart';
 import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/scale_mixin.dart';
+import 'package:taaqeem/screens/about_screen.dart';
+import 'package:taaqeem/screens/main_screen.dart';
+import 'package:taaqeem/screens/profile_landing_screen.dart';
+import 'package:taaqeem/screens/support_screen.dart';
+import 'package:taaqeem/widgets/bottom_navigation_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 mixin RouteValidator {
@@ -16,40 +22,40 @@ mixin RouteValidator {
 
   void popRoute(BuildContext context) {
     if (routes != null && 0 < routes.length) routes.removeLast();
-    debugPrint(
-      'lib/mixins/route_validator_mixin.dart:20 popRoute(), ${routes?.length} left',
-    );
+    debugPrint('${routes.length} routes\n$routes');
     Navigator.pop(context);
   }
 
-  bool pushRouteIfValid (
+  bool pushRouteIfValid(
     BuildContext context, {
+    bool animate = true,
     Widget Function(BuildContext context) builder,
     bool maintainState = true,
-    String name,
     bool removePrevious = false,
     bool replace = false,
+    int routeIndex,
     double scale,
     String Function() validator,
   }) {
-    debugPrint(
-      'lib/mixins/route_validator_mixin.dart:36 pushRouteIfValid(name: \'$name\', replace: $replace)',
-    );
     if (validator != null) {
       final String message = validator();
       if (message.isNotEmpty) {
         showMessageInContext(context, message);
-        debugPrint(
-          'pushRouteIfValid() failed: \'$message\', routes in stack: ${routes?.length}',
-        );
         return false;
       }
     }
-    final MaterialPageRoute route = MaterialPageRoute(
-      builder: builder,
-      maintainState: maintainState,
-      settings: RouteSettings(name: name),
-    );
+    final String name = NavigatorWidget.routeName(routeIndex);
+    final Route route = animate
+        ? MaterialPageRoute(
+            builder: builder,
+            maintainState: maintainState,
+            settings: RouteSettings(name: name),
+          )
+        : PageRouteBuilder(
+            maintainState: maintainState,
+            pageBuilder: (BuildContext context, _, __) => builder(context),
+            settings: RouteSettings(name: name),
+          );
     if (routes == null) routes = List<Route>();
     if (removePrevious && 1 < routes.length) {
       Navigator.removeRoute(
@@ -57,6 +63,7 @@ mixin RouteValidator {
         routes.removeAt(routes.length - 2),
       );
     }
+    updateBottomBar(routeIndex);
     if (replace) {
       if (0 < routes.length) routes.removeLast();
       routes.add(route);
@@ -65,10 +72,38 @@ mixin RouteValidator {
       routes.add(route);
       Navigator.push(context, route);
     }
-    debugPrint(
-      'pushRouteIfValid() succeeded, routes in stack: ${routes?.length}',
-    );
+    debugPrint('${routes.length} routes\n$routes');
     return true;
+  }
+
+  void removeFirstRoute(BuildContext context) {
+    if (routes != null && 1 < routes.length) {
+      Navigator.removeRoute(
+        context,
+        routes.removeAt(0),
+      );
+      debugPrint('${routes.length} routes\n$routes');
+    }
+  }
+
+  void updateBottomBar(int routeIndex) {
+    switch (routeIndex) {
+      case MainScreen.routeIndex:
+      case AboutScreen.routeIndex:
+      case SupportScreen.routeIndex:
+      case ProfileLandingScreen.routeIndex:
+        BottomNavigationWidget.selectedBottomBarItem = routeIndex;
+        break;
+      // case OrderScreen.routeIndex:
+      //   BottomNavigationWidget.selectedBottomBarItem = MainScreen.routeIndex;
+      //   break;
+      // case AuthorizationScreen.routeIndex:
+      // case ProfileScreen.routeIndex:
+      // case ProfileEditScreen.routeIndex:
+      // case FeedbackScreen.routeIndex:
+      //   BottomNavigationWidget.selectedBottomBarItem =
+      //       ProfileLandingScreen.routeIndex;
+    }
   }
 
   void showMessageInContext(

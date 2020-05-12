@@ -7,7 +7,10 @@
 import 'package:taaqeem/models/plan.dart';
 
 extension AllPlans on Plan {
-  static List<Plan> get local => [
+  static List<Plan> _local;
+  static List<Plan> get local {
+    if (_local == null)
+      _local = [
         Plan(
           'Service for Villa & Apartment',
           description:
@@ -20,7 +23,7 @@ extension AllPlans on Plan {
         ),
         Plan(
           'Service for offices',
-          description: 'We provide You best companies with govt-approved sani',
+          description: 'We provide You best companies with govt-approved sanitisation and disinfection or cleaning services for your office. Yalla!',
           icon: 'building',
           id: 2,
           image: 'office',
@@ -48,4 +51,6 @@ extension AllPlans on Plan {
           subtitle: 'start from 500 m²',
         ),
       ];
+    return _local;
+  }
 }

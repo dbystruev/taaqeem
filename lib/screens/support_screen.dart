@@ -5,9 +5,9 @@
 //
 
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:taaqeem/controllers/network_controller.dart';
+import 'package:taaqeem/globals.dart' as globals;
 import 'package:taaqeem/mixins/route_validator_mixin.dart';
 import 'package:taaqeem/mixins/scale_mixin.dart';
 import 'package:taaqeem/models/screen_data.dart';
@@ -29,13 +29,14 @@ class SupportScreen extends StatelessWidget with RouteValidator {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets safePadding = Scale.getSafePadding(context);
     final double scale = Scale.getScale(context);
     return ScaffoldBarWidget(
       body: BackgroundTopWidget(
         child: Padding(
           child: Column(
             children: [
-              SizedBox(height: 29 * scale),
+              SizedBox(height: 28 * scale),
               SupportItemWidget(
                 'mail_icon',
                 iconSize: 20,
@@ -66,7 +67,7 @@ class SupportScreen extends StatelessWidget with RouteValidator {
               ButtonWidget(
                 'Сall us +971 55 999 9863',
                 onPressed: () =>
-                    NetworkController.launchURL('tel:+971 55 999 9863'),
+                    NetworkController.launchURL('tel:+971-55-999-9863'),
                 scale: scale,
                 width: 335,
               ),
@@ -79,23 +80,18 @@ class SupportScreen extends StatelessWidget with RouteValidator {
                     url:
                         'https://www.facebook.com/taaqeem?roistat_visit=105268',
                   ),
-                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'instagram_icon',
                     scale: scale,
                     url:
                         'https://www.instagram.com/taaqeem.ae/?roistat_visit=105268',
                   ),
-                  // SizedBox(width: 12 * scale),
-                  // CircleIconWidget('telegram_icon', iconSize: 22, scale: scale),
-                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'whatsapp_icon',
                     scale: scale,
                     url:
                         'https://wa.me/971508689923?roistat_visit=105268&text=Please%20send%20this%20message%20and%20wait%20for%20a%20response.%20Your%20ticket%20number:%20105268',
                   ),
-                  // SizedBox(width: 12 * scale),
                   CircleIconWidget(
                     'youtube_icon',
                     scale: scale,
@@ -110,14 +106,24 @@ class SupportScreen extends StatelessWidget with RouteValidator {
               ),
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 20 * scale),
+          padding: EdgeInsets.only(
+            left: 20 * scale + safePadding.left,
+            right: 20 * scale + safePadding.right,
+          ),
         ),
+        maxOffset: 360,
         scale: scale,
         subtitle:
             'Write to us in messengers, call\nor look at the answers to FAQ',
         title: 'How can we help you?',
       ),
+      color: Scale.isHorizontal(context)
+          ? Theme.of(context).primaryColor
+          : globals.backgroundTopColor,
       getScreenData: () => screenData,
+      safeAreaLeft: false,
+      safeAreaRight: false,
+      safeAreaTop: false,
     );
   }
 }

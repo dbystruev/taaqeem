@@ -38,7 +38,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
   @override
   Widget build(BuildContext context) {
-    final double safeMargin = Scale.getSafeMargin(context);
     final double scale = Scale.getHorizontalScale(context);
     final User user = widget.screenData.user;
     final bool userHasName = user.name != null && user.name.trim().isNotEmpty;
@@ -49,18 +48,21 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
         children: [
           Positioned(
             child: AvatarWidget(user, scale: scale),
-            right: 21 * scale + safeMargin,
-            top: 33 * scale + safeMargin,
+            right: 21 * scale,
+            top: 33 * scale,
           ),
           ListView(
             children: [
               SizedBox(height: 33 * scale),
               if (userHasName)
-                TheText.w600(
-                  color: globals.textColor,
-                  fontSize: 24,
-                  text: user.name,
-                  textScaleFactor: scale,
+                Padding(
+                  child: TheText.w600(
+                    color: globals.textColor,
+                    fontSize: 24,
+                    text: user.name,
+                    textScaleFactor: scale,
+                  ),
+                  padding: EdgeInsets.only(right: 70 * scale),
                 ),
               if (userHasName) SizedBox(height: 35 * scale),
               ProfileItemWidget('Your phone', user.phone),
@@ -129,10 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
                 textScaleFactor: scale,
               ),
             ],
-            padding: EdgeInsets.symmetric(
-              horizontal: 20 * scale + safeMargin,
-              vertical: safeMargin,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 20 * scale),
           ),
         ],
       ),
@@ -144,37 +143,32 @@ class _ProfileScreenState extends State<ProfileScreen> with RouteValidator {
     pushRouteIfValid(
       context,
       builder: (context) => ProfileEditScreen(widget.screenData),
-      name: ProfileEditScreen.routeName,
+      routeIndex: ProfileEditScreen.routeIndex,
     );
   }
 
   @override
   void initState() {
     super.initState();
-    NetworkController.shared.savePrefs(widget.screenData);
-    debugPrint(
-      'lib/screens/profile_screen.dart:157 screenData = ${widget.screenData}',
-    );
+    NetworkController.shared.saveScreenDataToPrefs(widget.screenData);
   }
 
   void leaveFeedback() {
     pushRouteIfValid(
       context,
       builder: (context) => FeedbackScreen(widget.screenData),
-      name: FeedbackScreen.routeName,
+      routeIndex: FeedbackScreen.routeIndex,
     );
   }
 
   void logout() {
-    NetworkController.shared.removePrefs();
+    final ScreenData screenData = ScreenData.logout(widget.screenData);
+    NetworkController.shared.saveScreenDataToPrefs(screenData);
     pushRouteIfValid(
       context,
-      builder: (context) => MainScreen(
-        ScreenData.logout(widget.screenData),
-      ),
-      name: MainScreen.routeName,
+      builder: (context) => MainScreen(screenData, message: 'You have been logged out'),
       replace: true,
+      routeIndex: MainScreen.routeIndex,
     );
   }
-
 }

@@ -15,6 +15,7 @@ mixin Scale {
   static const double defaultSafeAreaPortraitHeight = 734; // bottom: 34 top: 44
   static const double defaultSafeAreaPortraitWidth = 375; // left/right: 0
   static const double defaultShorterSize = 375;
+  static const double maxScale = 1.25;
 
   static bool isHorizontal(BuildContext context) =>
       getScreenHeight(context) < getScreenWidth(context);
@@ -36,15 +37,15 @@ mixin Scale {
         ? defaultWidth - deductWidth
         : designWidth;
     final double horizontalScale = getScreenWidth(context) / width;
-    return horizontalScale;
+    return min(horizontalScale, maxScale);
   }
 
   static double getMidX(BuildContext context) => getScreenWidth(context) / 2;
 
   static double getMidY(BuildContext context) => getScreenHeight(context) / 2;
 
-  static double getSafeMargin(BuildContext context) =>
-      isHorizontal(context) ? 44 : 0;
+  static EdgeInsets getSafePadding(BuildContext context) =>
+      MediaQuery.of(context).padding;
 
   static double getScale(
     BuildContext context, {
@@ -76,7 +77,8 @@ mixin Scale {
     final double horizontalScale = getScreenWidth(context) / width;
     final double verticalScale = getScreenHeight(context) / height;
     final double scale = min(horizontalScale, verticalScale);
-    return scale;
+    // debugPrint('lib/mixins/scale_mixin.dart:80 scale = ${min(scale, maxScale)}');
+    return min(scale, maxScale);
   }
 
   static double getScreenHeight(BuildContext context) =>
@@ -102,6 +104,6 @@ mixin Scale {
         ? defaultHeight - deductHeight
         : designHeight;
     final double verticalScale = getScreenHeight(context) / height;
-    return verticalScale;
+    return min(verticalScale, maxScale);
   }
 }

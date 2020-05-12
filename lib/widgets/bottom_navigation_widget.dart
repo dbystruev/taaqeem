@@ -25,6 +25,7 @@ class BottomNavigationWidget extends StatelessWidget {
       child: Container(
         color: Theme.of(context).primaryColor,
         child: buildBottomAppBar(
+          context,
           currentIndex: selectedIndex,
           onTap: onTap,
           scale: scale,
@@ -80,7 +81,8 @@ class BottomNavigationWidget extends StatelessWidget {
     );
   }
 
-  Widget buildBottomAppBar({
+  Widget buildBottomAppBar(
+    BuildContext context, {
     int currentIndex = 0,
     ValueChanged<int> onTap,
     @required double scale,
@@ -105,16 +107,22 @@ class BottomNavigationWidget extends StatelessWidget {
           ),
         );
     return SizedBox(
-      child: Row(
+      child: Column(
         children: [
-          barItem('Main page', iconName: 'home', iconWidth: 22),
-          barItem('About us', iconHeight: 18, iconWidth: 27),
-          SizedBox(width: 14 * scale),
-          barItem('Support'),
-          barItem('My Taaqeem', iconName: 'user'),
+          Row(
+            children: [
+              barItem('Main page', iconName: 'home', iconWidth: 22),
+              barItem('About us', iconHeight: 18, iconWidth: 27),
+              SizedBox(width: 14 * scale),
+              barItem('Support'),
+              barItem('My Taaqeem', iconName: 'user'),
+            ],
+          ),
+          SizedBox(height: Scale.getSafePadding(context).bottom),
         ],
+        mainAxisAlignment: MainAxisAlignment.center,
       ),
-      height: 70 * scale,
+      height: 70 * scale + Scale.getSafePadding(context).bottom,
     );
   }
 }

@@ -23,7 +23,6 @@ class AboutScreen extends StatelessWidget with RouteValidator {
   static String get routeName => NavigatorWidget.routeName(routeIndex);
 
   final ScreenData screenData;
-  final ScrollController scrollController = ScrollController();
 
   AboutScreen(ScreenData screenData)
       : this.screenData = ScreenData.over(screenData, routeIndex: routeIndex);
@@ -31,16 +30,16 @@ class AboutScreen extends StatelessWidget with RouteValidator {
   @override
   Widget build(BuildContext context) {
     final Color accentColor = Theme.of(context).accentColor;
+    final EdgeInsets safePadding = Scale.getSafePadding(context);
     final double scale = Scale.getScale(context);
-    // scrollToTop();
     return ScaffoldBarWidget(
       body: BackgroundTopWidget(
         child: Padding(
           child: Column(
             children: [
-              SizedBox(height: 40 * scale),
+              SizedBox(height: 20 * scale),
               ImageWidget('logo', height: 68, width: 166, scale: scale),
-              SizedBox(height: 40 * scale),
+              SizedBox(height: 20 * scale),
               TheText.w600(
                 color: accentColor,
                 fontSize: 28,
@@ -49,7 +48,7 @@ class AboutScreen extends StatelessWidget with RouteValidator {
                 textAlign: TextAlign.center,
                 textScaleFactor: scale,
               ),
-              SizedBox(height: 20 * scale),
+              SizedBox(height: 12 * scale),
               TheText.w300(
                 color: globals.menuItemColor,
                 fontSize: 16,
@@ -65,14 +64,14 @@ class AboutScreen extends StatelessWidget with RouteValidator {
                 textAlign: TextAlign.center,
                 textScaleFactor: scale,
               ),
-              SizedBox(height: 30 * scale),
+              SizedBox(height: 16 * scale),
               ButtonWidget(
                 'Book cleaning',
                 onPressed: () => pushRouteIfValid(
                   context,
                   builder: (context) => OrderScreen(screenData),
-                  name: OrderScreen.routeName,
                   replace: screenData.isPlanSelected,
+                  routeIndex: OrderScreen.routeIndex,
                 ),
                 scale: scale,
                 width: 335,
@@ -82,21 +81,22 @@ class AboutScreen extends StatelessWidget with RouteValidator {
               ),
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 20 * scale),
+          padding: EdgeInsets.only(
+            left: 20 * scale + safePadding.left,
+            right: 20 * scale + safePadding.right,
+          ),
         ),
+        maxOffset: 260,
         scale: scale,
-        scrollController: scrollController,
         subtitle:
             'The first marketplace in UAE to help protect\nYou and keep You in healthy environment',
         title: 'About us',
       ),
+      color: globals.backgroundTopColor,
       getScreenData: () => screenData,
+      safeAreaLeft: false,
+      safeAreaRight: false,
+      safeAreaTop: false,
     );
-  }
-
-  void scrollToTop() async {
-    final Duration duration = Duration(milliseconds: 250);
-    await Future.delayed(duration);
-    scrollController.animateTo(0, duration: duration, curve: Curves.ease);
   }
 }
