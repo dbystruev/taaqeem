@@ -72,7 +72,7 @@ mixin RouteValidator {
       routes.add(route);
       Navigator.push(context, route);
     }
-    debugPrint('${routes.length} routes\n$routes');
+    debugPrint('replace = $replace, ${routes.length} routes\n$routes');
     return true;
   }
 

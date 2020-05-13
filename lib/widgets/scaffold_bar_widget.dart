@@ -68,6 +68,9 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
           if (newRouteIndex == oldRouteIndex ||
               oldRouteIndex == AuthorizationScreen.routeIndex &&
                   newRouteIndex == ProfileLandingScreen.routeIndex) return;
+          final bool isLoggedIn = widget.getScreenData().user.isLoggedIn;
+          final bool isNotRoutingToProfile =
+              newRouteIndex != ProfileLandingScreen.routeIndex;
           pushRouteIfValid(
             context,
             animate: false,
@@ -75,8 +78,9 @@ class _ScaffoldBarWidgetState extends State<ScaffoldBarWidget>
               newRouteIndex,
               screenData: widget.getScreenData(),
             ),
-            removePrevious: widget.removePreviousRoute,
-            replace: newRouteIndex != ProfileLandingScreen.routeIndex,
+            removePrevious: widget.removePreviousRoute &&
+                (isNotRoutingToProfile || isLoggedIn),
+            replace: isNotRoutingToProfile || isLoggedIn,
             routeIndex: newRouteIndex,
           );
         },
