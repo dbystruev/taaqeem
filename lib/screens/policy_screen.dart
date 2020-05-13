@@ -11,9 +11,13 @@ import 'package:taaqeem/models/policy.dart';
 import 'package:taaqeem/models/policy+all.dart';
 import 'package:taaqeem/models/policy_section.dart';
 import 'package:taaqeem/widgets/back_widget.dart';
+import 'package:taaqeem/widgets/navigator_widget.dart';
 import 'package:taaqeem/widgets/text_widgets.dart';
 
 class PolicyScreen extends StatelessWidget {
+  static const routeIndex = 9;
+  static String get routeName => NavigatorWidget.routeName(routeIndex);
+
   final bool showToS;
 
   PolicyScreen({this.showToS = false});
@@ -31,7 +35,6 @@ class PolicyScreen extends StatelessWidget {
             BackWidget(
               policy.title,
               marginBottom: 40,
-              // marginTop: 31 + Scale.getSafeMargin(context),
               scale: scale,
             ),
             Expanded(

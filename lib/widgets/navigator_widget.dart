@@ -25,6 +25,7 @@ class NavigatorWidget extends StatelessWidget {
     'ProfileScreen',
     'ProfileEditScreen',
     'FeedbackScreen',
+    'PolicyScreen',
   ];
 
   static routeName(int index) => routeNames[index];

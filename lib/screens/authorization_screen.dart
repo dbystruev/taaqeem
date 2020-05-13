@@ -50,6 +50,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final double ratio = Scale.isHorizontal(context)
+        ? 0.5
+        : max(
+            Scale.getScreenWidth(context) / Scale.getScreenHeight(context),
+            0.46,
+          );
     final double scale = Scale.getHorizontalScale(context);
     final TextStyle underline =
         const TextStyle(decoration: TextDecoration.underline);
@@ -73,8 +79,12 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                       Column(
                         children: [
                           InkWell(
-                            child: ImageWidget('left',
-                                height: 15, scale: scale, width: 20),
+                            child: ImageWidget(
+                              'left',
+                              height: 15,
+                              scale: scale,
+                              width: 20,
+                            ),
                             onTap: () => popRoute(context),
                           ),
                           SizedBox(height: 30 * scale),
@@ -95,20 +105,30 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                 Row(
                   children: [
                     if (!isCode)
-                      Column(
-                        children: [
-                          SizedBox(height: 7 * scale),
-                          TheText.w600(
+                      FormWidget(
+                        enabled: false,
+                        boxHeight: 80 / ratio,
+                        boxWidth: 150 * ratio,
+                        controller: TextEditingController(),
+                        decoration: BoxDecoration(border: null),
+                        fontWeight: FontWeight.w600,
+                        inputDecoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(
                             color: globals.textColor,
-                            fontSize: 28,
-                            text: globals.phonePrefix,
-                            textScaleFactor: scale,
+                            fontSize: 28 * scale,
                           ),
-                        ],
+                          hintText: globals.phonePrefix,
+                        ),
+                        marginLeft: 0,
+                        marginRight: 0,
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        scale: scale,
                       ),
                     FormWidget(
-                      boxWidth: isCode ? 80 * scale : 220 * scale,
-                      boxHeight: 80 * scale,
+                      boxHeight: 80 / ratio,
+                      boxWidth: isCode ? 168 * ratio : 428 * ratio,
                       color: globals.textColor,
                       controller: isCode ? codeController : phoneController,
                       decoration: BoxDecoration(border: null),
@@ -140,7 +160,7 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                     ),
                     Column(
                       children: [
-                        SizedBox(height: 7 * scale),
+                        // if (Platform.isAndroid) SizedBox(height: 7 * scale),
                         ImageWidget('pen', height: 15, scale: scale, width: 15),
                       ],
                     ),
@@ -171,6 +191,8 @@ class _AuthorizationScreenState extends State<AuthorizationScreen>
                     pushRouteIfValid(
                       context,
                       builder: (context) => PolicyScreen(showToS: showToS),
+                      routeIndex: PolicyScreen.routeIndex,
+                      scale: scale,
                     );
                   },
                 ),
