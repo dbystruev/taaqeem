@@ -31,21 +31,22 @@ const String fontFamily = 'Museo Sans Cyrl';
 // Hint color
 const Color hintColor = Color(0xFFBDBDBD);
 
-// UAE Holidays 2020
+// UAE Holidays 2021
 final Map<DateTime, List> holidays = {
-  DateTime(2020, 1, 1): [''],
-  DateTime(2020, 5, 24): [''],
-  DateTime(2020, 5, 25): [''],
-  DateTime(2020, 5, 26): [''],
-  DateTime(2020, 7, 30): [''],
-  DateTime(2020, 7, 31): [''],
-  DateTime(2020, 8, 1): [''],
-  DateTime(2020, 8, 2): [''],
-  DateTime(2020, 8, 20): [''],
-  DateTime(2020, 10, 29): [''],
-  DateTime(2020, 12, 1): [''],
-  DateTime(2020, 12, 2): [''],
-  DateTime(2020, 12, 3): [''],
+  DateTime(2021, 1, 1): [''],
+  DateTime(2021, 5, 11): [''],
+  DateTime(2021, 5, 12): [''],
+  DateTime(2021, 5, 13): [''],
+  DateTime(2021, 5, 14): [''],
+  DateTime(2021, 5, 15): [''],
+  DateTime(2021, 7, 19): [''],
+  DateTime(2021, 7, 20): [''],
+  DateTime(2021, 7, 21): [''],
+  DateTime(2021, 7, 22): [''],
+  DateTime(2021, 8, 10): [''],
+  DateTime(2021, 10, 19): [''],
+  DateTime(2021, 11, 30): [''],
+  DateTime(2021, 12, 2): [''],
 };
 
 // Inactive color
